@@ -1,4 +1,4 @@
-2026-10-13 08:59:16 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-13 09:29:43 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -12,10 +12,10 @@ NRFI model | calibration a=0.340 b=-0.052  (fit on 1823 graded 1st innings befor
 Slate      | 1 games · none graded yet
 Cache      | 516 files (5.5 MB) · 59 served from disk, 4 fetched
 NHL        | 89 final game(s) this season, 89 with box scores, 0 missing
-NHL        | latest final: 2026-10-12 (game 2026020089) | today 2026-10-13 has 16 game(s), 0 final | feed 2 hit / 10 fetched
-2026-10-13 09:00:07   today  27.2s
-2026-10-13 09:00:19   nfl     9.7s  3 built, 7 to pick from
-2026-10-13 09:00:24   cfb     4.7s  3 built, 8 to pick from
+NHL        | latest final: 2026-10-12 (game 2026020089) | today 2026-10-13 has 16 game(s), 0 final | feed 1 hit / 11 fetched
+2026-10-13 09:30:42   today  31.4s
+2026-10-13 09:30:58   nfl    12.4s  3 built, 7 to pick from
+2026-10-13 09:31:04   cfb     6.2s  3 built, 8 to pick from
 
 ── Slate 2026-10-12 ──
 Win model  | learned weights: run model 0.971, Pythagorean gap 0.789 (fit on 2,455 graded mlb-runs-v10 games, 45% data, half-life 45 d)
@@ -59,7 +59,7 @@ Win model  | calibration a=1.164 b=-0.006  (fit on 2457 graded games before 2026
 NRFI model | calibration a=0.340 b=-0.052  (fit on 1823 graded 1st innings before 2026-10-16)
 Slate      | 2 games · none graded yet
 Cache      | 516 files (5.5 MB) · 21 served from disk, 7 fetched
-2026-10-13 09:00:47   mlb    23.2s  5 built, 16 to pick from
-2026-10-13 09:00:48   nhl     1.1s  5 built, 18 to pick from
-2026-10-13 09:00:48   nba     0.2s  1 built, 1 to pick from
-2026-10-13 09:00:48 built 11297 KB in 93s
+2026-10-13 09:31:32   mlb    27.7s  5 built, 16 to pick from
+2026-10-13 09:31:34   nhl     1.4s  5 built, 18 to pick from
+2026-10-13 09:31:34   nba     0.3s  1 built, 1 to pick from
+2026-10-13 09:31:34 built 11277 KB in 111s
