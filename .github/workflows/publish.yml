@@ -28,6 +28,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # A scheduled run checks out the branch as it stood when the schedule fired, which can
+      # be a commit or two behind by the time a runner actually picks it up. The ledgers are
+      # the models' memory, so building from a stale copy would quietly throw away the last
+      # run's grading -- and the push at the end would be rejected as out of date.
+      - name: Start from the current tip
+        run: |
+          git fetch -q origin "$GITHUB_REF_NAME"
+          git reset -q --hard "origin/$GITHUB_REF_NAME"
+          git log --oneline -1
+
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: release
@@ -107,20 +117,41 @@ jobs:
           echo "page is $(find d lib index.html -type f 2>/dev/null | wc -l) file(s)"
 
       # Runs even after a failed build, so whatever the models did learn is not thrown away.
-      # Only the page, the ledgers and the log are committed, never runner leftovers.
       - name: Commit the page and the ledgers
         if: always()
         run: |
+          set -e
           git config user.name  "projections-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A -- index.html .nojekyll d lib '*.csv' nfl_ledger _log
-          if git diff --cached --quiet; then
-            echo "nothing changed"
-          else
-            git commit -q -m "page $(TZ=America/Edmonton date '+%Y-%m-%d %H:%M %Z')"
-            git push || {
-              git fetch origin "$GITHUB_REF_NAME" &&
-              git rebase "origin/$GITHUB_REF_NAME" &&
-              git push
-            }
-          fi
+          MSG="page $(TZ=America/Edmonton date '+%Y-%m-%d %H:%M %Z')"
+
+          # Only the page, the ledgers and the log -- never anything the runner left behind.
+          # git add fails outright on a path that does not exist, and after a build that died
+          # early some of these will not, so each one is checked first. The csv pattern is
+          # handed to git rather than the shell, so a deleted ledger is still noticed.
+          stage() {
+            local p=()
+            for x in index.html .nojekyll d lib nfl_ledger _log; do
+              if [ -e "$x" ]; then p+=("$x"); fi
+            done
+            if compgen -G "*.csv" > /dev/null; then p+=("*.csv"); fi
+            if [ ${#p[@]} -gt 0 ]; then git add -A -- "${p[@]}"; fi
+          }
+
+          stage
+          if git diff --cached --quiet; then echo "nothing changed"; exit 0; fi
+          git commit -q -m "$MSG"
+          if git push; then exit 0; fi
+
+          # Something else published while this run was building. The page is regenerated
+          # whole every time, so rebasing it would only conflict with itself: instead put
+          # this run's page and ledgers on top of the new tip and let the newer build win,
+          # while keeping any code change that landed in the meantime.
+          echo "push rejected -- replaying this run's page on top of the new tip"
+          git fetch -q origin "$GITHUB_REF_NAME"
+          git reset -q --soft "origin/$GITHUB_REF_NAME"
+          git reset -q
+          stage
+          if git diff --cached --quiet; then echo "nothing left to commit"; exit 0; fi
+          git commit -q -m "$MSG"
+          git push
