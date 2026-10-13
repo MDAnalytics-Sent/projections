@@ -1,4 +1,4 @@
-2026-10-13 16:04:32 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-13 16:35:41 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -13,9 +13,9 @@ Slate      | 1 games · none graded yet
 Cache      | 516 files (5.5 MB) · 59 served from disk, 4 fetched
 NHL        | 89 final game(s) this season, 89 with box scores, 0 missing
 NHL        | latest final: 2026-10-12 (game 2026020089) | today 2026-10-13 has 16 game(s), 0 final | feed 2 hit / 10 fetched
-2026-10-13 16:05:41   today  42.2s
-2026-10-13 16:06:00   nfl    15.7s  3 built, 7 to pick from
-2026-10-13 16:06:09   cfb     8.4s  3 built, 8 to pick from
+2026-10-13 16:36:50   today  42.0s
+2026-10-13 16:37:09   nfl    15.0s  3 built, 7 to pick from
+2026-10-13 16:37:17   cfb     8.2s  3 built, 8 to pick from
 
 ── Slate 2026-10-12 ──
 Win model  | learned weights: run model 0.971, Pythagorean gap 0.789 (fit on 2,455 graded mlb-runs-v10 games, 45% data, half-life 45 d)
@@ -51,15 +51,15 @@ Win model  | learned weights: run model 0.956, Pythagorean gap 0.789 (fit on 2,4
 Win model  | calibration a=1.165 b=-0.006  (fit on 2457 graded games before 2026-10-15)
 NRFI model | calibration a=0.340 b=-0.052  (fit on 1823 graded 1st innings before 2026-10-15)
 Slate      | 2 games · none graded yet
-Cache      | 516 files (5.5 MB) · 15 served from disk, 13 fetched
+Cache      | 516 files (5.5 MB) · 21 served from disk, 7 fetched
 
 ── Slate 2026-10-16 ──
 Win model  | learned weights: run model 0.956, Pythagorean gap 0.783 (fit on 2,457 graded mlb-runs-v10 games, 44% data, half-life 45 d)
 Win model  | calibration a=1.164 b=-0.006  (fit on 2457 graded games before 2026-10-16)
 NRFI model | calibration a=0.340 b=-0.052  (fit on 1823 graded 1st innings before 2026-10-16)
 Slate      | 2 games · none graded yet
-Cache      | 516 files (5.5 MB) · 21 served from disk, 7 fetched
-2026-10-13 16:06:44   mlb    34.7s  5 built, 16 to pick from
-2026-10-13 16:06:46   nhl     1.9s  5 built, 18 to pick from
-2026-10-13 16:06:46   nba     0.3s  1 built, 1 to pick from
-2026-10-13 16:06:46 built 11733 KB in 135s
+Cache      | 516 files (5.5 MB) · 15 served from disk, 13 fetched
+2026-10-13 16:37:51   mlb    33.6s  5 built, 16 to pick from
+2026-10-13 16:37:53   nhl     1.8s  5 built, 18 to pick from
+2026-10-13 16:37:53   nba     0.3s  1 built, 1 to pick from
+2026-10-13 16:37:53 built 11733 KB in 133s
