@@ -12,6 +12,17 @@ on:
   schedule:
     - cron: "13,43 * * * *"
   workflow_dispatch:
+  # A change to the app or the publisher rebuilds the page straight away, rather than
+  # waiting up to half an hour for the next scheduled run. Only these three paths count,
+  # so the page, the ledgers and the log this workflow commits itself can never set it
+  # off again -- and GitHub already refuses to re-trigger on its own token's pushes, so
+  # there is no way round to a loop.
+  push:
+    branches: [main]
+    paths:
+      - Projections.R
+      - publish_site.R
+      - .github/workflows/publish.yml
 
 permissions:
   contents: write
