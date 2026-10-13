@@ -6284,6 +6284,17 @@ nhl_sched <- function() {
   if (!is.null(lv) && nrow(lv)) {
     j <- match(s$game_id, lv$game_id); fx <- !is.na(j) & !is.na(lv$ko[j])
     if (any(fx)) s$ko[fx] <- lv$ko[j[fx]]               # the season files often lack a start time
+    # The season files run a day or more behind on last night's results. Where the live
+    # feed already calls a game final and carries its score, that score wins -- otherwise
+    # a finished game sits with no result until the season file catches up.
+    if (!("api_final" %in% names(s))) s$api_final <- NA
+    hv <- !is.na(j) & !is.na(lv$api_final[j]) & lv$api_final[j] &
+          !is.na(lv$home_score[j]) & !is.na(lv$away_score[j])
+    if (any(hv)) {
+      s$home_score[hv] <- lv$home_score[j[hv]]
+      s$away_score[hv] <- lv$away_score[j[hv]]
+      s$api_final[hv]  <- TRUE
+    }
     lv <- lv[!(lv$game_id %in% s$game_id), , drop = FALSE]
     if (nrow(lv)) {
       attr(lv$ko, "tzone") <- attr(s$ko, "tzone")
@@ -6627,6 +6638,9 @@ NHL_API_FAIL  <- 8L
 NHL_WK_TTL    <- 4
 NHL_SEED_TTL  <- 12 * 60
 NHL_BOX_CAP   <- 60L
+NHL_BOX_TTL    <- 5     # minutes a box score is re-read for, until the game is over
+NHL_SCORE_TTL  <- 3     # minutes the live scoreboard is cached for
+NHL_SCORE_DAYS <- 3L    # days back the scoreboard is asked who won
 NHL_LIVE_DAYS <- 45L
 NHL_WK_GUARD  <- 40L
 NHL_CORRUPT_N <- 200L
@@ -6681,6 +6695,19 @@ nhl_api_json <- function(path, cache, ttl_min = 0, perm = FALSE) {
 
 nhl_api_final <- function(st) as.character(st) %in% c("OFF", "FINAL")
 
+# Keeps a cached answer for good. Only called once the game it describes is over, so
+# that a box score read while the game was still being played is never the last word:
+# caching that permanently is how a goalscorer board froze with the goals not yet in.
+nhl_api_seal <- function(cache) {
+  f <- file.path(nhl_live_dir, paste0(cache, ".rds"))
+  if (!file.exists(f)) return(invisible(FALSE))
+  o <- try(readRDS(f), silent = TRUE)
+  if (inherits(o, "try-error") || !is.list(o) || isTRUE(o$perm)) return(invisible(FALSE))
+  o$perm <- TRUE
+  try(saveRDS(o, f), silent = TRUE)
+  invisible(TRUE)
+}
+
 nhl_parse_week <- function(j) {
   if (is.null(j)) return(NULL)
   gw <- j$gameWeek
@@ -6712,6 +6739,33 @@ nhl_parse_week <- function(j) {
   }
   list(rows = if (length(rows)) dplyr::bind_rows(rows) else NULL, nxt = nxt,
        start = as.character(j$regularSeasonStartDate %||% ""))
+}
+
+# Who actually won, last night and tonight.
+#
+# The weekly /schedule feed is served from a cache that can sit hours behind the ice:
+# it will call a finished game LIVE and hand back the score as it stood at the time,
+# which the app then reads as no result at all. /score is the live scoreboard and is
+# current, so for the last few days it has the last word. It only ever adds a result:
+# a game already known to be final is never walked back to unfinished.
+nhl_score_day <- function(d) {
+  ds <- format(as.Date(d))
+  j <- nhl_api_json(sprintf("/score/%s", ds), paste0("sc_", ds), NHL_SCORE_TTL)
+  if (is.null(j) || !length(j$games)) return(NULL)
+  rows <- list()
+  for (g in j$games) {
+    ht <- g$homeTeam; at <- g$awayTeam
+    if (is.null(ht) || is.null(at)) next
+    if (!nhl_api_final(g$gameState %||% "")) next
+    hs <- suppressWarnings(as.numeric(ht$score %||% NA))
+    as_ <- suppressWarnings(as.numeric(at$score %||% NA))
+    if (is.na(hs) || is.na(as_)) next
+    rows[[length(rows) + 1L]] <- data.frame(
+      game_id = as.character(g$id %||% NA), home_score = hs, away_score = as_,
+      stringsAsFactors = FALSE)
+  }
+  if (!length(rows)) return(NULL)
+  dplyr::bind_rows(rows)
 }
 
 nhl_live_sched <- function(season_, upto = NULL) {
@@ -6749,7 +6803,19 @@ nhl_live_sched <- function(season_, upto = NULL) {
                     home_score = r$home_score, away_score = r$away_score,
                     api_final = r$api_final %||% NA,
                     stringsAsFactors = FALSE)
-  out[!duplicated(out$game_id), , drop = FALSE]
+  out <- out[!duplicated(out$game_id), , drop = FALSE]
+  today <- as.Date(format(now_et(), "%Y-%m-%d"))
+  for (i in 0:NHL_SCORE_DAYS) {
+    sd <- tryCatch(nhl_score_day(today - i), error = function(e) NULL)
+    if (is.null(sd) || !nrow(sd)) next
+    j <- match(sd$game_id, out$game_id)
+    k <- which(!is.na(j))
+    if (!length(k)) next
+    out$home_score[j[k]] <- sd$home_score[k]
+    out$away_score[j[k]] <- sd$away_score[k]
+    out$api_final[j[k]]  <- TRUE
+  }
+  out
 }
 
 nhl_parse_box <- function(j, id) {
@@ -6793,8 +6859,9 @@ nhl_live_box <- function(sch, cap = NHL_BOX_CAP) {
       if (spent >= cap) next
       spent <- spent + 1L
     }
-    b <- nhl_parse_box(nhl_api_json(sprintf("/gamecenter/%s/boxscore", id), tag,
-                                    perm = TRUE), id)
+    bj <- nhl_api_json(sprintf("/gamecenter/%s/boxscore", id), tag, NHL_BOX_TTL)
+    if (!is.null(bj) && nhl_api_final(bj$gameState %||% "")) nhl_api_seal(tag)
+    b <- nhl_parse_box(bj, id)
     if (!is.null(b)) out[[length(out) + 1L]] <- b
   }
   if (!length(out)) return(NULL)

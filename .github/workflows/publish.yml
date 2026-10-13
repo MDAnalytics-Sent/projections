@@ -23,7 +23,7 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 55
+    timeout-minutes: 120
 
     steps:
       - uses: actions/checkout@v4
@@ -48,15 +48,23 @@ jobs:
             any::Matrix
             any::nanoparquet
 
-      # Several hundred megabytes of league data and API responses. Restoring it is the
-      # difference between a ten minute run and an hour.
+      # Several hundred megabytes of league data and API responses: thirteen seasons of
+      # play-by-play and every box score the models have ever read. Restoring it is the
+      # difference between a ten minute run and an all-afternoon one. Saving is a separate
+      # step on purpose, so a run that fails or runs out of time still banks whatever it
+      # managed to fetch and the next run starts from there. The key turns over every six
+      # hours, which is often enough to keep up and rare enough not to fill the cache.
+      - name: Name the cache
+        id: ck
+        run: echo "key=projdata-$(date -u +%Y%m%d)-$(( $(date -u +%H) / 6 ))" >> "$GITHUB_OUTPUT"
+
       - name: Restore the data caches
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: |
             nfl_cache
             proj_cache
-          key: projdata-${{ github.run_number }}
+          key: ${{ steps.ck.outputs.key }}
           restore-keys: projdata-
 
       # Hand last run's page to the builder. Days that are settled and already built are
@@ -69,12 +77,25 @@ jobs:
           done
           echo "seeded $(find _site -type f | wc -l) file(s) from the last run"
 
+      # The build keeps its own log, committed with the page, so what a run did -- and what
+      # it could not reach -- can be read afterwards from the repository itself.
       - name: Build the page
         env:
           SITE_BUILD_ONLY: "1"
           TZ: America/Edmonton
         run: |
-          Rscript -e 'options(site.app_dir = getwd(), site.home = file.path(getwd(), "_site")); source("publish_site.R")'
+          set -o pipefail
+          mkdir -p _log
+          Rscript -e 'options(site.app_dir = getwd(), site.home = file.path(getwd(), "_site")); source("publish_site.R")' 2>&1 | tee _log/build.txt
+
+      - name: Save the data caches
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            nfl_cache
+            proj_cache
+          key: ${{ steps.ck.outputs.key }}
 
       # Only on a good build: a failed one must not take the live page down with it.
       - name: Move the page into place
@@ -86,15 +107,20 @@ jobs:
           echo "page is $(find d lib index.html -type f 2>/dev/null | wc -l) file(s)"
 
       # Runs even after a failed build, so whatever the models did learn is not thrown away.
+      # Only the page, the ledgers and the log are committed, never runner leftovers.
       - name: Commit the page and the ledgers
         if: always()
         run: |
           git config user.name  "projections-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git add -A -- index.html .nojekyll d lib '*.csv' nfl_ledger _log
           if git diff --cached --quiet; then
             echo "nothing changed"
           else
             git commit -q -m "page $(TZ=America/Edmonton date '+%Y-%m-%d %H:%M %Z')"
-            git push || { git fetch origin "${GITHUB_REF_NAME}" && git rebase "origin/${GITHUB_REF_NAME}" && git push; }
+            git push || {
+              git fetch origin "$GITHUB_REF_NAME" &&
+              git rebase "origin/$GITHUB_REF_NAME" &&
+              git push
+            }
           fi
