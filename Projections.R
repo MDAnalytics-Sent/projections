@@ -4112,6 +4112,78 @@ today_et <- function() as.Date(format(now_et(), "%Y-%m-%d"))
 # the eastern day a moment falls on, for the same reason
 day_et <- function(x) as.Date(format(x, "%Y-%m-%d"))
 
+# ---- picks frozen when the game starts -------------------------------------------
+#
+# Baseball, pro football and college football each write their pick to a ledger the
+# moment a game starts, and read it back for ever after, so the record on the page is
+# the pick as it actually stood. Hockey and basketball computed theirs the same way --
+# ratings from earlier dates only, calibration from earlier seasons only, so nothing
+# ever leaked -- but never wrote them down, which meant every rebuild recomputed
+# history. Nothing was wrong with it; it just was not nailed down. This gives the last
+# two leagues the same memory as the rest, and all five now behave identically.
+
+game_empty_ledger <- function() data.frame(
+  game_id = character(0), season = integer(0),
+  kickoff = as.POSIXct(character(0), tz = TZ_ET),
+  rd = numeric(0), pred = numeric(0), conf = numeric(0),
+  model_ver = character(0), locked_at = as.POSIXct(character(0), tz = TZ_ET),
+  stringsAsFactors = FALSE)
+
+game_read_ledger <- function(path) {
+  if (!file.exists(path)) return(game_empty_ledger())
+  L <- try(readRDS(path), silent = TRUE)
+  if (inherits(L, "try-error") || !is.data.frame(L)) return(game_empty_ledger())
+  L
+}
+
+# Append-only. A pick already on the ledger is never rewritten, by anything.
+game_append_ledger <- function(path, new) {
+  L <- game_read_ledger(path)
+  new <- new[!new$game_id %in% L$game_id, , drop = FALSE]
+  if (!nrow(new)) return(invisible(L))
+  L <- dplyr::bind_rows(L, new)
+  dir.create(dirname(path), recursive = TRUE, showWarnings = FALSE)
+  tmp <- paste0(path, ".tmp")
+  ok <- tryCatch({ saveRDS(L, tmp); file.rename(tmp, path) }, error = function(e) FALSE)
+  if (!isTRUE(ok)) unlink(tmp)
+  invisible(L)
+}
+
+# One row per game in g, in g's order: the frozen pick where there is one, otherwise a
+# fresh pick computed with nothing later than pmin(start, now) -- and written to the
+# ledger only once the game has actually started, so a pick can never be stored using
+# anything that happened during or after the game it is predicting.
+game_settle <- function(path, model_ver, predict_fn, g, now) {
+  if (!nrow(g)) return(NULL)
+  L <- game_read_ledger(path)
+  out <- list()
+  Lg <- L[L$game_id %in% g$game_id, , drop = FALSE]
+  if (nrow(Lg)) { Lg$locked <- TRUE; out[[1]] <- Lg }
+  todo <- g[!g$game_id %in% Lg$game_id, , drop = FALSE]
+  if (nrow(todo)) {
+    cut <- as.POSIXct(pmin(as.numeric(todo$ko), as.numeric(now)),
+                      origin = "1970-01-01", tz = TZ_ET)
+    for (u in unique(as.numeric(cut))) {
+      gi <- todo[as.numeric(cut) == u, , drop = FALSE]
+      x <- predict_fn(gi, as.POSIXct(u, origin = "1970-01-01", tz = TZ_ET))
+      if (is.null(x) || !nrow(x)) next
+      x$kickoff   <- gi$ko[match(x$game_id, gi$game_id)]
+      x$model_ver <- model_ver
+      x$locked_at <- now
+      x$locked    <- !is.na(x$kickoff) & now >= x$kickoff
+      out[[length(out) + 1L]] <- x
+      lk <- x[x$locked, , drop = FALSE]
+      if (nrow(lk))
+        game_append_ledger(path,
+          lk[, intersect(names(game_empty_ledger()), names(lk)), drop = FALSE])
+    }
+  }
+  if (!length(out)) return(NULL)
+  r <- dplyr::bind_rows(out)
+  r$locked[is.na(r$locked)] <- FALSE
+  r[match(g$game_id, r$game_id), , drop = FALSE]
+}
+
 NICK <- c(ARI="Cardinals", ATL="Falcons", BAL="Ravens", BUF="Bills",
   CAR="Panthers", CHI="Bears", CIN="Bengals", CLE="Browns", DAL="Cowboys",
   DEN="Broncos", DET="Lions", GB="Packers", HOU="Texans", IND="Colts",
@@ -6238,6 +6310,7 @@ NHL_GS_BASE  <- c(C = 0.1846, D = 0.0702, L = 0.1928, R = 0.2039)
 NHL_GS_RECENT <- 10L
 NHL_MIN_UNIQ <- 5L
 NHL_LEDGER   <- file.path(LEDGER_DIR, "nhl_predictions.rds")
+NHL_MODEL    <- sprintf("nhl-marg-v%d", NHL_VER)
 
 nhl_dir <- file.path(CACHE_DIR, "nhl")
 dir.create(nhl_dir, showWarnings = FALSE, recursive = TRUE)
@@ -6893,6 +6966,7 @@ NBA_FB_BASE  <- c(C = 0.1309, F = 0.1009, G = 0.0908, PF = 0.0794,
                   PG = 0.0798, SF = 0.0851, SG = 0.0919)
 NBA_FB_RECENT <- 12L
 NBA_LEDGER   <- file.path(LEDGER_DIR, "nba_predictions.rds")
+NBA_MODEL    <- sprintf("nba-marg-v%d", NBA_VER)
 
 nba_dir <- file.path(CACHE_DIR, "nba")
 dir.create(nba_dir, showWarnings = FALSE, recursive = TRUE)
@@ -9483,12 +9557,10 @@ server <- function(input, output, session) {
     if (!nrow(g)) return(NULL)
     now <- now_et()
     cut <- as.POSIXct(pmin(as.numeric(g$ko), as.numeric(now)), origin = "1970-01-01", tz = TZ_ET)
-    st <- dplyr::bind_rows(lapply(unique(as.numeric(cut)), function(u) {
-      gi <- g[as.numeric(cut) == u, , drop = FALSE]
-      nhl_predict(d$pan, d$endr, d$ents, m, gi,
-                  as.POSIXct(u, origin = "1970-01-01", tz = TZ_ET))
-    }))
-    st <- st[match(g$game_id, st$game_id), ]
+    st <- game_settle(NHL_LEDGER, NHL_MODEL,
+                      function(gi, cutoff) nhl_predict(d$pan, d$endr, d$ents, m, gi, cutoff),
+                      g, now)
+    if (is.null(st) || !nrow(st)) return(NULL)
     done <- g$has_score & g$final_at <= now
     list(g = g, st = st, done = done,
          pick = ifelse(st$pred > 0, g$home, g$away),
@@ -9501,7 +9573,10 @@ server <- function(input, output, session) {
     msg <- if (is.null(b)) "No NHL games on this date." else {
       n <- sum(b$done); h <- sum(b$ok, na.rm = TRUE)
       if (n == nrow(b$g) && n > 0) sprintf("Model went %d-%d on %d games.", h, n - h, n)
-      else sprintf("%d games, %d still to play.", nrow(b$g), nrow(b$g) - n)
+      else if (n > 0) sprintf("%d games, %d still to play. %d-%d so far.",
+                              nrow(b$g), nrow(b$g) - n, h, n - h)
+      else sprintf("%d games. %d locked at puck drop, the rest update until theirs.",
+                   nrow(b$g), sum(b$st$locked %in% TRUE))
     }
     div(class = "rec", msg,
         if (length(d$dropped))
@@ -9634,12 +9709,10 @@ server <- function(input, output, session) {
     if (!nrow(g)) return(NULL)
     now <- now_et()
     cut <- as.POSIXct(pmin(as.numeric(g$ko), as.numeric(now)), origin = "1970-01-01", tz = TZ_ET)
-    st <- dplyr::bind_rows(lapply(unique(as.numeric(cut)), function(u) {
-      gi <- g[as.numeric(cut) == u, , drop = FALSE]
-      nba_predict(d$pan, d$endr, d$ents, m, gi,
-                  as.POSIXct(u, origin = "1970-01-01", tz = TZ_ET))
-    }))
-    st <- st[match(g$game_id, st$game_id), ]
+    st <- game_settle(NBA_LEDGER, NBA_MODEL,
+                      function(gi, cutoff) nba_predict(d$pan, d$endr, d$ents, m, gi, cutoff),
+                      g, now)
+    if (is.null(st) || !nrow(st)) return(NULL)
     done <- g$has_score & g$final_at <= now
     list(g = g, st = st, done = done,
          pick = ifelse(st$pred > 0, g$home, g$away),
@@ -9652,7 +9725,10 @@ server <- function(input, output, session) {
     n <- sum(b$done); h <- sum(b$ok, na.rm = TRUE)
     div(class = "rec", if (n == nrow(b$g) && n > 0)
       sprintf("Model went %d-%d on %d games.", h, n - h, n)
-      else sprintf("%d games, %d still to play.", nrow(b$g), nrow(b$g) - n))
+      else if (n > 0) sprintf("%d games, %d still to play. %d-%d so far.",
+                              nrow(b$g), nrow(b$g) - n, h, n - h)
+      else sprintf("%d games. %d locked at tip-off, the rest update until theirs.",
+                   nrow(b$g), sum(b$st$locked %in% TRUE)))
   })
   output$bboard_sec <- renderUI({
     req(bboard()); tagList(div(class = "sec-hdr", "Game outcomes"), DTOutput("bboard"))
