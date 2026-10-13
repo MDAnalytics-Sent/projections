@@ -4100,6 +4100,18 @@ now_et <- function() {
   x
 }
 
+# What day it is in the east -- which is not what as.Date() says.
+#
+# as.Date() on a time ignores its time zone and reads it in UTC, so from 8pm eastern
+# onwards the plain conversion is already tomorrow. Every schedule here is dated
+# eastern, so that one-line difference was enough to point the whole evening at the
+# next day's slate: games that had just been played showed no winner, because the day
+# on screen was a day that had not happened yet.
+today_et <- function() as.Date(format(now_et(), "%Y-%m-%d"))
+
+# the eastern day a moment falls on, for the same reason
+day_et <- function(x) as.Date(format(x, "%Y-%m-%d"))
+
 NICK <- c(ARI="Cardinals", ATL="Falcons", BAL="Ravens", BUF="Bills",
   CAR="Panthers", CHI="Bears", CIN="Bengals", CLE="Browns", DAL="Cowboys",
   DEN="Broncos", DET="Lions", GB="Packers", HOU="Texans", IND="Colts",
@@ -6608,9 +6620,9 @@ nhl_live_report <- function(sch, k) {
                nrow(g), length(intersect(g$game_id, got)), length(miss),
                if (isTRUE(a$dead)) " -- API breaker tripped" else ""))
   mlog(sprintf("NHL        | latest final: %s | today %s has %d game(s), %d final | feed %d hit / %d fetched",
-               last, format(as.Date(now_et())),
-               sum(sch$date == as.Date(now_et()), na.rm = TRUE),
-               sum(sch$date == as.Date(now_et()) & sch$has_score, na.rm = TRUE),
+               last, format(today_et()),
+               sum(sch$date == today_et(), na.rm = TRUE),
+               sum(sch$date == today_et() & sch$has_score, na.rm = TRUE),
                a$hits, a$miss))
   if (length(miss))
     mlog(sprintf("NHL        | no box score for %s",
@@ -9447,10 +9459,10 @@ server <- function(input, output, session) {
   observe(dash_guard("NHL data", {
     if (isTRUE(nwk())) return()
     d <- ndat(); req(d)
-    td <- as.Date(now_et())
+    td <- today_et()
     up <- d$sch$ko[d$sch$ko > now_et()]
     dd <- if (any(d$sch$date == td, na.rm = TRUE)) td
-          else if (length(up)) as.Date(min(up))
+          else if (length(up)) day_et(min(up))
           else max(d$sch$date, na.rm = TRUE)
     if (!is.null(url_state$ndate)) dd <- url_state$ndate                # a reload keeps the date you were on
     updateDateInput(session, "ndate", value = dd)
@@ -9523,7 +9535,7 @@ server <- function(input, output, session) {
   }, server = FALSE)
   ngoal_tbl <- reactive({
     b <- nboard(); d <- ndat(); req(b, d)
-    live <- isTRUE(as.Date(b$cut) >= as.Date(now_et()))
+    live <- isTRUE(day_et(b$cut) >= today_et())
     inj <- if (live) tryCatch(nhl_inj(), error = function(e) NULL) else NULL
     tk  <- if (live) tryCatch(nhl_team_key(d$sch), error = function(e) NULL) else NULL
     x <- nhl_gs(d$sk, b$cut, unique(c(b$g$home, b$g$away)), inj, tk)
@@ -9598,10 +9610,10 @@ server <- function(input, output, session) {
   observe(dash_guard("NBA data", {
     if (isTRUE(bwk())) return()
     d <- bdat(); req(d)
-    td <- as.Date(now_et())
+    td <- today_et()
     up <- d$sch$ko[d$sch$ko > now_et()]
     dd <- if (any(d$sch$date == td, na.rm = TRUE)) td
-          else if (length(up)) as.Date(min(up))
+          else if (length(up)) day_et(min(up))
           else max(d$sch$date, na.rm = TRUE)
     if (!is.null(url_state$bdate)) dd <- url_state$bdate                # a reload keeps the date you were on
     updateDateInput(session, "bdate", value = dd)
