@@ -1,0 +1,6 @@
+_site/
+nfl_cache/
+proj_cache/
+.Rproj.user
+.Rhistory
+.RData

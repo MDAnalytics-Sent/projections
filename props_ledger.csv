@@ -1,0 +1,230 @@
+"GameDate","GameID","Type","PlayerID","Player","Team","Side","Matchup","Line","Pick","Prob","Started","Graded","Actual","Hit"
+"2026-09-30",849841,"HR",656941,"Kyle Schwarber","Philadelphia Phillies",NA,"Philadelphia Phillies @ Atlanta Braves",NA,"HR",0.181,TRUE,TRUE,1,TRUE
+"2026-09-30",849846,"HR",808959,"Munetaka Murakami","Chicago White Sox",NA,"Chicago White Sox @ Houston Astros",NA,"HR",0.168,TRUE,TRUE,0,FALSE
+"2026-09-30",849846,"HR",828599,"Lucas Spence","Houston Astros",NA,"Chicago White Sox @ Houston Astros",NA,"HR",0.167,TRUE,TRUE,0,FALSE
+"2026-09-30",849841,"HR",621566,"Matt Olson","Atlanta Braves",NA,"Philadelphia Phillies @ Atlanta Braves",NA,"HR",0.162,TRUE,TRUE,0,FALSE
+"2026-09-30",849846,"HR",670541,"Yordan Alvarez","Houston Astros",NA,"Chicago White Sox @ Houston Astros",NA,"HR",0.162,TRUE,TRUE,0,FALSE
+"2026-09-30",849842,"HR",691718,"Pete Crow-Armstrong","Chicago Cubs",NA,"Chicago Cubs @ San Diego Padres",NA,"HR",0.162,TRUE,TRUE,0,FALSE
+"2026-09-30",849848,"HR",700250,"Ben Rice","New York Yankees",NA,"Boston Red Sox @ New York Yankees",NA,"HR",0.16,TRUE,TRUE,0,FALSE
+"2026-09-30",849848,"HR",671277,"Luis García Jr.","New York Yankees",NA,"Boston Red Sox @ New York Yankees",NA,"HR",0.148,TRUE,TRUE,1,TRUE
+"2026-09-30",849841,"HR",547180,"Bryce Harper","Philadelphia Phillies",NA,"Philadelphia Phillies @ Atlanta Braves",NA,"HR",0.141,TRUE,TRUE,1,TRUE
+"2026-09-30",849846,"HR",695657,"Colson Montgomery","Chicago White Sox",NA,"Chicago White Sox @ Houston Astros",NA,"HR",0.139,TRUE,TRUE,0,FALSE
+"2026-09-30",849848,"HR",677800,"Wilyer Abreu","Boston Red Sox",NA,"Boston Red Sox @ New York Yankees",NA,"HR",0.134,TRUE,TRUE,0,FALSE
+"2026-09-30",849841,"HR",671739,"Michael Harris II","Atlanta Braves",NA,"Philadelphia Phillies @ Atlanta Braves",NA,"HR",0.132,TRUE,TRUE,0,FALSE
+"2026-09-30",849848,"HR",575929,"Willson Contreras","Boston Red Sox",NA,"Boston Red Sox @ New York Yankees",NA,"HR",0.13,TRUE,TRUE,1,TRUE
+"2026-09-30",849841,"HR",686948,"Drake Baldwin","Atlanta Braves",NA,"Philadelphia Phillies @ Atlanta Braves",NA,"HR",0.128,TRUE,TRUE,0,FALSE
+"2026-09-30",849846,"HR",678246,"Miguel Vargas","Chicago White Sox",NA,"Chicago White Sox @ Houston Astros",NA,"HR",0.127,TRUE,TRUE,0,FALSE
+"2026-09-30",849841,"HR",624641,"Edmundo Sosa","Philadelphia Phillies",NA,"Philadelphia Phillies @ Atlanta Braves",NA,"HR",0.121,TRUE,TRUE,0,FALSE
+"2026-09-30",849846,"HR",572233,"Christian Walker","Houston Astros",NA,"Chicago White Sox @ Houston Astros",NA,"HR",0.12,TRUE,TRUE,0,FALSE
+"2026-09-30",849848,"HR",682987,"Spencer Jones","New York Yankees",NA,"Boston Red Sox @ New York Yankees",NA,"HR",0.119,TRUE,TRUE,0,FALSE
+"2026-09-30",849842,"HR",673548,"Seiya Suzuki","Chicago Cubs",NA,"Chicago Cubs @ San Diego Padres",NA,"HR",0.116,TRUE,TRUE,0,FALSE
+"2026-09-30",849842,"HR",608324,"Alex Bregman","Chicago Cubs",NA,"Chicago Cubs @ San Diego Padres",NA,"HR",0.114,TRUE,TRUE,0,FALSE
+"2026-09-30",849848,"HR",668939,"Adley Rutschman","Boston Red Sox",NA,"Boston Red Sox @ New York Yankees",NA,"HR",0.111,TRUE,TRUE,0,FALSE
+"2026-09-30",849842,"HR",701538,"Jackson Merrill","San Diego Padres",NA,"Chicago Cubs @ San Diego Padres",NA,"HR",0.106,TRUE,TRUE,0,FALSE
+"2026-09-30",849842,"HR",592518,"Manny Machado","San Diego Padres",NA,"Chicago Cubs @ San Diego Padres",NA,"HR",0.105,TRUE,TRUE,0,FALSE
+"2026-09-30",849842,"HR",664034,"Ty France","San Diego Padres",NA,"Chicago Cubs @ San Diego Padres",NA,"HR",0.104,TRUE,TRUE,0,FALSE
+"2026-09-30",849841,"K",650911,"Cristopher Sánchez",NA,"away","Philadelphia Phillies @ Atlanta Braves",6.5,"Under",0.54,TRUE,TRUE,6,TRUE
+"2026-09-30",849846,"K",686613,"Hunter Brown",NA,"home","Chicago White Sox @ Houston Astros",6.5,"Under",0.57,TRUE,TRUE,NA,NA
+"2026-09-30",849848,"K",543243,"Sonny Gray",NA,"away","Boston Red Sox @ New York Yankees",5.5,"Under",0.54,TRUE,TRUE,5,TRUE
+"2026-09-30",849846,"K",680732,"Sean Burke",NA,"away","Chicago White Sox @ Houston Astros",5.5,"Under",0.54,TRUE,TRUE,8,FALSE
+"2026-09-30",849842,"K",592332,"Kevin Gausman",NA,"away","Chicago Cubs @ San Diego Padres",5.5,"Under",0.56,TRUE,TRUE,1,TRUE
+"2026-09-30",849848,"K",608331,"Max Fried",NA,"home","Boston Red Sox @ New York Yankees",4.5,"Over",0.52,TRUE,TRUE,6,TRUE
+"2026-09-30",849841,"K",641816,"Tyler Mahle",NA,"home","Philadelphia Phillies @ Atlanta Braves",4.5,"Over",0.51,TRUE,TRUE,6,TRUE
+"2026-09-30",849842,"K",601713,"Nick Pivetta",NA,"home","Chicago Cubs @ San Diego Padres",4.5,"Under",0.53,TRUE,TRUE,4,TRUE
+"2026-10-01",849844,"HR",656941,"Kyle Schwarber","Philadelphia Phillies",NA,"Philadelphia Phillies @ Atlanta Braves",NA,"HR",0.176,FALSE,TRUE,0,FALSE
+"2026-10-01",849844,"HR",621566,"Matt Olson","Atlanta Braves",NA,"Philadelphia Phillies @ Atlanta Braves",NA,"HR",0.158,FALSE,TRUE,1,TRUE
+"2026-10-01",849844,"HR",547180,"Bryce Harper","Philadelphia Phillies",NA,"Philadelphia Phillies @ Atlanta Braves",NA,"HR",0.137,FALSE,TRUE,0,FALSE
+"2026-10-01",849844,"HR",671739,"Michael Harris II","Atlanta Braves",NA,"Philadelphia Phillies @ Atlanta Braves",NA,"HR",0.128,FALSE,TRUE,1,TRUE
+"2026-10-01",849844,"HR",686948,"Drake Baldwin","Atlanta Braves",NA,"Philadelphia Phillies @ Atlanta Braves",NA,"HR",0.124,FALSE,TRUE,0,FALSE
+"2026-10-01",849844,"HR",624641,"Edmundo Sosa","Philadelphia Phillies",NA,"Philadelphia Phillies @ Atlanta Braves",NA,"HR",0.118,FALSE,TRUE,0,FALSE
+"2026-10-01",849844,"K",605400,"Aaron Nola",NA,"away","Philadelphia Phillies @ Atlanta Braves",5.5,"Under",0.6,FALSE,TRUE,NA,NA
+"2026-10-01",849844,"K",678061,"Ray Kerr",NA,"home","Philadelphia Phillies @ Atlanta Braves",3.5,"Under",0.51,FALSE,TRUE,2,TRUE
+"2026-10-03",849828,"HR",571970,"Max Muncy","Los Angeles Dodgers",NA,"Atlanta Braves @ Los Angeles Dodgers",NA,"HR",0.164,FALSE,TRUE,1,TRUE
+"2026-10-03",849835,"HR",700250,"Ben Rice","New York Yankees",NA,"New York Yankees @ Tampa Bay Rays",NA,"HR",0.16,FALSE,TRUE,0,FALSE
+"2026-10-03",849828,"HR",660271,"Shohei Ohtani","Los Angeles Dodgers",NA,"Atlanta Braves @ Los Angeles Dodgers",NA,"HR",0.159,FALSE,TRUE,0,FALSE
+"2026-10-03",849828,"HR",687221,"Dalton Rushing","Los Angeles Dodgers",NA,"Atlanta Braves @ Los Angeles Dodgers",NA,"HR",0.155,FALSE,TRUE,NA,NA
+"2026-10-03",849828,"HR",621566,"Matt Olson","Atlanta Braves",NA,"Atlanta Braves @ Los Angeles Dodgers",NA,"HR",0.151,FALSE,TRUE,0,FALSE
+"2026-10-03",849835,"HR",671277,"Luis García Jr.","New York Yankees",NA,"New York Yankees @ Tampa Bay Rays",NA,"HR",0.148,FALSE,TRUE,0,FALSE
+"2026-10-03",849835,"HR",691406,"Junior Caminero","Tampa Bay Rays",NA,"New York Yankees @ Tampa Bay Rays",NA,"HR",0.143,FALSE,TRUE,0,FALSE
+"2026-10-03",849835,"HR",683748,"Victor Mesa Jr.","Tampa Bay Rays",NA,"New York Yankees @ Tampa Bay Rays",NA,"HR",0.141,FALSE,TRUE,0,FALSE
+"2026-10-03",849829,"HR",808959,"Munetaka Murakami","Chicago White Sox",NA,"Chicago White Sox @ Cleveland Guardians",NA,"HR",0.133,FALSE,TRUE,1,TRUE
+"2026-10-03",849835,"HR",502671,"Paul Goldschmidt","New York Yankees",NA,"New York Yankees @ Tampa Bay Rays",NA,"HR",0.124,FALSE,TRUE,NA,NA
+"2026-10-03",849828,"HR",671739,"Michael Harris II","Atlanta Braves",NA,"Atlanta Braves @ Los Angeles Dodgers",NA,"HR",0.122,FALSE,TRUE,0,FALSE
+"2026-10-03",849828,"HR",686948,"Drake Baldwin","Atlanta Braves",NA,"Atlanta Braves @ Los Angeles Dodgers",NA,"HR",0.119,FALSE,TRUE,0,FALSE
+"2026-10-03",849829,"HR",545341,"Randal Grichuk","Chicago White Sox",NA,"Chicago White Sox @ Cleveland Guardians",NA,"HR",0.114,FALSE,TRUE,0,FALSE
+"2026-10-03",849835,"HR",668723,"Ryan Vilade","Tampa Bay Rays",NA,"New York Yankees @ Tampa Bay Rays",NA,"HR",0.111,FALSE,TRUE,NA,NA
+"2026-10-03",849829,"HR",695657,"Colson Montgomery","Chicago White Sox",NA,"Chicago White Sox @ Cleveland Guardians",NA,"HR",0.109,FALSE,TRUE,0,FALSE
+"2026-10-03",849829,"HR",682657,"Angel Martínez","Cleveland Guardians",NA,"Chicago White Sox @ Cleveland Guardians",NA,"HR",0.095,FALSE,TRUE,0,FALSE
+"2026-10-03",849829,"HR",681807,"David Fry","Cleveland Guardians",NA,"Chicago White Sox @ Cleveland Guardians",NA,"HR",0.093,FALSE,TRUE,0,FALSE
+"2026-10-03",849829,"HR",800050,"Chase DeLauter","Cleveland Guardians",NA,"Chicago White Sox @ Cleveland Guardians",NA,"HR",0.091,FALSE,TRUE,0,FALSE
+"2026-10-03",849828,"K",669373,"Tarik Skubal",NA,"home","Atlanta Braves @ Los Angeles Dodgers",6.5,"Under",0.54,FALSE,TRUE,7,FALSE
+"2026-10-03",849829,"K",800048,"Parker Messick",NA,"home","Chicago White Sox @ Cleveland Guardians",6.5,"Under",0.58,FALSE,TRUE,6,TRUE
+"2026-10-03",849835,"K",656876,"Drew Rasmussen",NA,"home","New York Yankees @ Tampa Bay Rays",6.5,"Under",0.6,FALSE,TRUE,10,FALSE
+"2026-10-03",849829,"K",696146,"Hagen Smith",NA,"away","Chicago White Sox @ Cleveland Guardians",4.5,"Over",0.53,FALSE,TRUE,4,FALSE
+"2026-10-03",849835,"K",543037,"Gerrit Cole",NA,"away","New York Yankees @ Tampa Bay Rays",4.5,"Over",0.52,FALSE,TRUE,5,TRUE
+"2026-10-03",849830,"HR",641343,"Jake Bauers","Milwaukee Brewers",NA,"San Diego Padres @ Milwaukee Brewers",NA,"HR",0.138,FALSE,TRUE,0,FALSE
+"2026-10-03",849830,"HR",694192,"Jackson Chourio","Milwaukee Brewers",NA,"San Diego Padres @ Milwaukee Brewers",NA,"HR",0.124,FALSE,TRUE,1,TRUE
+"2026-10-03",849830,"HR",701538,"Jackson Merrill","San Diego Padres",NA,"San Diego Padres @ Milwaukee Brewers",NA,"HR",0.12,FALSE,TRUE,0,FALSE
+"2026-10-03",849830,"HR",592518,"Manny Machado","San Diego Padres",NA,"San Diego Padres @ Milwaukee Brewers",NA,"HR",0.118,FALSE,TRUE,0,FALSE
+"2026-10-03",849830,"HR",668930,"Brice Turang","Milwaukee Brewers",NA,"San Diego Padres @ Milwaukee Brewers",NA,"HR",0.116,FALSE,TRUE,0,FALSE
+"2026-10-03",849830,"HR",664034,"Ty France","San Diego Padres",NA,"San Diego Padres @ Milwaukee Brewers",NA,"HR",0.116,FALSE,TRUE,0,FALSE
+"2026-10-03",849830,"K",694819,"Jacob Misiorowski",NA,"home","San Diego Padres @ Milwaukee Brewers",7.5,"Under",0.53,FALSE,TRUE,6,TRUE
+"2026-10-03",849830,"K",592662,"Robbie Ray",NA,"away","San Diego Padres @ Milwaukee Brewers",4.5,"Under",0.55,FALSE,TRUE,1,TRUE
+"2026-10-04",849823,"HR",571970,"Max Muncy","Los Angeles Dodgers",NA,"Atlanta Braves @ Los Angeles Dodgers",NA,"HR",0.164,FALSE,TRUE,1,TRUE
+"2026-10-04",849823,"HR",660271,"Shohei Ohtani","Los Angeles Dodgers",NA,"Atlanta Braves @ Los Angeles Dodgers",NA,"HR",0.159,FALSE,TRUE,0,FALSE
+"2026-10-04",849823,"HR",621566,"Matt Olson","Atlanta Braves",NA,"Atlanta Braves @ Los Angeles Dodgers",NA,"HR",0.151,FALSE,TRUE,0,FALSE
+"2026-10-04",849825,"HR",641343,"Jake Bauers","Milwaukee Brewers",NA,"San Diego Padres @ Milwaukee Brewers",NA,"HR",0.138,FALSE,TRUE,0,FALSE
+"2026-10-04",849823,"HR",605141,"Mookie Betts","Los Angeles Dodgers",NA,"Atlanta Braves @ Los Angeles Dodgers",NA,"HR",0.131,FALSE,TRUE,0,FALSE
+"2026-10-04",849825,"HR",694192,"Jackson Chourio","Milwaukee Brewers",NA,"San Diego Padres @ Milwaukee Brewers",NA,"HR",0.124,FALSE,TRUE,0,FALSE
+"2026-10-04",849823,"HR",671739,"Michael Harris II","Atlanta Braves",NA,"Atlanta Braves @ Los Angeles Dodgers",NA,"HR",0.122,FALSE,TRUE,0,FALSE
+"2026-10-04",849825,"HR",701538,"Jackson Merrill","San Diego Padres",NA,"San Diego Padres @ Milwaukee Brewers",NA,"HR",0.12,FALSE,TRUE,0,FALSE
+"2026-10-04",849823,"HR",686948,"Drake Baldwin","Atlanta Braves",NA,"Atlanta Braves @ Los Angeles Dodgers",NA,"HR",0.119,FALSE,TRUE,0,FALSE
+"2026-10-04",849825,"HR",592518,"Manny Machado","San Diego Padres",NA,"San Diego Padres @ Milwaukee Brewers",NA,"HR",0.118,FALSE,TRUE,0,FALSE
+"2026-10-04",849825,"HR",668930,"Brice Turang","Milwaukee Brewers",NA,"San Diego Padres @ Milwaukee Brewers",NA,"HR",0.116,FALSE,TRUE,0,FALSE
+"2026-10-04",849825,"HR",664034,"Ty France","San Diego Padres",NA,"San Diego Padres @ Milwaukee Brewers",NA,"HR",0.116,FALSE,TRUE,0,FALSE
+"2026-10-04",849825,"K",701656,"Logan Henderson",NA,"home","San Diego Padres @ Milwaukee Brewers",5.5,"Under",0.54,FALSE,TRUE,4,TRUE
+"2026-10-04",849823,"K",605483,"Blake Snell",NA,"home","Atlanta Braves @ Los Angeles Dodgers",5.5,"Under",0.57,FALSE,TRUE,5,TRUE
+"2026-10-04",849825,"K",650633,"Michael King",NA,"away","San Diego Padres @ Milwaukee Brewers",4.5,"Over",0.51,FALSE,TRUE,6,TRUE
+"2026-10-05",849839,"HR",700250,"Ben Rice","New York Yankees",NA,"New York Yankees @ Tampa Bay Rays",NA,"HR",0.16,FALSE,TRUE,2,TRUE
+"2026-10-05",849839,"HR",671277,"Luis García Jr.","New York Yankees",NA,"New York Yankees @ Tampa Bay Rays",NA,"HR",0.148,FALSE,TRUE,0,FALSE
+"2026-10-05",849839,"HR",691406,"Junior Caminero","Tampa Bay Rays",NA,"New York Yankees @ Tampa Bay Rays",NA,"HR",0.143,FALSE,TRUE,0,FALSE
+"2026-10-05",849839,"HR",683748,"Victor Mesa Jr.","Tampa Bay Rays",NA,"New York Yankees @ Tampa Bay Rays",NA,"HR",0.141,FALSE,TRUE,0,FALSE
+"2026-10-05",849839,"HR",502671,"Paul Goldschmidt","New York Yankees",NA,"New York Yankees @ Tampa Bay Rays",NA,"HR",0.124,FALSE,TRUE,0,FALSE
+"2026-10-05",849834,"HR",808959,"Munetaka Murakami","Chicago White Sox",NA,"Chicago White Sox @ Cleveland Guardians",NA,"HR",0.121,FALSE,TRUE,0,FALSE
+"2026-10-05",849839,"HR",668723,"Ryan Vilade","Tampa Bay Rays",NA,"New York Yankees @ Tampa Bay Rays",NA,"HR",0.111,FALSE,TRUE,NA,NA
+"2026-10-05",849834,"HR",695657,"Colson Montgomery","Chicago White Sox",NA,"Chicago White Sox @ Cleveland Guardians",NA,"HR",0.098,FALSE,TRUE,0,FALSE
+"2026-10-05",849834,"HR",663993,"Nathaniel Lowe","Cleveland Guardians",NA,"Chicago White Sox @ Cleveland Guardians",NA,"HR",0.094,FALSE,TRUE,0,FALSE
+"2026-10-05",849834,"HR",678246,"Miguel Vargas","Chicago White Sox",NA,"Chicago White Sox @ Cleveland Guardians",NA,"HR",0.092,FALSE,TRUE,0,FALSE
+"2026-10-05",849834,"HR",682657,"Angel Martínez","Cleveland Guardians",NA,"Chicago White Sox @ Cleveland Guardians",NA,"HR",0.086,FALSE,TRUE,0,FALSE
+"2026-10-05",849834,"HR",800050,"Chase DeLauter","Cleveland Guardians",NA,"Chicago White Sox @ Cleveland Guardians",NA,"HR",0.082,FALSE,TRUE,0,FALSE
+"2026-10-05",849834,"K",668909,"Gavin Williams",NA,"home","Chicago White Sox @ Cleveland Guardians",7.5,"Under",0.51,FALSE,TRUE,11,FALSE
+"2026-10-05",849839,"K",693645,"Cam Schlittler",NA,"away","New York Yankees @ Tampa Bay Rays",5.5,"Over",0.52,FALSE,TRUE,2,FALSE
+"2026-10-05",849839,"K",642547,"Freddy Peralta",NA,"home","New York Yankees @ Tampa Bay Rays",5.5,"Under",0.57,FALSE,TRUE,3,TRUE
+"2026-10-05",849834,"K",641743,"Anthony Kay",NA,"away","Chicago White Sox @ Cleveland Guardians",3.5,"Over",0.5,FALSE,TRUE,NA,NA
+"2026-10-06",849819,"HR",571970,"Max Muncy","Los Angeles Dodgers",NA,"Los Angeles Dodgers @ Atlanta Braves",NA,"HR",0.143,FALSE,TRUE,0,FALSE
+"2026-10-06",849819,"HR",660271,"Shohei Ohtani","Los Angeles Dodgers",NA,"Los Angeles Dodgers @ Atlanta Braves",NA,"HR",0.139,FALSE,TRUE,0,FALSE
+"2026-10-06",849819,"HR",621566,"Matt Olson","Atlanta Braves",NA,"Los Angeles Dodgers @ Atlanta Braves",NA,"HR",0.131,FALSE,TRUE,0,FALSE
+"2026-10-06",849819,"HR",605141,"Mookie Betts","Los Angeles Dodgers",NA,"Los Angeles Dodgers @ Atlanta Braves",NA,"HR",0.12,FALSE,TRUE,0,FALSE
+"2026-10-06",849819,"HR",671739,"Michael Harris II","Atlanta Braves",NA,"Los Angeles Dodgers @ Atlanta Braves",NA,"HR",0.106,FALSE,TRUE,0,FALSE
+"2026-10-06",849819,"HR",686948,"Drake Baldwin","Atlanta Braves",NA,"Los Angeles Dodgers @ Atlanta Braves",NA,"HR",0.103,FALSE,TRUE,0,FALSE
+"2026-10-06",849819,"K",519242,"Chris Sale",NA,"home","Los Angeles Dodgers @ Atlanta Braves",6.5,"Under",0.55,FALSE,TRUE,7,FALSE
+"2026-10-06",849819,"K",808967,"Yoshinobu Yamamoto",NA,"away","Los Angeles Dodgers @ Atlanta Braves",6.5,"Under",0.6,FALSE,TRUE,10,FALSE
+"2026-10-06",849826,"HR",641343,"Jake Bauers","Milwaukee Brewers",NA,"Milwaukee Brewers @ San Diego Padres",NA,"HR",0.129,FALSE,TRUE,0,FALSE
+"2026-10-06",849826,"HR",694192,"Jackson Chourio","Milwaukee Brewers",NA,"Milwaukee Brewers @ San Diego Padres",NA,"HR",0.117,FALSE,TRUE,0,FALSE
+"2026-10-06",849826,"HR",701538,"Jackson Merrill","San Diego Padres",NA,"Milwaukee Brewers @ San Diego Padres",NA,"HR",0.113,FALSE,TRUE,0,FALSE
+"2026-10-06",849826,"HR",592518,"Manny Machado","San Diego Padres",NA,"Milwaukee Brewers @ San Diego Padres",NA,"HR",0.112,FALSE,TRUE,0,FALSE
+"2026-10-06",849826,"HR",664034,"Ty France","San Diego Padres",NA,"Milwaukee Brewers @ San Diego Padres",NA,"HR",0.111,FALSE,TRUE,0,FALSE
+"2026-10-06",849826,"HR",668930,"Brice Turang","Milwaukee Brewers",NA,"Milwaukee Brewers @ San Diego Padres",NA,"HR",0.109,FALSE,TRUE,0,FALSE
+"2026-10-06",849826,"K",601713,"Nick Pivetta",NA,"home","Milwaukee Brewers @ San Diego Padres",4.5,"Over",0.5,FALSE,TRUE,4,FALSE
+"2026-10-06",849826,"K",669160,"Dustin May",NA,"away","Milwaukee Brewers @ San Diego Padres",4.5,"Under",0.55,FALSE,TRUE,3,TRUE
+"2026-10-07",849838,"HR",700250,"Ben Rice","New York Yankees",NA,"Tampa Bay Rays @ New York Yankees",NA,"HR",0.188,FALSE,TRUE,0,FALSE
+"2026-10-07",849838,"HR",671277,"Luis García Jr.","New York Yankees",NA,"Tampa Bay Rays @ New York Yankees",NA,"HR",0.174,FALSE,TRUE,0,FALSE
+"2026-10-07",849838,"HR",683748,"Victor Mesa Jr.","Tampa Bay Rays",NA,"Tampa Bay Rays @ New York Yankees",NA,"HR",0.167,FALSE,TRUE,1,TRUE
+"2026-10-07",849833,"HR",808959,"Munetaka Murakami","Chicago White Sox",NA,"Cleveland Guardians @ Chicago White Sox",NA,"HR",0.155,FALSE,TRUE,0,FALSE
+"2026-10-07",849838,"HR",691406,"Junior Caminero","Tampa Bay Rays",NA,"Tampa Bay Rays @ New York Yankees",NA,"HR",0.145,FALSE,TRUE,0,FALSE
+"2026-10-07",849822,"HR",571970,"Max Muncy","Los Angeles Dodgers",NA,"Los Angeles Dodgers @ Atlanta Braves",NA,"HR",0.143,FALSE,TRUE,1,TRUE
+"2026-10-07",849838,"HR",682987,"Spencer Jones","New York Yankees",NA,"Tampa Bay Rays @ New York Yankees",NA,"HR",0.141,FALSE,TRUE,0,FALSE
+"2026-10-07",849822,"HR",660271,"Shohei Ohtani","Los Angeles Dodgers",NA,"Los Angeles Dodgers @ Atlanta Braves",NA,"HR",0.139,FALSE,TRUE,0,FALSE
+"2026-10-07",849833,"HR",545341,"Randal Grichuk","Chicago White Sox",NA,"Cleveland Guardians @ Chicago White Sox",NA,"HR",0.135,FALSE,TRUE,0,FALSE
+"2026-10-07",849822,"HR",621566,"Matt Olson","Atlanta Braves",NA,"Los Angeles Dodgers @ Atlanta Braves",NA,"HR",0.131,FALSE,TRUE,0,FALSE
+"2026-10-07",849838,"HR",666018,"Jonathan Aranda","Tampa Bay Rays",NA,"Tampa Bay Rays @ New York Yankees",NA,"HR",0.129,FALSE,TRUE,0,FALSE
+"2026-10-07",849827,"HR",641343,"Jake Bauers","Milwaukee Brewers",NA,"Milwaukee Brewers @ San Diego Padres",NA,"HR",0.129,FALSE,TRUE,0,FALSE
+"2026-10-07",849833,"HR",695657,"Colson Montgomery","Chicago White Sox",NA,"Cleveland Guardians @ Chicago White Sox",NA,"HR",0.127,FALSE,TRUE,0,FALSE
+"2026-10-07",849833,"HR",663993,"Nathaniel Lowe","Cleveland Guardians",NA,"Cleveland Guardians @ Chicago White Sox",NA,"HR",0.122,FALSE,TRUE,0,FALSE
+"2026-10-07",849822,"HR",605141,"Mookie Betts","Los Angeles Dodgers",NA,"Los Angeles Dodgers @ Atlanta Braves",NA,"HR",0.12,FALSE,TRUE,0,FALSE
+"2026-10-07",849827,"HR",596142,"Gary Sánchez","Milwaukee Brewers",NA,"Milwaukee Brewers @ San Diego Padres",NA,"HR",0.119,FALSE,TRUE,NA,NA
+"2026-10-07",849827,"HR",694192,"Jackson Chourio","Milwaukee Brewers",NA,"Milwaukee Brewers @ San Diego Padres",NA,"HR",0.117,FALSE,TRUE,0,FALSE
+"2026-10-07",849827,"HR",657757,"Gavin Sheets","San Diego Padres",NA,"Milwaukee Brewers @ San Diego Padres",NA,"HR",0.114,FALSE,TRUE,0,FALSE
+"2026-10-07",849827,"HR",701538,"Jackson Merrill","San Diego Padres",NA,"Milwaukee Brewers @ San Diego Padres",NA,"HR",0.112,FALSE,TRUE,0,FALSE
+"2026-10-07",849833,"HR",682657,"Angel Martínez","Cleveland Guardians",NA,"Cleveland Guardians @ Chicago White Sox",NA,"HR",0.111,FALSE,TRUE,0,FALSE
+"2026-10-07",849827,"HR",592518,"Manny Machado","San Diego Padres",NA,"Milwaukee Brewers @ San Diego Padres",NA,"HR",0.111,FALSE,TRUE,0,FALSE
+"2026-10-07",849833,"HR",681807,"David Fry","Cleveland Guardians",NA,"Cleveland Guardians @ Chicago White Sox",NA,"HR",0.11,FALSE,TRUE,NA,NA
+"2026-10-07",849822,"HR",671739,"Michael Harris II","Atlanta Braves",NA,"Los Angeles Dodgers @ Atlanta Braves",NA,"HR",0.106,FALSE,TRUE,0,FALSE
+"2026-10-07",849822,"HR",686948,"Drake Baldwin","Atlanta Braves",NA,"Los Angeles Dodgers @ Atlanta Braves",NA,"HR",0.103,FALSE,TRUE,0,FALSE
+"2026-10-07",849822,"K",607192,"Tyler Glasnow",NA,"away","Los Angeles Dodgers @ Atlanta Braves",6.5,"Under",0.54,FALSE,TRUE,5,TRUE
+"2026-10-07",849822,"K",641816,"Tyler Mahle",NA,"home","Los Angeles Dodgers @ Atlanta Braves",4.5,"Under",0.53,FALSE,TRUE,4,TRUE
+"2026-10-07",849838,"K",608331,"Max Fried",NA,"home","Tampa Bay Rays @ New York Yankees",4.5,"Under",0.57,FALSE,TRUE,7,FALSE
+"2026-10-07",849838,"K",607259,"Nick Martinez",NA,"away","Tampa Bay Rays @ New York Yankees",4.5,"Under",0.62,FALSE,TRUE,3,TRUE
+"2026-10-07",849827,"K",621111,"Walker Buehler",NA,"home","Milwaukee Brewers @ San Diego Padres",4.5,"Under",0.62,FALSE,TRUE,0,TRUE
+"2026-10-07",849833,"K",682982,"Daniel Espino",NA,"away","Cleveland Guardians @ Chicago White Sox",4.5,"Under",0.63,FALSE,TRUE,NA,NA
+"2026-10-07",849833,"K",656794,"Sean Newcomb",NA,"home","Cleveland Guardians @ Chicago White Sox",2.5,"Under",0.58,FALSE,TRUE,1,TRUE
+"2026-10-08",849837,"HR",700250,"Ben Rice","New York Yankees",NA,"Tampa Bay Rays @ New York Yankees",NA,"HR",0.188,FALSE,FALSE,NA,NA
+"2026-10-08",849837,"HR",671277,"Luis García Jr.","New York Yankees",NA,"Tampa Bay Rays @ New York Yankees",NA,"HR",0.174,FALSE,FALSE,NA,NA
+"2026-10-08",849837,"HR",683748,"Victor Mesa Jr.","Tampa Bay Rays",NA,"Tampa Bay Rays @ New York Yankees",NA,"HR",0.167,FALSE,FALSE,NA,NA
+"2026-10-08",849837,"HR",691406,"Junior Caminero","Tampa Bay Rays",NA,"Tampa Bay Rays @ New York Yankees",NA,"HR",0.145,FALSE,FALSE,NA,NA
+"2026-10-08",849837,"HR",682987,"Spencer Jones","New York Yankees",NA,"Tampa Bay Rays @ New York Yankees",NA,"HR",0.141,FALSE,FALSE,NA,NA
+"2026-10-08",849837,"HR",666018,"Jonathan Aranda","Tampa Bay Rays",NA,"Tampa Bay Rays @ New York Yankees",NA,"HR",0.129,FALSE,FALSE,NA,NA
+"2026-10-08",849837,"K",607074,"Carlos Rodón",NA,"home","Tampa Bay Rays @ New York Yankees",4.5,"Under",0.52,FALSE,FALSE,NA,NA
+"2026-10-09",849821,"HR",571970,"Max Muncy","Los Angeles Dodgers",NA,"Atlanta Braves @ Los Angeles Dodgers",NA,"HR",0.164,FALSE,FALSE,NA,NA
+"2026-10-09",849821,"HR",660271,"Shohei Ohtani","Los Angeles Dodgers",NA,"Atlanta Braves @ Los Angeles Dodgers",NA,"HR",0.159,FALSE,FALSE,NA,NA
+"2026-10-09",849821,"HR",621566,"Matt Olson","Atlanta Braves",NA,"Atlanta Braves @ Los Angeles Dodgers",NA,"HR",0.151,FALSE,FALSE,NA,NA
+"2026-10-09",849821,"HR",605141,"Mookie Betts","Los Angeles Dodgers",NA,"Atlanta Braves @ Los Angeles Dodgers",NA,"HR",0.131,FALSE,FALSE,NA,NA
+"2026-10-09",849821,"HR",671739,"Michael Harris II","Atlanta Braves",NA,"Atlanta Braves @ Los Angeles Dodgers",NA,"HR",0.122,FALSE,FALSE,NA,NA
+"2026-10-09",849821,"HR",686948,"Drake Baldwin","Atlanta Braves",NA,"Atlanta Braves @ Los Angeles Dodgers",NA,"HR",0.119,FALSE,FALSE,NA,NA
+"2026-10-09",849824,"HR",641343,"Jake Bauers","Milwaukee Brewers",NA,"San Diego Padres @ Milwaukee Brewers",NA,"HR",0.138,FALSE,FALSE,NA,NA
+"2026-10-09",849824,"HR",596142,"Gary Sánchez","Milwaukee Brewers",NA,"San Diego Padres @ Milwaukee Brewers",NA,"HR",0.125,FALSE,FALSE,NA,NA
+"2026-10-09",849824,"HR",694192,"Jackson Chourio","Milwaukee Brewers",NA,"San Diego Padres @ Milwaukee Brewers",NA,"HR",0.124,FALSE,FALSE,NA,NA
+"2026-10-09",849824,"HR",657757,"Gavin Sheets","San Diego Padres",NA,"San Diego Padres @ Milwaukee Brewers",NA,"HR",0.122,FALSE,FALSE,NA,NA
+"2026-10-09",849824,"HR",701538,"Jackson Merrill","San Diego Padres",NA,"San Diego Padres @ Milwaukee Brewers",NA,"HR",0.12,FALSE,FALSE,NA,NA
+"2026-10-09",849824,"HR",592518,"Manny Machado","San Diego Padres",NA,"San Diego Padres @ Milwaukee Brewers",NA,"HR",0.118,FALSE,FALSE,NA,NA
+"2026-10-09",849824,"K",694819,"Jacob Misiorowski",NA,"home","San Diego Padres @ Milwaukee Brewers",7.5,"Under",0.53,FALSE,FALSE,NA,NA
+"2026-10-08",849832,"HR",808959,"Munetaka Murakami","Chicago White Sox",NA,"Cleveland Guardians @ Chicago White Sox",NA,"HR",0.155,FALSE,TRUE,0,FALSE
+"2026-10-08",849832,"HR",545341,"Randal Grichuk","Chicago White Sox",NA,"Cleveland Guardians @ Chicago White Sox",NA,"HR",0.135,FALSE,TRUE,0,FALSE
+"2026-10-08",849832,"HR",695657,"Colson Montgomery","Chicago White Sox",NA,"Cleveland Guardians @ Chicago White Sox",NA,"HR",0.127,FALSE,TRUE,0,FALSE
+"2026-10-08",849832,"HR",663993,"Nathaniel Lowe","Cleveland Guardians",NA,"Cleveland Guardians @ Chicago White Sox",NA,"HR",0.122,FALSE,TRUE,0,FALSE
+"2026-10-08",849832,"HR",682657,"Angel Martínez","Cleveland Guardians",NA,"Cleveland Guardians @ Chicago White Sox",NA,"HR",0.111,FALSE,TRUE,0,FALSE
+"2026-10-08",849832,"HR",681807,"David Fry","Cleveland Guardians",NA,"Cleveland Guardians @ Chicago White Sox",NA,"HR",0.11,FALSE,TRUE,NA,NA
+"2026-10-08",849832,"K",800048,"Parker Messick",NA,"away","Cleveland Guardians @ Chicago White Sox",6.5,"Under",0.58,FALSE,TRUE,5,TRUE
+"2026-10-08",849832,"K",696146,"Hagen Smith",NA,"home","Cleveland Guardians @ Chicago White Sox",4.5,"Over",0.53,FALSE,TRUE,NA,NA
+"2026-10-10",849831,"HR",808959,"Munetaka Murakami","Chicago White Sox",NA,"Chicago White Sox @ Cleveland Guardians",NA,"HR",0.147,FALSE,TRUE,0,FALSE
+"2026-10-10",849831,"HR",545341,"Randal Grichuk","Chicago White Sox",NA,"Chicago White Sox @ Cleveland Guardians",NA,"HR",0.127,FALSE,TRUE,0,FALSE
+"2026-10-10",849831,"HR",695657,"Colson Montgomery","Chicago White Sox",NA,"Chicago White Sox @ Cleveland Guardians",NA,"HR",0.121,FALSE,TRUE,0,FALSE
+"2026-10-10",849831,"HR",663993,"Nathaniel Lowe","Cleveland Guardians",NA,"Chicago White Sox @ Cleveland Guardians",NA,"HR",0.115,FALSE,TRUE,0,FALSE
+"2026-10-10",849831,"HR",682657,"Angel Martínez","Cleveland Guardians",NA,"Chicago White Sox @ Cleveland Guardians",NA,"HR",0.106,FALSE,TRUE,NA,NA
+"2026-10-10",849831,"HR",681807,"David Fry","Cleveland Guardians",NA,"Chicago White Sox @ Cleveland Guardians",NA,"HR",0.103,FALSE,TRUE,NA,NA
+"2026-10-10",849831,"K",668909,"Gavin Williams",NA,"home","Chicago White Sox @ Cleveland Guardians",7.5,"Under",0.51,FALSE,TRUE,12,FALSE
+"2026-10-10",849831,"K",680732,"Sean Burke",NA,"away","Chicago White Sox @ Cleveland Guardians",5.5,"Under",0.58,FALSE,TRUE,4,TRUE
+"2026-10-11",849809,"HR",571970,"Max Muncy","Los Angeles Dodgers",NA,"Los Angeles Dodgers @ Milwaukee Brewers",NA,"HR",0.142,FALSE,TRUE,0,FALSE
+"2026-10-11",849809,"HR",660271,"Shohei Ohtani","Los Angeles Dodgers",NA,"Los Angeles Dodgers @ Milwaukee Brewers",NA,"HR",0.138,FALSE,TRUE,0,FALSE
+"2026-10-11",849809,"HR",641343,"Jake Bauers","Milwaukee Brewers",NA,"Los Angeles Dodgers @ Milwaukee Brewers",NA,"HR",0.121,FALSE,TRUE,0,FALSE
+"2026-10-11",849809,"HR",605141,"Mookie Betts","Los Angeles Dodgers",NA,"Los Angeles Dodgers @ Milwaukee Brewers",NA,"HR",0.117,FALSE,TRUE,0,FALSE
+"2026-10-11",849809,"HR",596142,"Gary Sánchez","Milwaukee Brewers",NA,"Los Angeles Dodgers @ Milwaukee Brewers",NA,"HR",0.11,FALSE,TRUE,NA,NA
+"2026-10-11",849809,"HR",694192,"Jackson Chourio","Milwaukee Brewers",NA,"Los Angeles Dodgers @ Milwaukee Brewers",NA,"HR",0.109,FALSE,TRUE,0,FALSE
+"2026-10-11",849809,"K",669373,"Tarik Skubal",NA,"away","Los Angeles Dodgers @ Milwaukee Brewers",6.5,"Under",0.53,FALSE,TRUE,7,FALSE
+"2026-10-12",849812,"HR",571970,"Max Muncy","Los Angeles Dodgers",NA,"Los Angeles Dodgers @ Milwaukee Brewers",NA,"HR",0.142,FALSE,FALSE,NA,NA
+"2026-10-12",849820,"HR",691406,"Junior Caminero","Tampa Bay Rays",NA,"CLE/CWS @ Tampa Bay Rays",NA,"HR",0.14,FALSE,FALSE,NA,NA
+"2026-10-12",849820,"HR",683748,"Victor Mesa Jr.","Tampa Bay Rays",NA,"CLE/CWS @ Tampa Bay Rays",NA,"HR",0.139,FALSE,FALSE,NA,NA
+"2026-10-12",849812,"HR",660271,"Shohei Ohtani","Los Angeles Dodgers",NA,"Los Angeles Dodgers @ Milwaukee Brewers",NA,"HR",0.138,FALSE,FALSE,NA,NA
+"2026-10-12",849812,"HR",641343,"Jake Bauers","Milwaukee Brewers",NA,"Los Angeles Dodgers @ Milwaukee Brewers",NA,"HR",0.121,FALSE,FALSE,NA,NA
+"2026-10-12",849812,"HR",605141,"Mookie Betts","Los Angeles Dodgers",NA,"Los Angeles Dodgers @ Milwaukee Brewers",NA,"HR",0.117,FALSE,FALSE,NA,NA
+"2026-10-12",849812,"HR",596142,"Gary Sánchez","Milwaukee Brewers",NA,"Los Angeles Dodgers @ Milwaukee Brewers",NA,"HR",0.11,FALSE,FALSE,NA,NA
+"2026-10-12",849812,"HR",694192,"Jackson Chourio","Milwaukee Brewers",NA,"Los Angeles Dodgers @ Milwaukee Brewers",NA,"HR",0.109,FALSE,FALSE,NA,NA
+"2026-10-12",849820,"HR",668723,"Ryan Vilade","Tampa Bay Rays",NA,"CLE/CWS @ Tampa Bay Rays",NA,"HR",0.109,FALSE,FALSE,NA,NA
+"2026-10-12",849812,"K",808967,"Yoshinobu Yamamoto",NA,"away","Los Angeles Dodgers @ Milwaukee Brewers",6.5,"Under",0.59,FALSE,FALSE,NA,NA
+"2026-10-13",849813,"HR",691406,"Junior Caminero","Tampa Bay Rays",NA,"Cleveland Guardians @ Tampa Bay Rays",NA,"HR",0.133,FALSE,FALSE,NA,NA
+"2026-10-13",849813,"HR",683748,"Victor Mesa Jr.","Tampa Bay Rays",NA,"Cleveland Guardians @ Tampa Bay Rays",NA,"HR",0.132,FALSE,FALSE,NA,NA
+"2026-10-13",849813,"HR",663993,"Nathaniel Lowe","Cleveland Guardians",NA,"Cleveland Guardians @ Tampa Bay Rays",NA,"HR",0.121,FALSE,FALSE,NA,NA
+"2026-10-13",849813,"HR",682657,"Angel Martínez","Cleveland Guardians",NA,"Cleveland Guardians @ Tampa Bay Rays",NA,"HR",0.111,FALSE,FALSE,NA,NA
+"2026-10-13",849813,"HR",681807,"David Fry","Cleveland Guardians",NA,"Cleveland Guardians @ Tampa Bay Rays",NA,"HR",0.109,FALSE,FALSE,NA,NA
+"2026-10-13",849813,"HR",668723,"Ryan Vilade","Tampa Bay Rays",NA,"Cleveland Guardians @ Tampa Bay Rays",NA,"HR",0.103,FALSE,FALSE,NA,NA
+"2026-10-13",849813,"K",800048,"Parker Messick",NA,"away","Cleveland Guardians @ Tampa Bay Rays",4.5,"Over",0.53,FALSE,FALSE,NA,NA
+"2026-10-13",849813,"K",642547,"Freddy Peralta",NA,"home","Cleveland Guardians @ Tampa Bay Rays",4.5,"Under",0.54,FALSE,FALSE,NA,NA
+"2026-10-14",849811,"HR",571970,"Max Muncy","Los Angeles Dodgers",NA,"Milwaukee Brewers @ Los Angeles Dodgers",NA,"HR",0.15,FALSE,FALSE,NA,NA
+"2026-10-14",849811,"HR",660271,"Shohei Ohtani","Los Angeles Dodgers",NA,"Milwaukee Brewers @ Los Angeles Dodgers",NA,"HR",0.146,FALSE,FALSE,NA,NA
+"2026-10-14",849811,"HR",641343,"Jake Bauers","Milwaukee Brewers",NA,"Milwaukee Brewers @ Los Angeles Dodgers",NA,"HR",0.129,FALSE,FALSE,NA,NA
+"2026-10-14",849811,"HR",605141,"Mookie Betts","Los Angeles Dodgers",NA,"Milwaukee Brewers @ Los Angeles Dodgers",NA,"HR",0.12,FALSE,FALSE,NA,NA
+"2026-10-14",849811,"HR",596142,"Gary Sánchez","Milwaukee Brewers",NA,"Milwaukee Brewers @ Los Angeles Dodgers",NA,"HR",0.113,FALSE,FALSE,NA,NA
+"2026-10-14",849811,"HR",694192,"Jackson Chourio","Milwaukee Brewers",NA,"Milwaukee Brewers @ Los Angeles Dodgers",NA,"HR",0.111,FALSE,FALSE,NA,NA
+"2026-10-14",849811,"K",688107,"Robert Gasser",NA,"away","Milwaukee Brewers @ Los Angeles Dodgers",4.5,"Under",0.56,FALSE,FALSE,NA,NA
+"2026-10-15",849810,"HR",571970,"Max Muncy","Los Angeles Dodgers",NA,"Milwaukee Brewers @ Los Angeles Dodgers",NA,"HR",0.15,FALSE,FALSE,NA,NA
+"2026-10-15",849810,"HR",660271,"Shohei Ohtani","Los Angeles Dodgers",NA,"Milwaukee Brewers @ Los Angeles Dodgers",NA,"HR",0.146,FALSE,FALSE,NA,NA
+"2026-10-15",849818,"HR",691406,"Junior Caminero","Tampa Bay Rays",NA,"Tampa Bay Rays @ Cleveland Guardians",NA,"HR",0.132,FALSE,FALSE,NA,NA
+"2026-10-15",849818,"HR",683748,"Victor Mesa Jr.","Tampa Bay Rays",NA,"Tampa Bay Rays @ Cleveland Guardians",NA,"HR",0.13,FALSE,FALSE,NA,NA
+"2026-10-15",849810,"HR",641343,"Jake Bauers","Milwaukee Brewers",NA,"Milwaukee Brewers @ Los Angeles Dodgers",NA,"HR",0.129,FALSE,FALSE,NA,NA
+"2026-10-15",849818,"HR",663993,"Nathaniel Lowe","Cleveland Guardians",NA,"Tampa Bay Rays @ Cleveland Guardians",NA,"HR",0.12,FALSE,FALSE,NA,NA
+"2026-10-15",849810,"HR",605141,"Mookie Betts","Los Angeles Dodgers",NA,"Milwaukee Brewers @ Los Angeles Dodgers",NA,"HR",0.12,FALSE,FALSE,NA,NA
+"2026-10-15",849810,"HR",596142,"Gary Sánchez","Milwaukee Brewers",NA,"Milwaukee Brewers @ Los Angeles Dodgers",NA,"HR",0.113,FALSE,FALSE,NA,NA
+"2026-10-15",849810,"HR",694192,"Jackson Chourio","Milwaukee Brewers",NA,"Milwaukee Brewers @ Los Angeles Dodgers",NA,"HR",0.111,FALSE,FALSE,NA,NA
+"2026-10-15",849818,"HR",682657,"Angel Martínez","Cleveland Guardians",NA,"Tampa Bay Rays @ Cleveland Guardians",NA,"HR",0.11,FALSE,FALSE,NA,NA
+"2026-10-15",849818,"HR",681807,"David Fry","Cleveland Guardians",NA,"Tampa Bay Rays @ Cleveland Guardians",NA,"HR",0.108,FALSE,FALSE,NA,NA
+"2026-10-15",849818,"HR",668723,"Ryan Vilade","Tampa Bay Rays",NA,"Tampa Bay Rays @ Cleveland Guardians",NA,"HR",0.102,FALSE,FALSE,NA,NA

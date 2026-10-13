@@ -1,0 +1,100 @@
+name: Publish projections
+
+# Builds the page on GitHub's machines every half hour, with nothing running on anybody's
+# laptop, and commits the finished page straight back to this branch -- which is the branch
+# GitHub Pages serves. The page has to live next to the code rather than on a branch of its
+# own, because a scheduled workflow only ever runs from the repository's default branch.
+#
+# The ledgers are the models' memory: every pick they have ever made, frozen at kickoff.
+# They are committed back too, so the next run picks up where this one left off.
+
+on:
+  schedule:
+    - cron: "13,43 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: release
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::shiny
+            any::httr
+            any::jsonlite
+            any::dplyr
+            any::tidyr
+            any::purrr
+            any::lubridate
+            any::DT
+            any::nflreadr
+            any::Matrix
+            any::nanoparquet
+
+      # Several hundred megabytes of league data and API responses. Restoring it is the
+      # difference between a ten minute run and an hour.
+      - name: Restore the data caches
+        uses: actions/cache@v4
+        with:
+          path: |
+            nfl_cache
+            proj_cache
+          key: projdata-${{ github.run_number }}
+          restore-keys: projdata-
+
+      # Hand last run's page to the builder. Days that are settled and already built are
+      # kept as they are, so each run only recomputes what actually moved.
+      - name: Seed the previous page
+        run: |
+          mkdir -p _site
+          for p in index.html .nojekyll d lib; do
+            if [ -e "$p" ]; then cp -R "$p" _site/; fi
+          done
+          echo "seeded $(find _site -type f | wc -l) file(s) from the last run"
+
+      - name: Build the page
+        env:
+          SITE_BUILD_ONLY: "1"
+          TZ: America/Edmonton
+        run: |
+          Rscript -e 'options(site.app_dir = getwd(), site.home = file.path(getwd(), "_site")); source("publish_site.R")'
+
+      # Only on a good build: a failed one must not take the live page down with it.
+      - name: Move the page into place
+        run: |
+          rm -rf d lib index.html .nojekyll
+          cp -R _site/. .
+          rm -rf _site
+          touch .nojekyll
+          echo "page is $(find d lib index.html -type f 2>/dev/null | wc -l) file(s)"
+
+      # Runs even after a failed build, so whatever the models did learn is not thrown away.
+      - name: Commit the page and the ledgers
+        if: always()
+        run: |
+          git config user.name  "projections-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "nothing changed"
+          else
+            git commit -q -m "page $(TZ=America/Edmonton date '+%Y-%m-%d %H:%M %Z')"
+            git push || { git fetch origin "${GITHUB_REF_NAME}" && git rebase "origin/${GITHUB_REF_NAME}" && git push; }
+          fi
