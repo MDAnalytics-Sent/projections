@@ -1,4 +1,4 @@
-2026-10-13 22:09:19 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-13 22:33:38 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -12,11 +12,11 @@ Win model  | 1 of 1 games served from locked history (picks frozen at first pitc
 NRFI model | calibration a=0.340 b=-0.052  (fit on 1823 graded 1st innings before 2026-10-13)
 Slate      | 1 games · record 0-1 (0%)
 Cache      | 516 files (5.5 MB) · 59 served from disk, 4 fetched
-NHL        | 102 final game(s) this season, 102 with box scores, 0 missing
-NHL        | latest final: 2026-10-13 (game 2026020102) | today 2026-10-14 has 2 game(s), 0 final | feed 2 hit / 10 fetched
-2026-10-13 22:10:27   today  38.9s
-2026-10-13 22:10:46   nfl    15.1s  3 built, 7 to pick from
-2026-10-13 22:10:55   cfb     8.3s  3 built, 8 to pick from
+NHL        | 103 final game(s) this season, 103 with box scores, 0 missing
+NHL        | latest final: 2026-10-13 (game 2026020103) | today 2026-10-14 has 2 game(s), 0 final | feed 2 hit / 10 fetched
+2026-10-13 22:34:24   today  25.1s
+2026-10-13 22:34:36   nfl     9.2s  3 built, 7 to pick from
+2026-10-13 22:34:41   cfb     5.2s  3 built, 8 to pick from
 
 ── Slate 2026-10-12 ──
 Win model  | learned weights: run model 0.971, Pythagorean gap 0.789 (fit on 2,455 graded mlb-runs-v10 games, 45% data, half-life 45 d)
@@ -61,8 +61,8 @@ Win model  | learned weights: run model 0.943, Pythagorean gap 0.811 (fit on 2,4
 Win model  | calibration a=1.160 b=-0.004  (fit on 2458 graded games before 2026-10-16)
 NRFI model | calibration a=0.347 b=-0.048  (fit on 1824 graded 1st innings before 2026-10-16)
 Slate      | 2 games · none graded yet
-Cache      | 518 files (5.5 MB) · 15 served from disk, 13 fetched
-2026-10-13 22:11:30   mlb    34.6s  5 built, 16 to pick from
-2026-10-13 22:11:32   nhl     1.9s  5 built, 18 to pick from
-2026-10-13 22:11:32   nba     0.3s  1 built, 1 to pick from
-2026-10-13 22:11:32 built 11589 KB in 133s
+Cache      | 518 files (5.5 MB) · 21 served from disk, 7 fetched
+2026-10-13 22:35:02   mlb    20.5s  5 built, 16 to pick from
+2026-10-13 22:35:03   nhl     1.1s  5 built, 18 to pick from
+2026-10-13 22:35:03   nba     0.2s  1 built, 1 to pick from
+2026-10-13 22:35:03 built 11590 KB in 85s
