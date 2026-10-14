@@ -1,4 +1,4 @@
-2026-10-13 19:36:26 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-13 20:05:20 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -12,11 +12,11 @@ Win model  | 1 of 1 games served from locked history (picks frozen at first pitc
 NRFI model | calibration a=0.340 b=-0.052  (fit on 1823 graded 1st innings before 2026-10-13)
 Slate      | 1 games · none graded yet
 Cache      | 516 files (5.5 MB) · 59 served from disk, 4 fetched
-NHL        | 93 final game(s) this season, 93 with box scores, 0 missing
-NHL        | latest final: 2026-10-13 (game 2026020093) | today 2026-10-13 has 16 game(s), 4 final | feed 2 hit / 10 fetched
-2026-10-13 19:37:09   today  18.7s
-2026-10-13 19:37:28   nfl    15.0s  3 built, 7 to pick from
-2026-10-13 19:37:36   cfb     8.0s  3 built, 8 to pick from
+NHL        | 95 final game(s) this season, 95 with box scores, 0 missing
+NHL        | latest final: 2026-10-13 (game 2026020095) | today 2026-10-13 has 16 game(s), 6 final | feed 2 hit / 10 fetched
+2026-10-13 20:06:09   today  21.1s
+2026-10-13 20:06:25   nfl    12.6s  3 built, 7 to pick from
+2026-10-13 20:06:32   cfb     6.5s  3 built, 8 to pick from
 
 ── Slate 2026-10-12 ──
 Win model  | learned weights: run model 0.971, Pythagorean gap 0.789 (fit on 2,455 graded mlb-runs-v10 games, 45% data, half-life 45 d)
@@ -62,7 +62,7 @@ Win model  | calibration a=1.164 b=-0.006  (fit on 2457 graded games before 2026
 NRFI model | calibration a=0.347 b=-0.048  (fit on 1824 graded 1st innings before 2026-10-16)
 Slate      | 2 games · none graded yet
 Cache      | 516 files (5.5 MB) · 21 served from disk, 7 fetched
-2026-10-13 19:38:09   mlb    33.0s  5 built, 16 to pick from
-2026-10-13 19:38:11   nhl     1.9s  5 built, 18 to pick from
-2026-10-13 19:38:11   nba     0.3s  1 built, 1 to pick from
-2026-10-13 19:38:11 built 11734 KB in 105s
+2026-10-13 20:07:01   mlb    29.0s  5 built, 16 to pick from
+2026-10-13 20:07:03   nhl     1.6s  5 built, 18 to pick from
+2026-10-13 20:07:03   nba     0.3s  1 built, 1 to pick from
+2026-10-13 20:07:03 built 11736 KB in 104s
