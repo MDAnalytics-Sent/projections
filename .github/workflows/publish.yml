@@ -77,7 +77,13 @@ jobs:
       # hours, which is often enough to keep up and rare enough not to fill the cache.
       - name: Name the cache
         id: ck
-        run: echo "key=projdata-$(date -u +%Y%m%d)-$(( $(date -u +%H) / 6 ))" >> "$GITHUB_OUTPUT"
+        run: |
+          # date pads the hour, and the shell reads a leading zero as octal -- so 08 and 09
+          # are not valid numbers at all. This step used to die on them, taking the whole
+          # build with it, every night between 08:00 and 10:00 UTC. 10# forces base ten.
+          h=$(date -u +%H)
+          echo "key=projdata-$(date -u +%Y%m%d)-$(( 10#$h / 6 ))" >> "$GITHUB_OUTPUT"
+          echo "cache key: projdata-$(date -u +%Y%m%d)-$(( 10#$h / 6 ))"
 
       - name: Restore the data caches
         uses: actions/cache/restore@v4
