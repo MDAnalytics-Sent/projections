@@ -6262,13 +6262,20 @@ cfb_td_week <- function(d, s, g, now = now_et(), recent = 1L) {
   cal <- tryCatch(prop_calib("cfb", "anytime_td", suppressWarnings(min(g$ko, na.rm = TRUE))),
                   error = function(e) NULL)
   x$p <- prop_apply(x$p_raw, cal)
-  if (!isTRUE(.cfb_td_said)) {
-    .cfb_td_said <<- TRUE
-    if (isTRUE(cal$ok))
-      mlog(sprintf("CFB td     | recalibrated on %d graded prop(s): slope %.2f, shift %+.2f -- a raw 60%% becomes %.0f%%",
-                   cal$n, cal$a, cal$b, 100 * prop_apply(0.60, cal)))
-    else
-      mlog("CFB td     | no recalibration yet: needs 300 graded props from earlier slates")
+  # Report the first slate that actually gets a correction, not the first slate built --
+  # the earliest week of the season has nothing before it by definition, and saying so
+  # every run read as though the correction were never working.
+  if (isTRUE(cal$ok)) {
+    if (!isTRUE(.cfb_td_said)) {
+      .cfb_td_said <<- TRUE
+      mlog(sprintf("CFB td     | recalibrated on %d graded prop(s) settled before this slate: slope %.2f, shift %+.2f -- a raw 25%% becomes %.0f%%, a raw 60%% becomes %.0f%%",
+                   cal$n, cal$a, cal$b,
+                   100 * prop_apply(0.25, cal), 100 * prop_apply(0.60, cal)))
+    }
+  } else if (!isTRUE(.cfb_td_none)) {
+    .cfb_td_none <<- TRUE
+    mlog(sprintf("CFB td     | %d graded prop(s) on file; the earliest slates have nothing before them to correct against",
+                 nrow(prop_read())))
   }
   # the result, once the game is in the box scores
   if (!is.null(cur)) {
@@ -7171,6 +7178,7 @@ NHL_CORRUPT_N <- 200L
 .nhl_gk$log <- NULL
 .nhl_gk$said <- FALSE
 .cfb_td_said <- FALSE
+.cfb_td_none <- FALSE
 
 .nhl_api <- new.env(hash = TRUE, parent = emptyenv())
 .nhl_api$fail <- 0L
