@@ -4221,6 +4221,63 @@ game_grade_history <- function(path, sch) {
   game_grade_ledger(path, sch$game_id[i], sch$home_score[i], sch$away_score[i])
 }
 
+# ---- player props: what was offered, and whether it happened --------------------
+#
+# Separate from the game ledgers because a prop is one player in one game, and because
+# only settled rows are written. The probability a board shows is computed from games
+# before kickoff and nothing else, so for a game that is over it is identical to what
+# was on screen beforehand -- which means recording at settlement captures the pick as
+# it stood without needing to write it twice.
+#
+# p_raw is the model's own number, before any recalibration. Calibrating on an already
+# calibrated number would chase its own tail.
+PROP_LEDGER <- file.path(LEDGER_DIR, "player_props_graded.rds")
+
+prop_empty <- function() data.frame(
+  league = character(0), market = character(0), game_id = character(0),
+  pid = character(0), pname = character(0),
+  kickoff = as.POSIXct(character(0), tz = TZ_ET),
+  p_raw = numeric(0), hit = integer(0),
+  model_ver = character(0), settled_at = as.POSIXct(character(0), tz = TZ_ET),
+  stringsAsFactors = FALSE)
+
+prop_read <- function(path = PROP_LEDGER) {
+  if (!file.exists(path)) return(prop_empty())
+  L <- try(readRDS(path), silent = TRUE)
+  if (inherits(L, "try-error") || !is.data.frame(L)) return(prop_empty())
+  L
+}
+
+# Append-only, one row per player per game per market. A row already written is never
+# revisited, so a later run cannot talk itself into a different answer.
+prop_record <- function(league, market, game_id, pid, pname, kickoff, p_raw, hit,
+                        model_ver = NA_character_, path = PROP_LEDGER) {
+  n <- length(pid)
+  if (!n) return(invisible(FALSE))
+  keep <- !is.na(hit) & !is.na(p_raw) & !is.na(game_id) & !is.na(pid)
+  if (!any(keep)) return(invisible(FALSE))
+  new <- data.frame(
+    league = as.character(league), market = as.character(market),
+    game_id = as.character(game_id)[keep], pid = as.character(pid)[keep],
+    pname = as.character(pname)[keep],
+    kickoff = rep(as.POSIXct(NA, tz = TZ_ET), sum(keep)),
+    p_raw = as.numeric(p_raw)[keep], hit = as.integer(hit)[keep],
+    model_ver = as.character(model_ver), settled_at = Sys.time(),
+    stringsAsFactors = FALSE)
+  if (length(kickoff) == n) new$kickoff <- kickoff[keep]
+  else if (length(kickoff) == 1L) new$kickoff <- rep(kickoff, sum(keep))
+  L <- prop_read(path)
+  k <- function(d) paste(d$league, d$market, d$game_id, d$pid)
+  new <- new[!(k(new) %in% k(L)) & !duplicated(k(new)), , drop = FALSE]
+  if (!nrow(new)) return(invisible(FALSE))
+  L <- dplyr::bind_rows(L, new)
+  dir.create(dirname(path), recursive = TRUE, showWarnings = FALSE)
+  tmp <- paste0(path, ".tmp")
+  ok <- tryCatch({ saveRDS(L, tmp); file.rename(tmp, path) }, error = function(e) FALSE)
+  if (!isTRUE(ok)) unlink(tmp)
+  invisible(isTRUE(ok))
+}
+
 # every settled game on this slate, handed to the grader above
 game_grade_slate <- function(path, g, done) {
   i <- which(done %in% TRUE)
@@ -6140,6 +6197,7 @@ cfb_td_week <- function(d, s, g, now = now_et(), recent = 1L) {
       out[[length(out) + 1L]] <- data.frame(
         game_id = g$game_id[i], team_id = tm, opp_id = op, aid = agg$aid[ok],
         name = unname(nm[agg$aid[ok]]), p = cfb_td_predict(m, X[ok, , drop = FALSE]),
+        p_raw = cfb_td_predict(m, X[ok, , drop = FALSE]),
         car_pg = ifelse(agg$n_prev[ok] > 0, agg$s_car[ok] / agg$n_prev[ok], NA_real_),
         rec_pg = ifelse(agg$n_prev[ok] > 0, agg$s_rec[ok] / agg$n_prev[ok], NA_real_),
         td_n = agg$s_td[ok], gp = agg$n_prev[ok], kickoff = g$ko[i], stringsAsFactors = FALSE)
@@ -9269,6 +9327,14 @@ server <- function(input, output, session) {
     x$act_td[!x$done %in% TRUE] <- NA
     x$act_ry[!x$done %in% TRUE] <- NA
     x$act_td[x$done %in% TRUE & is.na(x$act_td)] <- 0L
+    local({
+      pl <- x$done %in% TRUE & !is.na(x$act_td)
+      if (any(pl))
+        tryCatch(prop_record("nfl", "anytime_td", x$game_id[pl], x$pid[pl], x$pname[pl],
+                             x$kickoff[pl], x$p_td[pl], as.integer(x$act_td[pl] > 0),
+                             sprintf("nfl-td-v%s", PLR_VER)),
+                 error = function(e) NULL)
+    })
     x$act_ry[x$done %in% TRUE & is.na(x$act_ry)] <- 0
     x
   })
@@ -9536,9 +9602,18 @@ server <- function(input, output, session) {
     d <- cdat(); g <- cgames()
     if (is.null(g) || !nrow(g)) return(NULL)
     s <- as.integer(input$cseason)
-    withProgress(message = "Projecting touchdown scorers", value = 0.5,
-                 detail = "Usage, touchdown rate and scoring environment",
-                 cfb_td_week(d, s, g, now_et()))
+    x <- withProgress(message = "Projecting touchdown scorers", value = 0.5,
+                      detail = "Usage, touchdown rate and scoring environment",
+                      cfb_td_week(d, s, g, now_et()))
+    if (!is.null(x) && nrow(x)) {
+      pl <- !is.na(x$scored)
+      if (any(pl))
+        tryCatch(prop_record("cfb", "anytime_td", x$game_id[pl], x$aid[pl], x$name[pl],
+                             x$kickoff[pl], x$p_raw[pl], as.integer(x$scored[pl] > 0),
+                             sprintf("cfb-td-v%d", CFB_TD_VER)),
+                 error = function(e) NULL)
+    }
+    x
   })
   cfb_pname <- function(d, team, name) paste0(cfb_badge(d, team), '<span class="tm">', dash_esc(name), '</span>')
   cfb_tdx_html <- function(gid) tryCatch({
@@ -10016,6 +10091,14 @@ server <- function(input, output, session) {
     x$scored <- NA_integer_
     pl <- x$state == "played"
     if (any(pl)) x$scored[pl] <- as.integer(r$scored[j[pl]] > 0)
+    if (any(pl)) {
+      tg <- stats::setNames(c(b$g$game_id, b$g$game_id), c(b$g$home, b$g$away))
+      tk2 <- stats::setNames(c(b$g$ko, b$g$ko), c(b$g$home, b$g$away))
+      tryCatch(prop_record("nhl", "anytime_goal", unname(tg[x$team[pl]]),
+                           x$pid[pl], x$pname[pl], unname(tk2[x$team[pl]]),
+                           x$p[pl], x$scored[pl], sprintf("nhl-gs-v%d", NHL_VER)),
+               error = function(e) NULL)
+    }
     x
   })
   output$ngoal_sec <- renderUI({
