@@ -6363,6 +6363,17 @@ NHL_END_LAM  <- 30
 NHL_GS_KP    <- 15
 NHL_GS_BASE  <- c(C = 0.1846, D = 0.0702, L = 0.1928, R = 0.2039)
 NHL_GS_RECENT <- 10L
+# Goaltending. The save percentage of a goalie with few shots behind him says almost
+# nothing, so it is shrunk hard toward the era average -- 750 shots is about a third of
+# a starter's season. The result is turned into goals per game at a typical shot volume,
+# which is the unit the margin model already works in.
+NHL_GK_LG   <- 0.905   # era average save percentage: the shrinkage target
+NHL_GK_KS   <- 750     # shots of shrinkage toward it
+NHL_GK_SPG  <- 30      # shots a starter faces in a typical game
+NHL_GK_LOOK <- 10L     # how many of a team's recent games are looked at
+NHL_GK_HL   <- 3       # starts of half-life: the last start counts most, and a goalie
+                       # who has just taken over outvotes one who started more often
+                       # a fortnight ago. A flat vote took five games to notice a change.
 NHL_MIN_UNIQ <- 5L
 NHL_LEDGER   <- file.path(LEDGER_DIR, "nhl_predictions.rds")
 NHL_MODEL    <- sprintf("nhl-marg-v%d", NHL_VER)
@@ -6522,14 +6533,14 @@ nhl_prior <- function(endr, season_) {
   endr[[as.character(max(ks))]] * NHL_RHO
 }
 
-nhl_rows <- function(panel, endr, ents, upto) {
+nhl_rows <- function(panel, endr, ents, upto, gf = NULL) {
   f <- nhl_path("rows")
   R <- if (file.exists(f)) try(readRDS(f), silent = TRUE) else NULL
   if (inherits(R, "try-error") || !is.data.frame(R)) R <- NULL
   have <- if (is.null(R)) integer(0) else unique(R$season)
   want <- sort(unique(panel$season[panel$season < upto]))
   miss <- setdiff(want, have)
-  if (!length(miss)) return(R)
+  if (!length(miss)) return(nhl_rows_gd(R, gf))
   add <- list()
   for (s in miss) {
     sg <- panel[panel$season == s, ]
@@ -6550,20 +6561,48 @@ nhl_rows <- function(panel, endr, ents, upto) {
   R <- dplyr::bind_rows(R, dplyr::bind_rows(add))
   R <- R[!is.na(R$rd) & !is.na(R$marg), ]
   try(saveRDS(R, f), silent = TRUE)
+  nhl_rows_gd(R, gf)
+}
+
+# The goalie column is attached rather than stored, because it depends only on the game
+# id: that way adding it costs nothing and does not throw away a rating cache that took
+# eleven seasons of walk-forward passes to build.
+nhl_rows_gd <- function(R, gf) {
+  if (is.null(R) || !nrow(R)) return(R)
+  R$gd <- if (is.null(gf) || !nrow(gf)) 0 else {
+    v <- gf$gd[match(as.character(R$game_id), as.character(gf$game_id))]
+    ifelse(is.na(v), 0, v)
+  }
   R
 }
 
 nhl_fit <- function(R, season_) {
   h <- R[R$season < season_, ]
   if (nrow(h) < 1200) return(NULL)
-  m1 <- stats::lm(marg ~ rd, data = h)
+  # Only ask for a goalie term if there is a goalie signal in the training seasons to
+  # measure it from. Where there is not, this is exactly the model it has always been.
+  use_gd <- "gd" %in% names(h) && sum(abs(h$gd) > 1e-8, na.rm = TRUE) >= 500 &&
+            stats::sd(h$gd, na.rm = TRUE) > 1e-6
+  m1 <- if (use_gd) stats::lm(marg ~ rd + gd, data = h) else stats::lm(marg ~ rd, data = h)
   h$pred <- stats::predict(m1)
   h <- h[h$marg != 0, ]; h$win <- as.integer(h$marg > 0)
   lg <- suppressWarnings(stats::glm(win ~ pred, data = h, family = stats::binomial()))
-  list(marg = m1, conf = lg, n = nrow(h))
+  # said once per run, not once per day page
+  if (!isTRUE(.nhl_gk$said)) {
+    .nhl_gk$said <- TRUE
+    if (use_gd) {
+      se <- tryCatch(summary(m1)$coefficients["gd", 2], error = function(e) NA_real_)
+      mlog(sprintf("NHL goalie | fitted worth %.2f goals of margin per goal of starter edge (se %.2f), on %d prior-season game(s)",
+                   unname(stats::coef(m1)["gd"]), se, nrow(h)))
+    } else {
+      mlog(sprintf("NHL goalie | not enough starter signal in the prior seasons: team-only model, %d game(s)", nrow(h)))
+    }
+  }
+  list(marg = m1, conf = lg, n = nrow(h), gd = use_gd,
+       gd_beta = if (use_gd) unname(stats::coef(m1)["gd"]) else NA_real_)
 }
 
-nhl_predict <- function(panel, endr, ents, m, g, cutoff) {
+nhl_predict <- function(panel, endr, ents, m, g, cutoff, gf = NULL) {
   if (is.null(m) || !nrow(g)) return(NULL)
   s <- g$season[1]
   # v2: ratings use games from EARLIER dates only -- the same rule the walk-forward
@@ -6574,10 +6613,115 @@ nhl_predict <- function(panel, endr, ents, m, g, cutoff) {
   r <- nhl_rate(hist, ents, NHL_LAM, pr, NHL_PW / (1 + gp / NHL_PW_G))
   rd <- unname(r[g$home]) - unname(r[g$away])
   rd[is.na(rd)] <- 0
-  pred <- as.numeric(stats::predict(m$marg, newdata = data.frame(rd = rd)))
+  gd <- if (is.null(gf) || !nrow(gf)) rep(0, nrow(g)) else {
+    v <- gf$gd[match(as.character(g$game_id), as.character(gf$game_id))]
+    ifelse(is.na(v), 0, v)
+  }
+  pred <- as.numeric(stats::predict(m$marg, newdata = data.frame(rd = rd, gd = gd)))
   conf <- as.numeric(stats::predict(m$conf, newdata = data.frame(pred = pred), type = "response"))
-  data.frame(game_id = g$game_id, season = s, rd = rd, pred = pred,
+  data.frame(game_id = g$game_id, season = s, rd = rd, gd = gd, pred = pred,
              conf = pmax(conf, 1 - conf), stringsAsFactors = FALSE)
+}
+
+# Every goalie appearance the season files know about.
+#
+# In this feed a goalie is a row with no position but a shot count, and time on ice is
+# "mm:ss" text rather than a number, which is why it reads as missing if taken directly.
+nhl_goalies <- function(sch) {
+  out <- lapply(NHL_SEASONS, function(y) {
+    f <- nhl_path("pb", y); if (!file.exists(f)) return(NULL)
+    d <- try(readRDS(f), silent = TRUE); if (inherits(d, "try-error")) return(NULL)
+    d <- as.data.frame(d)
+    need <- c("game_id", "player_id", "team_abbrev", "shots_against", "saves")
+    if (!all(need %in% names(d))) return(NULL)
+    sa <- suppressWarnings(as.numeric(d$shots_against))
+    keep <- !is.na(d$game_id) & !is.na(sa)
+    if ("position" %in% names(d)) keep <- keep & is.na(d$position)
+    d <- d[keep, , drop = FALSE]
+    if (!nrow(d)) return(NULL)
+    data.frame(game_id = as.character(d$game_id), pid = as.character(d$player_id),
+               team = as.character(d$team_abbrev),
+               shots = suppressWarnings(as.numeric(d$shots_against)),
+               saves = suppressWarnings(as.numeric(d$saves)),
+               toi = if ("toi" %in% names(d)) vapply(d$toi, nhl_mmss, 0, USE.NAMES = FALSE)
+                     else rep(NA_real_, nrow(d)),
+               stringsAsFactors = FALSE)
+  })
+  g <- dplyr::bind_rows(out)
+  lv <- .nhl_gk$log
+  if (!is.null(lv) && nrow(lv)) {
+    lv <- lv[, intersect(c("game_id", "pid", "team", "shots", "saves", "toi"), names(lv)), drop = FALSE]
+    if (nrow(g)) lv <- lv[!(lv$game_id %in% g$game_id), , drop = FALSE]
+    if (nrow(lv)) g <- dplyr::bind_rows(g, lv)
+  }
+  if (!nrow(g)) return(NULL)
+  j <- match(g$game_id, sch$game_id)
+  g$date <- sch$date[j]; g$season <- sch$season[j]
+  g <- g[!is.na(g$date) & !is.na(g$pid) & nzchar(g$pid), , drop = FALSE]
+  if (!nrow(g)) return(NULL)
+  # the starter is whoever faced the most of his team's shots in that game
+  g$started <- FALSE
+  k <- paste(g$game_id, g$team)
+  for (u in unique(k)) {
+    i <- which(k == u)
+    w <- if (any(!is.na(g$toi[i]))) g$toi[i] else g$shots[i]
+    g$started[i[which.max(ifelse(is.na(w), -1, w))]] <- TRUE
+  }
+  g[order(g$date), , drop = FALSE]
+}
+
+# How much better or worse than average the likely starters are, in goals, for every
+# game -- using nothing but games already played when that game started.
+#
+# The likely starter rather than the actual one on purpose: that is all that is knowable
+# before a game, so measuring it that way is the only way the fitted coefficient means
+# anything when it is used on a game that has not been played.
+nhl_gk_feature <- function(gl, sch) {
+  if (is.null(gl) || !nrow(gl) || is.null(sch) || !nrow(sch)) return(NULL)
+  gl <- gl[order(gl$date), , drop = FALSE]
+  # each goalie's record BEFORE each of his own appearances
+  o <- order(gl$pid, gl$date)
+  q <- gl[o, , drop = FALSE]
+  sv <- ifelse(is.na(q$saves), 0, q$saves)
+  sh <- ifelse(is.na(q$shots), 0, q$shots)
+  cum <- function(x, grp) stats::ave(x, grp, FUN = cumsum)
+  q$cs <- cum(sv, q$pid) - sv
+  q$ch <- cum(sh, q$pid) - sh
+  q$eff <- ((q$cs + NHL_GK_KS * NHL_GK_LG) / (q$ch + NHL_GK_KS) - NHL_GK_LG) * NHL_GK_SPG
+  gl <- q[order(q$date), , drop = FALSE]
+
+  # a goalie's standing as of a date, and a team's likely starter as of a date
+  st <- gl[gl$started %in% TRUE, , drop = FALSE]
+  if (!nrow(st)) return(NULL)
+  rows <- list()
+  for (tm in unique(st$team)) {
+    s <- st[st$team == tm, , drop = FALSE]
+    s <- s[order(s$date), , drop = FALSE]
+    if (!nrow(s)) next
+    exp_pid <- rep(NA_character_, nrow(s)); exp_eff <- rep(NA_real_, nrow(s))
+    for (i in seq_len(nrow(s))) {
+      lo <- max(1L, i - NHL_GK_LOOK); hi <- i - 1L
+      if (hi < lo) next
+      w <- rev(s$pid[lo:hi])                     # most recent start first
+      wt <- 0.5 ^ ((seq_along(w) - 1L) / NHL_GK_HL)
+      tb <- sort(tapply(wt, w, sum), decreasing = TRUE)
+      pid <- names(tb)[1]
+      exp_pid[i] <- pid
+      # that goalie's standing as of this date
+      h <- gl[gl$pid == pid & gl$date < s$date[i], , drop = FALSE]
+      exp_eff[i] <- if (nrow(h)) h$eff[nrow(h)] else 0
+    }
+    rows[[length(rows) + 1L]] <- data.frame(game_id = s$game_id, team = tm,
+                                            gk = exp_pid, eff = exp_eff,
+                                            stringsAsFactors = FALSE)
+  }
+  if (!length(rows)) return(NULL)
+  E <- dplyr::bind_rows(rows)
+  hm <- E[match(paste(sch$game_id, sch$home), paste(E$game_id, E$team)), ]
+  aw <- E[match(paste(sch$game_id, sch$away), paste(E$game_id, E$team)), ]
+  gd <- ifelse(is.na(hm$eff) | is.na(aw$eff), 0, hm$eff - aw$eff)
+  data.frame(game_id = as.character(sch$game_id), gd = as.numeric(gd),
+             gk_home = hm$gk, gk_away = aw$gk, stringsAsFactors = FALSE)
 }
 
 nhl_skaters <- function(sch) {
@@ -6587,7 +6731,9 @@ nhl_skaters <- function(sch) {
     d <- as.data.frame(d)
     need <- c("game_id", "player_id", "player_name", "position", "goals", "team_abbrev")
     if (!all(need %in% names(d))) return(NULL)
-    d <- d[!is.na(d$game_id) & d$position != "G", ]
+    # Goalies carry no position in this feed, so they fall out here as NA rather than
+    # as "G" -- without the is.na guard they came through as rows of nothing.
+    d <- d[!is.na(d$game_id) & !is.na(d$position) & d$position != "G", ]
     if (!nrow(d)) return(NULL)
     data.frame(game_id = as.character(d$game_id), pid = as.character(d$player_id),
                pname = as.character(d$player_name), pos = as.character(d$position),
@@ -6736,6 +6882,27 @@ nhl_current_season <- function(sch, now) {
   as.integer(max(y))
 }
 
+nhl_gk_report <- function(gkl, gf) {
+  if (is.null(gkl) || !nrow(gkl)) {
+    mlog("NHL goalie | no goalie appearances found: the model stays team-only")
+    return(invisible(NULL))
+  }
+  st <- gkl[gkl$started %in% TRUE, , drop = FALSE]
+  mlog(sprintf("NHL goalie | %d appearance(s), %d start(s), %d goalie(s), %d season(s) %d-%d",
+               nrow(gkl), nrow(st), length(unique(gkl$pid)),
+               length(unique(gkl$season)), min(gkl$season, na.rm = TRUE),
+               max(gkl$season, na.rm = TRUE)))
+  if (is.null(gf) || !nrow(gf)) {
+    mlog("NHL goalie | no usable starter differential")
+  } else {
+    nz <- abs(gf$gd) > 1e-8
+    mlog(sprintf("NHL goalie | starter edge on %d of %d game(s) (%.0f%%); sd %.3f, range %+.2f to %+.2f goals",
+                 sum(nz), nrow(gf), 100*mean(nz), stats::sd(gf$gd[nz]),
+                 min(gf$gd), max(gf$gd)))
+  }
+  invisible(NULL)
+}
+
 nhl_live_report <- function(sch, k) {
   a <- nhl_api_stats()
   cur <- nhl_season_of(now_et())
@@ -6752,32 +6919,6 @@ nhl_live_report <- function(sch, k) {
                sum(sch$date == today_et(), na.rm = TRUE),
                sum(sch$date == today_et() & sch$has_score, na.rm = TRUE),
                a$hits, a$miss))
-  # Does the per-season player file carry goalie stats? The model trains on prior seasons
-  # only, so a goalie term is only fittable if these files have the save data in them.
-  for (y in rev(NHL_SEASONS)[1:3]) {
-    f <- nhl_path("pb", y)
-    if (!file.exists(f)) next
-    d <- tryCatch(as.data.frame(readRDS(f)), error = function(e) NULL)
-    if (is.null(d)) next
-    pos <- if ("position" %in% names(d)) table(as.character(d$position), useNA = "ifany") else NULL
-    mlog(sprintf("NHL season | %d: %d rows; positions: %s", y, nrow(d),
-                 if (is.null(pos)) "no position column"
-                 else paste(sprintf("%s=%d", names(pos), as.integer(pos)), collapse = " ")))
-    for (cl in c("saves", "shots_against", "save_pctg", "toi", "goals_against")) {
-      if (!(cl %in% names(d))) next
-      v <- suppressWarnings(as.numeric(d[[cl]]))
-      mlog(sprintf("NHL season | %d: %-14s non-missing on %d row(s)", y, cl, sum(!is.na(v))))
-    }
-    if ("saves" %in% names(d)) {
-      i <- which(!is.na(suppressWarnings(as.numeric(d$saves))))
-      if (length(i)) {
-        r <- d[i[1], intersect(c("player_name","position","team_abbrev","toi","saves","shots_against"), names(d))]
-        mlog(paste("NHL season | a row that has saves:",
-                   paste(sprintf("%s=%s", names(r), as.character(unlist(r))), collapse = " ")))
-      }
-    }
-    break
-  }
   gk <- .nhl_gk$log
   if (is.null(gk) || !nrow(gk)) {
     mlog("NHL goalie | no goalie rows found in this run's box scores")
@@ -6809,7 +6950,10 @@ nhl_load <- function() {
   ents <- sort(unique(c(pan$team, pan$opp)))
   nmv <- nhl_names(sch)
   game_grade_history(NHL_LEDGER, sch)
-  list(sch = sch, pan = pan, endr = endr, ents = ents,
+  gkl <- tryCatch(nhl_goalies(sch), error = function(e) NULL)
+  gf  <- tryCatch(nhl_gk_feature(gkl, sch), error = function(e) NULL)
+  nhl_gk_report(gkl, gf)
+  list(sch = sch, pan = pan, endr = endr, ents = ents, gf = gf,
        nm = nmv, logo = stats::setNames(nhl_logo(names(nmv)), names(nmv)),
        sk = nhl_live_report(sch, nhl_skaters(sch)),
        dropped = sort(unique(sch$season[sch$corrupt])))
@@ -6832,6 +6976,7 @@ NHL_CORRUPT_N <- 200L
 # through every return value, because the skater path is what drives the fetching.
 .nhl_gk <- new.env(hash = TRUE, parent = emptyenv())
 .nhl_gk$log <- NULL
+.nhl_gk$said <- FALSE
 
 .nhl_api <- new.env(hash = TRUE, parent = emptyenv())
 .nhl_api$fail <- 0L
@@ -7501,7 +7646,7 @@ warm_build <- function() {
   add("NHL walk-forward ratings", function() {
     if (warm_held("nhl")) return(invisible(NULL))
     d <- nhl_load()
-    invisible(nhl_rows(d$pan, d$endr, d$ents, nhl_season_of(Sys.Date())))
+    invisible(nhl_rows(d$pan, d$endr, d$ents, nhl_season_of(Sys.Date()), d$gf))
   })
   add("NBA boxscores and shots", function() {
     if (warm_held("nba")) return(invisible(NULL))
@@ -9709,7 +9854,7 @@ server <- function(input, output, session) {
     d <- ndat(); req(d, input$ndate)
     s <- nhl_season_of(as.Date(input$ndate))
     withProgress(message = "Rating NHL teams", value = 0.6, {
-      R <- nhl_rows(d$pan, d$endr, d$ents, s)
+      R <- nhl_rows(d$pan, d$endr, d$ents, s, d$gf)
       if (is.null(R)) NULL else nhl_fit(R, s)
     })
   })
@@ -9721,7 +9866,7 @@ server <- function(input, output, session) {
     now <- now_et()
     cut <- as.POSIXct(pmin(as.numeric(g$ko), as.numeric(now)), origin = "1970-01-01", tz = TZ_ET)
     st <- game_settle(NHL_LEDGER, NHL_MODEL,
-                      function(gi, cutoff) nhl_predict(d$pan, d$endr, d$ents, m, gi, cutoff),
+                      function(gi, cutoff) nhl_predict(d$pan, d$endr, d$ents, m, gi, cutoff, d$gf),
                       g, now)
     if (is.null(st) || !nrow(st)) return(NULL)
     done <- g$has_score & g$final_at <= now
@@ -10169,7 +10314,7 @@ server <- function(input, output, session) {
     d <- ndat(); req(d)
     s <- nhl_season_of(td)
     m <- if (!is.null(input$ndate) && identical(nhl_season_of(as.Date(input$ndate)), s)) nmodel() else {
-      R <- nhl_rows(d$pan, d$endr, d$ents, s); if (is.null(R)) NULL else nhl_fit(R, s) }
+      R <- nhl_rows(d$pan, d$endr, d$ents, s, d$gf); if (is.null(R)) NULL else nhl_fit(R, s) }
     nmv <- function(id) ifelse(is.na(unname(d$nm[id])), id, unname(d$nm[id]))
     espn_ab <- function(a) { al <- c(LAK = "LA", NJD = "NJ", SJS = "SJ", TBL = "TB")
       a <- as.character(a); ifelse(a %in% names(al), unname(al[a]), a) }
