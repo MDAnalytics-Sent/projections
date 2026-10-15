@@ -1,4 +1,4 @@
-2026-10-15 15:38:15 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-15 16:04:04 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -21,10 +21,10 @@ NHL goalie | 428 appearance(s) across 107 game(s); 214 identifiable starter(s), 
 NHL goalie | fields present -- toi 100%, shots 100%, saves 100%, goals against 100%
 NHL goalie | starters league save pct 0.8925 over 5602 shots
 NHL goalie | measured -0.09 goals of margin per goal of starter edge (se 0.23) on 7667 prior-season game(s) -- NOT used: needs the right sign and two standard errors
-2026-10-15 15:39:36   today  55.6s
+2026-10-15 16:05:28   today  56.7s
 CFB td     | recalibrated on 8045 graded prop(s) settled before this slate: slope 1.20, shift -0.16 -- a raw 25% becomes 19%, a raw 60% becomes 58%
-2026-10-15 15:39:56   nfl    15.3s  3 built, 7 to pick from
-2026-10-15 15:40:05   cfb     8.8s  3 built, 8 to pick from
+2026-10-15 16:05:47   nfl    15.0s  3 built, 7 to pick from
+2026-10-15 16:05:56   cfb     8.7s  3 built, 8 to pick from
 
 ── Slate 2026-10-14 ──
 Win model  | learned weights: run model 0.942, Pythagorean gap 0.826 (fit on 2,458 graded mlb-runs-v10 games, 45% data, half-life 45 d)
@@ -70,7 +70,7 @@ Win model  | calibration a=1.152 b=-0.003  (fit on 2460 graded games before 2026
 NRFI model | calibration a=0.330 b=-0.048  (fit on 1826 graded 1st innings before 2026-10-18)
 Slate      | 1 games · none graded yet
 Cache      | 533 files (5.6 MB) · 19 served from disk, 4 fetched
-2026-10-15 15:40:38   mlb    33.1s  5 built, 16 to pick from
-2026-10-15 15:40:40   nhl     1.9s  5 built, 18 to pick from
-2026-10-15 15:40:40   nba     0.4s  1 built, 1 to pick from
-2026-10-15 15:40:41 built 11755 KB in 145s
+2026-10-15 16:06:30   mlb    33.7s  5 built, 16 to pick from
+2026-10-15 16:06:32   nhl     1.9s  5 built, 18 to pick from
+2026-10-15 16:06:32   nba     0.4s  1 built, 1 to pick from
+2026-10-15 16:06:32 built 11754 KB in 148s
