@@ -6759,10 +6759,23 @@ nhl_live_report <- function(sch, k) {
     if (!file.exists(f)) next
     d <- tryCatch(as.data.frame(readRDS(f)), error = function(e) NULL)
     if (is.null(d)) next
-    gcols <- grep("save|shot|goals_against|ga$|toi|position", names(d), ignore.case = TRUE, value = TRUE)
-    ng <- if ("position" %in% names(d)) sum(d$position == "G", na.rm = TRUE) else NA
-    mlog(sprintf("NHL season | %d: %d rows, %s goalie row(s); goalie-ish columns: %s",
-                 y, nrow(d), format(ng), if (length(gcols)) paste(gcols, collapse = ", ") else "none"))
+    pos <- if ("position" %in% names(d)) table(as.character(d$position), useNA = "ifany") else NULL
+    mlog(sprintf("NHL season | %d: %d rows; positions: %s", y, nrow(d),
+                 if (is.null(pos)) "no position column"
+                 else paste(sprintf("%s=%d", names(pos), as.integer(pos)), collapse = " ")))
+    for (cl in c("saves", "shots_against", "save_pctg", "toi", "goals_against")) {
+      if (!(cl %in% names(d))) next
+      v <- suppressWarnings(as.numeric(d[[cl]]))
+      mlog(sprintf("NHL season | %d: %-14s non-missing on %d row(s)", y, cl, sum(!is.na(v))))
+    }
+    if ("saves" %in% names(d)) {
+      i <- which(!is.na(suppressWarnings(as.numeric(d$saves))))
+      if (length(i)) {
+        r <- d[i[1], intersect(c("player_name","position","team_abbrev","toi","saves","shots_against"), names(d))]
+        mlog(paste("NHL season | a row that has saves:",
+                   paste(sprintf("%s=%s", names(r), as.character(unlist(r))), collapse = " ")))
+      }
+    }
     break
   }
   gk <- .nhl_gk$log
