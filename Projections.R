@@ -6583,23 +6583,35 @@ nhl_fit <- function(R, season_) {
   # measure it from. Where there is not, this is exactly the model it has always been.
   use_gd <- "gd" %in% names(h) && sum(abs(h$gd) > 1e-8, na.rm = TRUE) >= 500 &&
             stats::sd(h$gd, na.rm = TRUE) > 1e-6
-  m1 <- if (use_gd) stats::lm(marg ~ rd + gd, data = h) else stats::lm(marg ~ rd, data = h)
+  m1 <- stats::lm(marg ~ rd, data = h)
+  gd_b <- NA_real_; gd_se <- NA_real_
+  if (use_gd) {
+    m2 <- stats::lm(marg ~ rd + gd, data = h)
+    cf <- tryCatch(summary(m2)$coefficients, error = function(e) NULL)
+    if (!is.null(cf) && "gd" %in% rownames(cf)) {
+      gd_b <- cf["gd", 1]; gd_se <- cf["gd", 2]
+    }
+    # A goalie expected to save more goals cannot make his team lose by more, so a
+    # negative coefficient is noise wearing a result's clothes. Two standard errors and
+    # the right sign, or the term does not go in the model at all.
+    if (is.finite(gd_b) && is.finite(gd_se) && gd_b > 0 && gd_b > 2 * gd_se) m1 <- m2
+    else use_gd <- FALSE
+  }
   h$pred <- stats::predict(m1)
   h <- h[h$marg != 0, ]; h$win <- as.integer(h$marg > 0)
   lg <- suppressWarnings(stats::glm(win ~ pred, data = h, family = stats::binomial()))
   # said once per run, not once per day page
   if (!isTRUE(.nhl_gk$said)) {
     .nhl_gk$said <- TRUE
-    if (use_gd) {
-      se <- tryCatch(summary(m1)$coefficients["gd", 2], error = function(e) NA_real_)
-      mlog(sprintf("NHL goalie | fitted worth %.2f goals of margin per goal of starter edge (se %.2f), on %d prior-season game(s)",
-                   unname(stats::coef(m1)["gd"]), se, nrow(h)))
+    if (is.finite(gd_b)) {
+      mlog(sprintf("NHL goalie | measured %+.2f goals of margin per goal of starter edge (se %.2f) on %d prior-season game(s) -- %s",
+                   gd_b, gd_se, nrow(h),
+                   if (use_gd) "used" else "NOT used: needs the right sign and two standard errors"))
     } else {
-      mlog(sprintf("NHL goalie | not enough starter signal in the prior seasons: team-only model, %d game(s)", nrow(h)))
+      mlog(sprintf("NHL goalie | too little starter signal in the prior seasons to measure: team-only model, %d game(s)", nrow(h)))
     }
   }
-  list(marg = m1, conf = lg, n = nrow(h), gd = use_gd,
-       gd_beta = if (use_gd) unname(stats::coef(m1)["gd"]) else NA_real_)
+  list(marg = m1, conf = lg, n = nrow(h), gd = use_gd, gd_beta = gd_b, gd_se = gd_se)
 }
 
 nhl_predict <- function(panel, endr, ents, m, g, cutoff, gf = NULL) {
@@ -6707,9 +6719,20 @@ nhl_gk_feature <- function(gl, sch) {
       tb <- sort(tapply(wt, w, sum), decreasing = TRUE)
       pid <- names(tb)[1]
       exp_pid[i] <- pid
-      # that goalie's standing as of this date
+      # That goalie's standing as of this date, measured against what this team's
+      # goaltending has been overall.
+      #
+      # Against the team's own baseline on purpose. The team rating is built from goal
+      # margins, which already contain whatever the goalies did, so a goalie's absolute
+      # quality is largely in the rating twice over -- and measured that way it came out
+      # with the wrong sign. What the rating cannot know is which of a team's goalies is
+      # in tonight, and that is exactly this.
       h <- gl[gl$pid == pid & gl$date < s$date[i], , drop = FALSE]
-      exp_eff[i] <- if (nrow(h)) h$eff[nrow(h)] else 0
+      me <- if (nrow(h)) h$eff[nrow(h)] else 0
+      tb2 <- gl[gl$team == tm & gl$date < s$date[i], , drop = FALSE]
+      base <- if (nrow(tb2) && sum(tb2$shots, na.rm = TRUE) > 0)
+        stats::weighted.mean(tb2$eff, pmax(tb2$shots, 0), na.rm = TRUE) else 0
+      exp_eff[i] <- me - (if (is.finite(base)) base else 0)
     }
     rows[[length(rows) + 1L]] <- data.frame(game_id = s$game_id, team = tm,
                                             gk = exp_pid, eff = exp_eff,
