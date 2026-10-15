@@ -6820,24 +6820,25 @@ nhl_norm <- function(x) {
   }, "", USE.NAMES = FALSE)
 }
 
-nhl_inj <- function() {
-  f <- file.path(nhl_live_dir, "inj.rds")
+# Who is unavailable, from ESPN's injury feed. One fetcher for every league: the NHL
+# gate proved the shape, and basketball needs exactly the same thing.
+espn_inj <- function(url, f, ttl, out_set, timeout = 15) {
   cached <- function() {
     o <- try(readRDS(f), silent = TRUE)
     if (!inherits(o, "try-error") && is.data.frame(o) && nrow(o)) o else NULL
   }
-  if (file.exists(f) && age_min(f) < NHL_INJ_TTL) {
+  if (file.exists(f) && age_min(f) < ttl) {
     o <- cached(); if (!is.null(o)) return(o)
   }
-  r <- tryCatch(httr::GET(NHL_INJ_URL, httr::timeout(NHL_API_TO)), error = function(e) NULL)
+  r <- tryCatch(httr::GET(url, httr::timeout(timeout)), error = function(e) NULL)
   if (is.null(r) || !identical(httr::status_code(r), 200L)) return(cached())
   j <- tryCatch(jsonlite::fromJSON(httr::content(r, "text", encoding = "UTF-8"),
                                    simplifyVector = FALSE), error = function(e) NULL)
   if (is.null(j) || is.null(j$injuries)) return(cached())
   rows <- list()
-  for (t in j$injuries) {
-    tn <- as.character(t$displayName %||% "")
-    for (i in (t$injuries %||% list())) {
+  for (tm in j$injuries) {
+    tn <- as.character(tm$displayName %||% "")
+    for (i in (tm$injuries %||% list())) {
       a <- i$athlete
       if (is.null(a)) next
       rows[[length(rows) + 1L]] <- data.frame(
@@ -6853,18 +6854,42 @@ nhl_inj <- function() {
   d <- dplyr::bind_rows(rows)
   d$tkey <- nhl_norm(d$team_name)
   d$pkey <- nhl_norm(d$short)
-  d$out  <- tolower(trimws(d$status)) %in% NHL_INJ_OUT
+  d$out  <- tolower(trimws(d$status)) %in% out_set
+  dir.create(dirname(f), recursive = TRUE, showWarnings = FALSE)
   try(saveRDS(d, f), silent = TRUE)
   d
 }
 
-nhl_team_key <- function(sch) {
+# the team-name-to-abbreviation bridge, which every league needs the same way
+espn_team_key <- function(sch) {
   nm <- c(stats::setNames(sch$home_name, sch$home),
           stats::setNames(sch$away_name, sch$away))
   nm <- nm[!is.na(nm) & nzchar(nm)]
   nm <- nm[!duplicated(paste(names(nm), nm))]
   stats::setNames(names(nm), nhl_norm(nm))
 }
+
+# Drops anyone ruled out, and labels the rest with their status. Shared because a board
+# that lists a player who is not playing is wrong in exactly one way in every sport.
+espn_inj_gate <- function(x, inj, tkey) {
+  x$inj <- NA_character_
+  if (is.null(inj) || !nrow(inj) || is.null(tkey) || !length(tkey)) return(x)
+  inj$abbr <- unname(tkey[inj$tkey])
+  inj <- inj[!is.na(inj$abbr), , drop = FALSE]
+  if (!nrow(inj)) return(x)
+  j <- match(paste(x$team, nhl_norm(x$pname)), paste(inj$abbr, inj$pkey))
+  hit <- !is.na(j)
+  x$inj[hit] <- inj$status[j[hit]]
+  gone <- rep(FALSE, nrow(x))
+  gone[hit] <- inj$out[j[hit]] %in% TRUE
+  x[!gone, , drop = FALSE]
+}
+
+nhl_inj <- function()
+  espn_inj(NHL_INJ_URL, file.path(nhl_live_dir, "inj.rds"), NHL_INJ_TTL,
+           NHL_INJ_OUT, timeout = NHL_API_TO)
+
+nhl_team_key <- function(sch) espn_team_key(sch)
 
 nhl_gs <- function(K, cutoff, teams, inj = NULL, tkey = NULL) {
   if (is.null(K) || !nrow(K)) return(NULL)
@@ -7316,6 +7341,11 @@ NBA_FB_BASE  <- c(C = 0.1309, F = 0.1009, G = 0.0908, PF = 0.0794,
                   PG = 0.0798, SF = 0.0851, SG = 0.0919)
 NBA_FB_RECENT <- 12L
 NBA_LEDGER   <- file.path(LEDGER_DIR, "nba_predictions.rds")
+NBA_INJ_URL  <- "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/injuries"
+NBA_INJ_TTL  <- 30
+# Basketball rests healthy players, so the feed carries states hockey's does not.
+NBA_INJ_OUT  <- c("out", "injured reserve", "suspension", "suspended",
+                  "not with team", "out for season")
 NBA_MODEL    <- sprintf("nba-marg-v%d", NBA_VER)
 
 nba_dir <- file.path(CACHE_DIR, "nba")
@@ -7568,7 +7598,10 @@ nba_fb_hist <- function(sch) {
   H
 }
 
-nba_fb <- function(H, cutoff, teams) {
+nba_inj <- function()
+  espn_inj(NBA_INJ_URL, file.path(nba_dir, "inj.rds"), NBA_INJ_TTL, NBA_INJ_OUT)
+
+nba_fb <- function(H, cutoff, teams, inj = NULL, tkey = NULL) {
   if (is.null(H) || !nrow(H)) return(NULL)
   h <- H[H$ko < cutoff, ]
   if (!nrow(h)) return(NULL)
@@ -7584,6 +7617,8 @@ nba_fb <- function(H, cutoff, teams) {
     }), use.names = FALSE)
     x <- x[x$pid %in% keep & x$team %in% teams, ]
   } else x <- x[0, ]
+  if (!nrow(x)) return(NULL)
+  x <- espn_inj_gate(x, inj, tkey)
   if (!nrow(x)) return(NULL)
   b <- unname(NBA_FB_BASE[x$pos]); b[is.na(b)] <- 0.10
   x$p_fg  <- (x$f + NBA_FB_KPL * b) / (x$n + NBA_FB_KPL)
@@ -10116,7 +10151,10 @@ server <- function(input, output, session) {
   }, server = FALSE)
   bfb_tbl <- reactive({
     b <- bboard(); d <- bdat(); req(b, d)
-    x <- nba_fb(d$fbh, b$cut, unique(c(b$g$home, b$g$away)))
+    live <- isTRUE(day_et(b$cut) >= today_et())
+    inj <- if (live) tryCatch(nba_inj(), error = function(e) NULL) else NULL
+    tk  <- if (live) tryCatch(espn_team_key(d$sch), error = function(e) NULL) else NULL
+    x <- nba_fb(d$fbh, b$cut, unique(c(b$g$home, b$g$away)), inj, tk)
     if (is.null(x) || !nrow(x)) return(NULL)
     st <- grade_state(x$pid, x$team, b, d$fbh)
     j <- attr(st, "row"); r <- attr(st, "src")
