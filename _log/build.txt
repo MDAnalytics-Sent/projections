@@ -1,4 +1,4 @@
-2026-10-14 22:13:13 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-14 22:21:07 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -14,9 +14,12 @@ Slate      | 1 games · record 0-1 (0%)
 Cache      | 523 files (5.5 MB) · 57 served from disk, 4 fetched
 NHL        | 107 final game(s) this season, 107 with box scores, 0 missing
 NHL        | latest final: 2026-10-14 (game 2026020107) | today 2026-10-15 has 11 game(s), 0 final | feed 3 hit / 9 fetched
-2026-10-14 22:14:13   today  34.6s
-2026-10-14 22:14:38   nfl    20.0s  7 built, 7 to pick from
-2026-10-14 22:15:00   cfb    22.0s  8 built, 8 to pick from
+NHL goalie | 428 appearance(s) across 107 game(s); 214 identifiable starter(s), 71 distinct goalie(s)
+NHL goalie | fields present -- toi 100%, shots 100%, saves 100%, goals against 100%
+NHL goalie | starters league save pct 0.8925 over 5602 shots
+2026-10-14 22:22:09   today  34.5s
+2026-10-14 22:22:33   nfl    19.4s  7 built, 7 to pick from
+2026-10-14 22:22:53   cfb    19.8s  8 built, 8 to pick from
 
 ── Slate 2026-09-30 ──
 Win model  | learned weights: run model 0.950, Pythagorean gap 0.867 (fit on 2,433 graded mlb-runs-v10 games, 36% data, half-life 25 d)
@@ -134,7 +137,7 @@ Win model  | calibration a=1.153 b=-0.005  (fit on 2459 graded games before 2026
 NRFI model | calibration a=0.341 b=-0.052  (fit on 1825 graded 1st innings before 2026-10-17)
 Slate      | 1 games · none graded yet
 Cache      | 526 files (5.6 MB) · 19 served from disk, 4 fetched
-2026-10-14 22:16:54   mlb   113.3s  15 built, 16 to pick from
-2026-10-14 22:16:59   nhl     5.9s  15 built, 18 to pick from
-2026-10-14 22:17:00   nba     0.3s  1 built, 1 to pick from
-2026-10-14 22:17:00 built 11801 KB in 227s
+2026-10-14 22:25:04   mlb   131.5s  15 built, 16 to pick from
+2026-10-14 22:25:10   nhl     5.6s  15 built, 18 to pick from
+2026-10-14 22:25:10   nba     0.3s  1 built, 1 to pick from
+2026-10-14 22:25:11 built 11801 KB in 243s
