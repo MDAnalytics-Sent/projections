@@ -4278,6 +4278,39 @@ prop_record <- function(league, market, game_id, pid, pname, kickoff, p_raw, hit
   invisible(isTRUE(ok))
 }
 
+PROP_CAL_MIN <- 300L   # graded props before a correction is trusted at all
+PROP_CAL_HL  <- 60     # days of half-life, so this season's scoring environment counts most
+
+# The correction a board's own record says it needs.
+#
+# Same shape as the baseball calibration already in this file: a logistic fit of what
+# happened on what was said, weighted toward recent games, with an identity fallback. It
+# is measured only on props that had already settled before the slate being built, so a
+# week is never corrected using its own results.
+prop_calib <- function(league, market, asof, min_n = PROP_CAL_MIN, half_life = PROP_CAL_HL) {
+  ident <- list(ok = FALSE, a = 1, b = 0, n = 0L)
+  if (is.null(asof) || !is.finite(as.numeric(asof))) return(ident)
+  L <- prop_read()
+  if (!nrow(L)) return(ident)
+  h <- L[L$league == league & L$market == market &
+         !is.na(L$hit) & !is.na(L$p_raw) & !is.na(L$kickoff) & L$kickoff < asof, , drop = FALSE]
+  if (nrow(h) < min_n) return(ident)
+  z <- stats::qlogis(clamp(h$p_raw, 0.002, 0.998))
+  wts <- 0.5 ^ (as.numeric(difftime(asof, h$kickoff, units = "days")) / half_life)
+  fit <- tryCatch(suppressWarnings(stats::glm(h$hit ~ z, family = stats::binomial(),
+                                              weights = wts)), error = function(e) NULL)
+  if (is.null(fit) || any(!is.finite(stats::coef(fit)))) return(ident)
+  a <- unname(stats::coef(fit)[2]); b <- unname(stats::coef(fit)[1])
+  # a negative slope would turn the board upside down: that is a broken fit, not a finding
+  if (!is.finite(a) || a <= 0) return(ident)
+  list(ok = TRUE, a = a, b = b, n = nrow(h))
+}
+
+prop_apply <- function(p, cal) {
+  if (is.null(cal) || !isTRUE(cal$ok)) return(p)
+  clamp(stats::plogis(cal$a * stats::qlogis(clamp(p, 0.002, 0.998)) + cal$b), 0.002, 0.95)
+}
+
 # every settled game on this slate, handed to the grader above
 game_grade_slate <- function(path, g, done) {
   i <- which(done %in% TRUE)
@@ -6205,6 +6238,21 @@ cfb_td_week <- function(d, s, g, now = now_et(), recent = 1L) {
   }
   if (!length(out)) return(NULL)
   x <- dplyr::bind_rows(out)
+  # This board said 52.1% across 600 graded picks and 44.0% happened, an eight point
+  # overprediction measured out of sample. The model underneath is fitted on prior seasons
+  # only and is not wrong about who scores -- it is optimistic at the top of the board,
+  # which is exactly what a recalibration is for.
+  cal <- tryCatch(prop_calib("cfb", "anytime_td", suppressWarnings(min(g$ko, na.rm = TRUE))),
+                  error = function(e) NULL)
+  x$p <- prop_apply(x$p_raw, cal)
+  if (!isTRUE(.cfb_td_said)) {
+    .cfb_td_said <<- TRUE
+    if (isTRUE(cal$ok))
+      mlog(sprintf("CFB td     | recalibrated on %d graded prop(s): slope %.2f, shift %+.2f -- a raw 60%% becomes %.0f%%",
+                   cal$n, cal$a, cal$b, 100 * prop_apply(0.60, cal)))
+    else
+      mlog("CFB td     | no recalibration yet: needs 300 graded props from earlier slates")
+  }
   # the result, once the game is in the box scores
   if (!is.null(cur)) {
     k <- match(paste(x$game_id, x$aid), paste(cur$game_id, cur$aid))
@@ -7105,6 +7153,7 @@ NHL_CORRUPT_N <- 200L
 .nhl_gk <- new.env(hash = TRUE, parent = emptyenv())
 .nhl_gk$log <- NULL
 .nhl_gk$said <- FALSE
+.cfb_td_said <- FALSE
 
 .nhl_api <- new.env(hash = TRUE, parent = emptyenv())
 .nhl_api$fail <- 0L
