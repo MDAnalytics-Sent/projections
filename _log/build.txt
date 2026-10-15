@@ -1,4 +1,4 @@
-2026-10-14 23:20:31 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-14 23:25:37 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -12,6 +12,7 @@ Win model  | 1 of 1 games served from locked history (picks frozen at first pitc
 NRFI model | calibration a=0.347 b=-0.048  (fit on 1824 graded 1st innings before 2026-10-14)
 Slate      | 1 games · record 0-1 (0%)
 Cache      | 523 files (5.5 MB) · 57 served from disk, 4 fetched
+CFB td     | no recalibration yet: needs 300 graded props from earlier slates
 NHL goalie | 16162 appearance(s), 8082 start(s), 166 goalie(s), 4 season(s) 2023-2026
 NHL goalie | starter edge on 4010 of 14856 game(s) (27%); sd 0.177, range -0.74 to +0.69 goals
 NHL        | 107 final game(s) this season, 107 with box scores, 0 missing
@@ -20,9 +21,9 @@ NHL goalie | 428 appearance(s) across 107 game(s); 214 identifiable starter(s), 
 NHL goalie | fields present -- toi 100%, shots 100%, saves 100%, goals against 100%
 NHL goalie | starters league save pct 0.8925 over 5602 shots
 NHL goalie | measured -0.09 goals of margin per goal of starter edge (se 0.23) on 7667 prior-season game(s) -- NOT used: needs the right sign and two standard errors
-2026-10-14 23:21:41   today  45.7s
-2026-10-14 23:22:06   nfl    20.1s  7 built, 7 to pick from
-2026-10-14 23:22:26   cfb    20.6s  8 built, 8 to pick from
+2026-10-14 23:26:49   today  46.4s
+2026-10-14 23:27:13   nfl    19.4s  7 built, 7 to pick from
+2026-10-14 23:27:34   cfb    20.9s  8 built, 8 to pick from
 
 ── Slate 2026-09-30 ──
 Win model  | learned weights: run model 0.950, Pythagorean gap 0.867 (fit on 2,433 graded mlb-runs-v10 games, 36% data, half-life 25 d)
@@ -102,7 +103,7 @@ Cache      | 526 files (5.6 MB) · 22 served from disk, 2 fetched
 
 ── Slate 2026-10-09 ──
 Slate      | 0 games · none graded yet
-Cache      | 526 files (5.6 MB) · 20 served from disk, 0 fetched
+Cache      | 526 files (5.6 MB) · 14 served from disk, 6 fetched
 
 ── Slate 2026-10-13 ──
 Win model  | learned weights: run model 0.955, Pythagorean gap 0.803 (fit on 2,457 graded mlb-runs-v10 games, 45% data, half-life 45 d)
@@ -132,7 +133,7 @@ Win model  | learned weights: run model 0.935, Pythagorean gap 0.820 (fit on 2,4
 Win model  | calibration a=1.154 b=-0.005  (fit on 2459 graded games before 2026-10-16)
 NRFI model | calibration a=0.341 b=-0.052  (fit on 1825 graded 1st innings before 2026-10-16)
 Slate      | 2 games · none graded yet
-Cache      | 526 files (5.6 MB) · 13 served from disk, 13 fetched
+Cache      | 526 files (5.6 MB) · 19 served from disk, 7 fetched
 
 ── Slate 2026-10-17 ──
 Win model  | learned weights: run model 0.936, Pythagorean gap 0.813 (fit on 2,459 graded mlb-runs-v10 games, 44% data, half-life 45 d)
@@ -140,7 +141,7 @@ Win model  | calibration a=1.153 b=-0.005  (fit on 2459 graded games before 2026
 NRFI model | calibration a=0.341 b=-0.052  (fit on 1825 graded 1st innings before 2026-10-17)
 Slate      | 1 games · none graded yet
 Cache      | 526 files (5.6 MB) · 19 served from disk, 4 fetched
-2026-10-14 23:24:08   mlb   101.1s  15 built, 16 to pick from
-2026-10-14 23:24:14   nhl     6.5s  15 built, 18 to pick from
-2026-10-14 23:24:15   nba     0.3s  1 built, 1 to pick from
-2026-10-14 23:24:15 built 11808 KB in 224s
+2026-10-14 23:29:35   mlb   120.4s  15 built, 16 to pick from
+2026-10-14 23:29:42   nhl     6.9s  15 built, 18 to pick from
+2026-10-14 23:29:43   nba     0.3s  1 built, 1 to pick from
+2026-10-14 23:29:43 built 11808 KB in 246s
