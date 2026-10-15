@@ -4153,6 +4153,59 @@ game_append_ledger <- function(path, new) {
 # fresh pick computed with nothing later than pmin(start, now) -- and written to the
 # ledger only once the game has actually started, so a pick can never be stored using
 # anything that happened during or after the game it is predicting.
+# Writes down what actually happened, once per game.
+#
+# The pick stays untouchable: pred, conf, kickoff, model_ver and locked_at are never
+# rewritten, and a row that already carries a result is left alone. Without this the
+# only trace of a settled pick was the day page it appeared on, and those age out after
+# two weeks -- so a season's record quietly disappeared as the window moved.
+game_grade_ledger <- function(path, game_id, home_score, away_score) {
+  L <- game_read_ledger(path)
+  if (!nrow(L) || !length(game_id) || !("pred" %in% names(L))) return(invisible(FALSE))
+  for (cl in c("home_score", "away_score")) if (!(cl %in% names(L))) L[[cl]] <- NA_real_
+  if (!("won" %in% names(L))) L$won <- NA
+  if (!("settled_at" %in% names(L))) L$settled_at <- as.POSIXct(NA, tz = TZ_ET)
+  r <- data.frame(gid = as.character(game_id),
+                  hs = suppressWarnings(as.numeric(home_score)),
+                  aw = suppressWarnings(as.numeric(away_score)),
+                  stringsAsFactors = FALSE)
+  r <- r[!is.na(r$hs) & !is.na(r$aw) & !duplicated(r$gid), , drop = FALSE]
+  if (!nrow(r)) return(invisible(FALSE))
+  j <- match(as.character(L$game_id), r$gid)
+  need <- !is.na(j) & is.na(L$home_score)
+  if (!any(need)) return(invisible(FALSE))
+  hs <- r$hs[j[need]]; aw <- r$aw[j[need]]
+  L$home_score[need] <- hs
+  L$away_score[need] <- aw
+  L$won[need]        <- ifelse(hs == aw, NA, (L$pred[need] > 0) == (hs > aw))
+  L$settled_at[need] <- Sys.time()
+  dir.create(dirname(path), recursive = TRUE, showWarnings = FALSE)
+  tmp <- paste0(path, ".tmp")
+  ok <- tryCatch({ saveRDS(L, tmp); file.rename(tmp, path) }, error = function(e) FALSE)
+  if (!isTRUE(ok)) unlink(tmp)
+  invisible(isTRUE(ok))
+}
+
+# Every settled game a league knows about, not just the slate on screen. A day page only
+# covers a fortnight, so without this pass any pick older than the window would keep its
+# result for ever unwritten.
+game_grade_history <- function(path, sch) {
+  if (is.null(sch) || !nrow(sch)) return(invisible(FALSE))
+  ok <- sch$has_score %in% TRUE & !is.na(sch$home_score) & !is.na(sch$away_score)
+  if (!("final_at" %in% names(sch))) ok <- ok & FALSE
+  else ok <- ok & !is.na(sch$final_at) & sch$final_at <= now_et()
+  i <- which(ok)
+  if (!length(i)) return(invisible(FALSE))
+  game_grade_ledger(path, sch$game_id[i], sch$home_score[i], sch$away_score[i])
+}
+
+# every settled game on this slate, handed to the grader above
+game_grade_slate <- function(path, g, done) {
+  i <- which(done %in% TRUE)
+  if (!length(i)) return(invisible(FALSE))
+  game_grade_ledger(path, g$game_id[i], g$home_score[i], g$away_score[i])
+}
+
 game_settle <- function(path, model_ver, predict_fn, g, now) {
   if (!nrow(g)) return(NULL)
   L <- game_read_ledger(path)
@@ -4565,6 +4618,7 @@ load_all <- function() {
   if (nrow(pbp) == 0) stop("No play-by-play could be loaded. Check your connection.")
   tw <- build_team_weeks(pbp)
   tw <- dplyr::left_join(tw, sched_long(sch), by = c("season", "week", "team"))
+  game_grade_history(LEDGER_FILE, sch)
   pal <- team_palette()
   plr <- dplyr::bind_rows(lapply(PLR_SEASONS, function(y) {
     f <- plr_file(y); if (file.exists(f)) readRDS(f) else NULL
@@ -5788,6 +5842,7 @@ cfb_load <- function() {
   F <- cfb_feat(fbs, cfb_roster_feats(), cfb_talent(), endr)
   ents <- sort(unique(c(pan$ent, pan$oent, "FCS")))
   cur <- fbs[fbs$season == max(fbs$season), ]
+  game_grade_history(CFB_LEDGER, sch)
   list(sch = sch, fbs = fbs, pan = pan, endr = endr, F = F, ents = ents,
        col = stats::setNames(cur$col, cur$team_id),
        logo = stats::setNames(cur$logo, cur$team_id),
@@ -6711,6 +6766,7 @@ nhl_load <- function() {
   endr <- nhl_end(pan)
   ents <- sort(unique(c(pan$team, pan$opp)))
   nmv <- nhl_names(sch)
+  game_grade_history(NHL_LEDGER, sch)
   list(sch = sch, pan = pan, endr = endr, ents = ents,
        nm = nmv, logo = stats::setNames(nhl_logo(names(nmv)), names(nmv)),
        sk = nhl_live_report(sch, nhl_skaters(sch)),
@@ -7255,6 +7311,7 @@ nba_load <- function() {
   ents <- sort(unique(c(pan$team, pan$opp)))
   nm <- c(stats::setNames(sch$home_name, sch$home), stats::setNames(sch$away_name, sch$away))
   lg <- c(stats::setNames(sch$home_logo, sch$home), stats::setNames(sch$away_logo, sch$away))
+  game_grade_history(NBA_LEDGER, sch)
   list(sch = sch, pan = pan, endr = endr, ents = ents,
        fbh = nba_fb_hist(sch),
        nm = nm[!duplicated(names(nm))], logo = lg[!duplicated(names(lg))])
@@ -8645,6 +8702,7 @@ server <- function(input, output, session) {
 
     pick <- ifelse(pred > 0, g$home_team, g$away_team)
     done   <- g$has_score & !is.na(g$final_at) & g$final_at <= now
+    game_grade_slate(LEDGER_FILE, g, done)
     tie    <- done & g$home_score == g$away_score
     picked <- done & !tie & ((pred > 0) == (g$home_score > g$away_score))
 
@@ -9078,6 +9136,7 @@ server <- function(input, output, session) {
     pred <- st$pred; conf <- st$conf
     pick <- ifelse(pred > 0, g$home_id, g$away_id)
     done <- g$has_score & !is.na(g$final_at) & g$final_at <= now
+    game_grade_slate(CFB_LEDGER, g, done)
     tie  <- done & g$home_score == g$away_score
     ok   <- done & !tie & ((pred > 0) == (g$home_score > g$away_score))
     list(g = g, st = st, pred = pred, conf = conf, pick = pick,
@@ -9562,6 +9621,7 @@ server <- function(input, output, session) {
                       g, now)
     if (is.null(st) || !nrow(st)) return(NULL)
     done <- g$has_score & g$final_at <= now
+    game_grade_slate(NHL_LEDGER, g, done)
     list(g = g, st = st, done = done,
          pick = ifelse(st$pred > 0, g$home, g$away),
          ok = done & ((st$pred > 0) == (g$home_score > g$away_score)),
@@ -9714,6 +9774,7 @@ server <- function(input, output, session) {
                       g, now)
     if (is.null(st) || !nrow(st)) return(NULL)
     done <- g$has_score & g$final_at <= now
+    game_grade_slate(NBA_LEDGER, g, done)
     list(g = g, st = st, done = done,
          pick = ifelse(st$pred > 0, g$home, g$away),
          ok = done & ((st$pred > 0) == (g$home_score > g$away_score)),
