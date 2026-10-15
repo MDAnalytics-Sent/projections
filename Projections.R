@@ -3363,6 +3363,28 @@ nrfi_ledger_load <- function(path = NRFI_LEDGER_PATH) {
 # Same first-pitch rule as awm_append(): a first inning that has not started yet
 # is refreshed (confirmed lineups genuinely improve it), one that has started is
 # frozen and only ever has its result written in.
+# What this model has actually done, over every first inning it has ever called.
+#
+# Shown on the page on purpose. A pick displayed with a confidence badge and no record
+# invites more trust than it has earned, and over 1,825 graded innings this one has not
+# separated itself from a coin toss: a Wilson interval that still contains 50% is the
+# honest way to say so, and it will stop saying so the moment that stops being true.
+nrfi_track_record <- function() {
+  h <- tryCatch(nrfi_ledger_load(), error = function(e) NULL)
+  if (is.null(h) || !nrow(h) || !("IsCorrect" %in% names(h))) return(NULL)
+  h <- h[mlb_competitive_rows(h), , drop = FALSE]
+  h <- h[!is.na(h$IsCorrect), , drop = FALSE]
+  n <- nrow(h); if (n < 200) return(NULL)
+  k <- sum(h$IsCorrect %in% TRUE)
+  p <- k / n; z <- 1.96; d <- 1 + z^2 / n
+  lo <- (p + z^2/(2*n) - z*sqrt(p*(1-p)/n + z^2/(4*n^2))) / d
+  hi <- (p + z^2/(2*n) + z*sqrt(p*(1-p)/n + z^2/(4*n^2))) / d
+  sprintf("Measured record: %d of %d correct, %.1f%% (95%% interval %.1f-%.1f%%). %s",
+          k, n, 100*p, 100*lo, 100*hi,
+          if (lo > 0.5) "Ahead of a coin toss." else
+            "That interval still includes 50%, so this has not yet shown an edge over a coin toss \u2014 treat it as a readout, not a recommendation.")
+}
+
 nrfi_ledger_append <- function(rows, path = NRFI_LEDGER_PATH) {
   if (is.null(rows) || !nrow(rows)) return(invisible(FALSE))
   rows$Started <- .started_flag(rows, cols = "Started", graded = "ActualNRFI")
@@ -9700,6 +9722,12 @@ server <- function(input, output, session) {
             div(style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#64748b;margin:-6px 0 12px;",
                 paste0("Ranked by confidence that NO run scores. Exact base-out dynamic program over the top of the order vs. the starter at his first time through \u00b7 league base rate ",
                        sprintf("%.1f%%", NRFI_LG_BASE*100))),
+            local({
+              tr <- tryCatch(nrfi_track_record(), error = function(e) NULL)
+              if (is.null(tr)) NULL else
+                div(style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#a8620a;background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.28);border-radius:6px;padding:7px 10px;margin:-4px 0 14px;",
+                    tr)
+            }),
             div(class="tbl-wrap", DTOutput("nrfi_tbl")))
   })
   
