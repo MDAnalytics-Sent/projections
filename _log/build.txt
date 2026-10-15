@@ -1,4 +1,4 @@
-2026-10-14 23:32:14 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-14 23:35:58 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -21,41 +21,9 @@ NHL goalie | 428 appearance(s) across 107 game(s); 214 identifiable starter(s), 
 NHL goalie | fields present -- toi 100%, shots 100%, saves 100%, goals against 100%
 NHL goalie | starters league save pct 0.8925 over 5602 shots
 NHL goalie | measured -0.09 goals of margin per goal of starter edge (se 0.23) on 7667 prior-season game(s) -- NOT used: needs the right sign and two standard errors
-2026-10-14 23:33:21   today  40.7s
-2026-10-14 23:33:37   nfl    12.1s  3 built, 7 to pick from
-2026-10-14 23:33:44   cfb     7.1s  3 built, 8 to pick from
-
-── Slate 2026-10-10 ──
-Win model  | learned weights: run model 0.986, Pythagorean gap 0.708 (fit on 2,453 graded mlb-runs-v10 games, 31% data, half-life 25 d)
-Win model  | calibration a=1.187 b=-0.010  (fit on 2453 graded games before 2026-10-10)
-Win model  | 1 of 1 games served from locked history (picks frozen at first pitch)
-NRFI model | calibration a=0.377 b=-0.054  (fit on 1819 graded 1st innings before 2026-10-10)
-Slate      | 1 games · record 1-0 (100%)
-Cache      | 524 files (5.5 MB) · 36 served from disk, 44 fetched
-
-── Slate 2026-10-14 ──
-Win model  | learned weights: run model 0.942, Pythagorean gap 0.826 (fit on 2,458 graded mlb-runs-v10 games, 45% data, half-life 45 d)
-Win model  | calibration a=1.161 b=-0.004  (fit on 2458 graded games before 2026-10-14)
-Win model  | 1 of 1 games served from locked history (picks frozen at first pitch)
-NRFI model | calibration a=0.347 b=-0.048  (fit on 1824 graded 1st innings before 2026-10-14)
-Slate      | 1 games · record 0-1 (0%)
-Cache      | 524 files (5.5 MB) · 25 served from disk, 0 fetched
-
-── Slate 2026-10-11 ──
-Win model  | learned weights: run model 0.979, Pythagorean gap 0.718 (fit on 2,454 graded mlb-runs-v10 games, 30% data, half-life 25 d)
-Win model  | calibration a=1.186 b=-0.009  (fit on 2454 graded games before 2026-10-11)
-Win model  | 1 of 1 games served from locked history (picks frozen at first pitch)
-NRFI model | calibration a=0.376 b=-0.050  (fit on 1820 graded 1st innings before 2026-10-11)
-Slate      | 1 games · record 0-1 (0%)
-Cache      | 525 files (5.5 MB) · 22 served from disk, 27 fetched
-
-── Slate 2026-10-12 ──
-Win model  | learned weights: run model 0.971, Pythagorean gap 0.789 (fit on 2,455 graded mlb-runs-v10 games, 45% data, half-life 45 d)
-Win model  | calibration a=1.178 b=-0.006  (fit on 2455 graded games before 2026-10-12)
-Win model  | 2 of 2 games served from locked history (picks frozen at first pitch)
-NRFI model | calibration a=0.370 b=-0.046  (fit on 1821 graded 1st innings before 2026-10-12)
-Slate      | 2 games · record 0-2 (0%)
-Cache      | 526 files (5.5 MB) · 39 served from disk, 16 fetched
+2026-10-14 23:37:09   today  45.5s
+2026-10-14 23:37:27   nfl    14.6s  3 built, 7 to pick from
+2026-10-14 23:37:36   cfb     8.4s  3 built, 8 to pick from
 
 ── Slate 2026-10-13 ──
 Win model  | learned weights: run model 0.955, Pythagorean gap 0.803 (fit on 2,457 graded mlb-runs-v10 games, 45% data, half-life 45 d)
@@ -63,7 +31,7 @@ Win model  | calibration a=1.167 b=-0.006  (fit on 2457 graded games before 2026
 Win model  | 1 of 1 games served from locked history (picks frozen at first pitch)
 NRFI model | calibration a=0.340 b=-0.052  (fit on 1823 graded 1st innings before 2026-10-13)
 Slate      | 1 games · record 0-1 (0%)
-Cache      | 526 files (5.5 MB) · 21 served from disk, 8 fetched
+Cache      | 523 files (5.5 MB) · 55 served from disk, 2 fetched
 
 ── Slate 2026-10-14 ──
 Win model  | learned weights: run model 0.942, Pythagorean gap 0.826 (fit on 2,458 graded mlb-runs-v10 games, 45% data, half-life 45 d)
@@ -71,29 +39,37 @@ Win model  | calibration a=1.161 b=-0.004  (fit on 2458 graded games before 2026
 Win model  | 1 of 1 games served from locked history (picks frozen at first pitch)
 NRFI model | calibration a=0.347 b=-0.048  (fit on 1824 graded 1st innings before 2026-10-14)
 Slate      | 1 games · record 0-1 (0%)
-Cache      | 526 files (5.5 MB) · 22 served from disk, 3 fetched
+Cache      | 523 files (5.5 MB) · 25 served from disk, 0 fetched
+
+── Slate 2026-10-14 ──
+Win model  | learned weights: run model 0.942, Pythagorean gap 0.826 (fit on 2,458 graded mlb-runs-v10 games, 45% data, half-life 45 d)
+Win model  | calibration a=1.161 b=-0.004  (fit on 2458 graded games before 2026-10-14)
+Win model  | 1 of 1 games served from locked history (picks frozen at first pitch)
+NRFI model | calibration a=0.347 b=-0.048  (fit on 1824 graded 1st innings before 2026-10-14)
+Slate      | 1 games · record 0-1 (0%)
+Cache      | 523 files (5.5 MB) · 25 served from disk, 0 fetched
 
 ── Slate 2026-10-15 ──
 Win model  | learned weights: run model 0.934, Pythagorean gap 0.827 (fit on 2,459 graded mlb-runs-v10 games, 44% data, half-life 45 d)
 Win model  | calibration a=1.154 b=-0.005  (fit on 2459 graded games before 2026-10-15)
 NRFI model | calibration a=0.341 b=-0.052  (fit on 1825 graded 1st innings before 2026-10-15)
 Slate      | 2 games · none graded yet
-Cache      | 526 files (5.5 MB) · 24 served from disk, 7 fetched
+Cache      | 523 files (5.5 MB) · 25 served from disk, 7 fetched
 
 ── Slate 2026-10-16 ──
 Win model  | learned weights: run model 0.935, Pythagorean gap 0.820 (fit on 2,459 graded mlb-runs-v10 games, 44% data, half-life 45 d)
 Win model  | calibration a=1.154 b=-0.005  (fit on 2459 graded games before 2026-10-16)
 NRFI model | calibration a=0.341 b=-0.052  (fit on 1825 graded 1st innings before 2026-10-16)
 Slate      | 2 games · none graded yet
-Cache      | 526 files (5.5 MB) · 19 served from disk, 7 fetched
+Cache      | 523 files (5.5 MB) · 13 served from disk, 13 fetched
 
 ── Slate 2026-10-17 ──
 Win model  | learned weights: run model 0.936, Pythagorean gap 0.813 (fit on 2,459 graded mlb-runs-v10 games, 44% data, half-life 45 d)
 Win model  | calibration a=1.153 b=-0.005  (fit on 2459 graded games before 2026-10-17)
 NRFI model | calibration a=0.341 b=-0.052  (fit on 1825 graded 1st innings before 2026-10-17)
 Slate      | 1 games · none graded yet
-Cache      | 526 files (5.5 MB) · 19 served from disk, 4 fetched
-2026-10-14 23:34:38   mlb    53.0s  8 built, 16 to pick from
-2026-10-14 23:34:41   nhl     3.2s  8 built, 18 to pick from
-2026-10-14 23:34:41   nba     0.3s  1 built, 1 to pick from
-2026-10-14 23:34:41 built 11808 KB in 147s
+Cache      | 523 files (5.5 MB) · 19 served from disk, 4 fetched
+2026-10-14 23:38:07   mlb    30.7s  5 built, 16 to pick from
+2026-10-14 23:38:09   nhl     2.1s  5 built, 18 to pick from
+2026-10-14 23:38:09   nba     0.3s  1 built, 1 to pick from
+2026-10-14 23:38:10 built 11808 KB in 131s
