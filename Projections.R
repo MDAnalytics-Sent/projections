@@ -6752,6 +6752,19 @@ nhl_live_report <- function(sch, k) {
                sum(sch$date == today_et(), na.rm = TRUE),
                sum(sch$date == today_et() & sch$has_score, na.rm = TRUE),
                a$hits, a$miss))
+  # Does the per-season player file carry goalie stats? The model trains on prior seasons
+  # only, so a goalie term is only fittable if these files have the save data in them.
+  for (y in rev(NHL_SEASONS)[1:3]) {
+    f <- nhl_path("pb", y)
+    if (!file.exists(f)) next
+    d <- tryCatch(as.data.frame(readRDS(f)), error = function(e) NULL)
+    if (is.null(d)) next
+    gcols <- grep("save|shot|goals_against|ga$|toi|position", names(d), ignore.case = TRUE, value = TRUE)
+    ng <- if ("position" %in% names(d)) sum(d$position == "G", na.rm = TRUE) else NA
+    mlog(sprintf("NHL season | %d: %d rows, %s goalie row(s); goalie-ish columns: %s",
+                 y, nrow(d), format(ng), if (length(gcols)) paste(gcols, collapse = ", ") else "none"))
+    break
+  }
   gk <- .nhl_gk$log
   if (is.null(gk) || !nrow(gk)) {
     mlog("NHL goalie | no goalie rows found in this run's box scores")
