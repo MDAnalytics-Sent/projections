@@ -4231,7 +4231,12 @@ game_grade_history <- function(path, sch) {
 #
 # p_raw is the model's own number, before any recalibration. Calibrating on an already
 # calibrated number would chase its own tail.
-PROP_LEDGER <- file.path(LEDGER_DIR, "player_props_graded.rds")
+# A text ledger rather than a compressed one, deliberately. This grows by tens of
+# thousands of rows a season and is committed as it does; git stores an appended text file
+# as a small delta against the previous version, and a gzipped binary as a whole new blob
+# every time. The other ledgers in this project are csv for the same reason.
+PROP_LEDGER <- file.path(LEDGER_DIR, "player_props_graded.csv")
+PROP_TFMT   <- "%Y-%m-%d %H:%M:%S"
 
 prop_empty <- function() data.frame(
   league = character(0), market = character(0), game_id = character(0),
@@ -4243,8 +4248,13 @@ prop_empty <- function() data.frame(
 
 prop_read <- function(path = PROP_LEDGER) {
   if (!file.exists(path)) return(prop_empty())
-  L <- try(readRDS(path), silent = TRUE)
-  if (inherits(L, "try-error") || !is.data.frame(L)) return(prop_empty())
+  L <- try(utils::read.csv(path, stringsAsFactors = FALSE,
+                           colClasses = c(game_id = "character", pid = "character")),
+           silent = TRUE)
+  if (inherits(L, "try-error") || !is.data.frame(L) || !nrow(L)) return(prop_empty())
+  for (cl in c("kickoff", "settled_at"))
+    if (cl %in% names(L))
+      L[[cl]] <- as.POSIXct(as.character(L[[cl]]), format = PROP_TFMT, tz = TZ_ET)
   L
 }
 
@@ -4271,9 +4281,16 @@ prop_record <- function(league, market, game_id, pid, pname, kickoff, p_raw, hit
   new <- new[!(k(new) %in% k(L)) & !duplicated(k(new)), , drop = FALSE]
   if (!nrow(new)) return(invisible(FALSE))
   L <- dplyr::bind_rows(L, new)
+  L <- L[order(L$kickoff, L$league, L$market, L$game_id, L$pid), , drop = FALSE]
+  W <- L
+  for (cl in c("kickoff", "settled_at"))
+    W[[cl]] <- format(W[[cl]], PROP_TFMT)
   dir.create(dirname(path), recursive = TRUE, showWarnings = FALSE)
   tmp <- paste0(path, ".tmp")
-  ok <- tryCatch({ saveRDS(L, tmp); file.rename(tmp, path) }, error = function(e) FALSE)
+  ok <- tryCatch({
+    utils::write.csv(W, tmp, row.names = FALSE, na = "")
+    file.rename(tmp, path)
+  }, error = function(e) FALSE)
   if (!isTRUE(ok)) unlink(tmp)
   invisible(isTRUE(ok))
 }
