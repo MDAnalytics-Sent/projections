@@ -6227,10 +6227,10 @@ cfb_td_week <- function(d, s, g, now = now_et(), recent = 1L) {
       X <- cfb_td_x(agg)
       ok <- stats::complete.cases(X)
       if (!any(ok)) next
+      praw <- cfb_td_predict(m, X[ok, , drop = FALSE])
       out[[length(out) + 1L]] <- data.frame(
         game_id = g$game_id[i], team_id = tm, opp_id = op, aid = agg$aid[ok],
-        name = unname(nm[agg$aid[ok]]), p = cfb_td_predict(m, X[ok, , drop = FALSE]),
-        p_raw = cfb_td_predict(m, X[ok, , drop = FALSE]),
+        name = unname(nm[agg$aid[ok]]), p = praw, p_raw = praw,
         car_pg = ifelse(agg$n_prev[ok] > 0, agg$s_car[ok] / agg$n_prev[ok], NA_real_),
         rec_pg = ifelse(agg$n_prev[ok] > 0, agg$s_rec[ok] / agg$n_prev[ok], NA_real_),
         td_n = agg$s_td[ok], gp = agg$n_prev[ok], kickoff = g$ko[i], stringsAsFactors = FALSE)
