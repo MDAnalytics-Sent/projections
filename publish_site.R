@@ -11,11 +11,15 @@
 # as the app, and published as a finished page: opening it computes nothing, so it loads in
 # about a second, and with no server behind it there is no connection to drop.
 #
-#   Page:   https://dsentes24.github.io/projections/
-#   Copy:   ~/Projections site     Log: ~/Library/Logs/projections-site.log
+#   Page:   https://<github-login>.github.io/projections/
 
 SITE <- list(
-  user  = "dsentes24",
+  # Whose page this is. GitHub Actions supplies the owner, so nobody's account name has to
+  # be written into a file that is published to the web.
+  user  = local({
+    e <- Sys.getenv("GITHUB_REPOSITORY_OWNER")
+    if (nzchar(e)) e else Sys.getenv("SITE_GITHUB_LOGIN", unset = "projections")
+  }),
   repo  = "projections",
   home  = getOption("site.home", path.expand("~/Projections site")),
   state = path.expand("~/Library/Application Support/Projections"),
