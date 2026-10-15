@@ -6752,6 +6752,22 @@ nhl_live_report <- function(sch, k) {
                sum(sch$date == today_et(), na.rm = TRUE),
                sum(sch$date == today_et() & sch$has_score, na.rm = TRUE),
                a$hits, a$miss))
+  gk <- .nhl_gk$log
+  if (is.null(gk) || !nrow(gk)) {
+    mlog("NHL goalie | no goalie rows found in this run's box scores")
+  } else {
+    st <- gk[gk$started %in% TRUE, , drop = FALSE]
+    mlog(sprintf("NHL goalie | %d appearance(s) across %d game(s); %d identifiable starter(s), %d distinct goalie(s)",
+                 nrow(gk), length(unique(gk$game_id)), nrow(st), length(unique(gk$pid))))
+    mlog(sprintf("NHL goalie | fields present -- toi %.0f%%, shots %.0f%%, saves %.0f%%, goals against %.0f%%",
+                 100*mean(!is.na(gk$toi)), 100*mean(!is.na(gk$shots)),
+                 100*mean(!is.na(gk$saves)), 100*mean(!is.na(gk$ga))))
+    if (nrow(st) && any(!is.na(st$shots)) && any(!is.na(st$saves))) {
+      sp <- sum(st$saves, na.rm = TRUE) / max(1, sum(st$shots, na.rm = TRUE))
+      mlog(sprintf("NHL goalie | starters league save pct %.4f over %d shots",
+                   sp, as.integer(sum(st$shots, na.rm = TRUE))))
+    }
+  }
   if (length(miss))
     mlog(sprintf("NHL        | no box score for %s",
                  paste(utils::head(sort(miss, decreasing = TRUE), 6), collapse = ", ")))
@@ -6785,6 +6801,11 @@ NHL_SCORE_DAYS <- 3L    # days back the scoreboard is asked who won
 NHL_LIVE_DAYS <- 45L
 NHL_WK_GUARD  <- 40L
 NHL_CORRUPT_N <- 200L
+
+# Goalie appearances found in this run's box scores. Kept here rather than threaded
+# through every return value, because the skater path is what drives the fetching.
+.nhl_gk <- new.env(hash = TRUE, parent = emptyenv())
+.nhl_gk$log <- NULL
 
 .nhl_api <- new.env(hash = TRUE, parent = emptyenv())
 .nhl_api$fail <- 0L
@@ -6984,6 +7005,60 @@ nhl_parse_box <- function(j, id) {
   dplyr::bind_rows(rows)
 }
 
+# Goalies out of a box score. Nothing here costs a request: the same JSON is already
+# being fetched and parsed for the skaters, and the goalies sit beside them.
+#
+# The starter is taken as whoever was in net longest, rather than any 'starter' flag,
+# because the flag is not in every season's feed and time on ice always is.
+nhl_mmss <- function(s) {
+  s <- as.character(s %||% "")
+  if (!nzchar(s) || !grepl(":", s)) return(NA_real_)
+  q <- strsplit(s, ":")[[1]]
+  if (length(q) != 2L) return(NA_real_)
+  suppressWarnings(as.numeric(q[1]) + as.numeric(q[2]) / 60)
+}
+
+# "28/30" -> saves 28, shots 30
+nhl_saves <- function(s) {
+  s <- as.character(s %||% "")
+  q <- strsplit(s, "/")[[1]]
+  if (length(q) != 2L) return(c(NA_real_, NA_real_))
+  suppressWarnings(as.numeric(q))
+}
+
+nhl_parse_goalies <- function(j, id) {
+  if (is.null(j)) return(NULL)
+  pbg <- j$playerByGameStats
+  if (is.null(pbg)) return(NULL)
+  rows <- list()
+  for (side in c("awayTeam", "homeTeam")) {
+    tm <- as.character(j[[side]]$abbrev %||% NA)
+    for (q in (pbg[[side]]$goalies %||% list())) {
+      sv <- nhl_saves(q$saveShotsAgainst)
+      rows[[length(rows) + 1L]] <- data.frame(
+        game_id = as.character(id),
+        pid   = as.character(q$playerId %||% NA),
+        gname = as.character(q$name$default %||% ""),
+        team  = tm,
+        toi   = nhl_mmss(q$toi),
+        saves = sv[1], shots = sv[2],
+        ga    = suppressWarnings(as.numeric(q$goalsAgainst %||% NA)),
+        stringsAsFactors = FALSE)
+    }
+  }
+  if (!length(rows)) return(NULL)
+  d <- dplyr::bind_rows(rows)
+  d <- d[!is.na(d$pid) & nzchar(d$pid), , drop = FALSE]
+  if (!nrow(d)) return(NULL)
+  d$started <- FALSE
+  for (tm in unique(d$team)) {
+    i <- which(d$team == tm)
+    if (!length(i)) next
+    d$started[i[which.max(ifelse(is.na(d$toi[i]), -1, d$toi[i]))]] <- TRUE
+  }
+  d
+}
+
 nhl_live_box <- function(sch, cap = NHL_BOX_CAP) {
   cur <- nhl_season_of(now_et())
   g <- sch[sch$season == cur & sch$has_score, , drop = FALSE]
@@ -6991,7 +7066,7 @@ nhl_live_box <- function(sch, cap = NHL_BOX_CAP) {
   g <- g[as.numeric(Sys.Date() - g$date) <= NHL_LIVE_DAYS, , drop = FALSE]
   if (!nrow(g)) return(NULL)
   g <- g[order(g$ko, decreasing = TRUE), , drop = FALSE]
-  out <- list(); spent <- 0L
+  out <- list(); gout <- list(); spent <- 0L
   for (i in seq_len(nrow(g))) {
     id <- g$game_id[i]
     tag <- paste0("bx_", id)
@@ -7004,7 +7079,10 @@ nhl_live_box <- function(sch, cap = NHL_BOX_CAP) {
     if (!is.null(bj) && nhl_api_final(bj$gameState %||% "")) nhl_api_seal(tag)
     b <- nhl_parse_box(bj, id)
     if (!is.null(b)) out[[length(out) + 1L]] <- b
+    gk <- tryCatch(nhl_parse_goalies(bj, id), error = function(e) NULL)
+    if (!is.null(gk)) gout[[length(gout) + 1L]] <- gk
   }
+  .nhl_gk$log <- if (length(gout)) dplyr::bind_rows(gout) else NULL
   if (!length(out)) return(NULL)
   dplyr::bind_rows(out)
 }
