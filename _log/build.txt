@@ -1,4 +1,4 @@
-2026-10-14 20:36:34 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-14 21:06:00 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -14,9 +14,9 @@ Slate      | 1 games · none graded yet
 Cache      | 523 files (5.5 MB) · 57 served from disk, 4 fetched
 NHL        | 106 final game(s) this season, 106 with box scores, 0 missing
 NHL        | latest final: 2026-10-14 (game 2026020106) | today 2026-10-14 has 2 game(s), 1 final | feed 3 hit / 9 fetched
-2026-10-14 20:37:17   today  18.5s
-2026-10-14 20:37:31   nfl    11.7s  3 built, 7 to pick from
-2026-10-14 20:37:38   cfb     6.5s  3 built, 8 to pick from
+2026-10-14 21:07:00   today  33.5s
+2026-10-14 21:07:18   nfl    15.1s  3 built, 7 to pick from
+2026-10-14 21:07:27   cfb     8.1s  3 built, 8 to pick from
 
 ── Slate 2026-10-13 ──
 Win model  | learned weights: run model 0.955, Pythagorean gap 0.803 (fit on 2,457 graded mlb-runs-v10 games, 45% data, half-life 45 d)
@@ -62,7 +62,7 @@ Win model  | calibration a=1.159 b=-0.004  (fit on 2458 graded games before 2026
 NRFI model | calibration a=0.341 b=-0.052  (fit on 1825 graded 1st innings before 2026-10-17)
 Slate      | 1 games · none graded yet
 Cache      | 523 files (5.5 MB) · 19 served from disk, 4 fetched
-2026-10-14 20:38:06   mlb    27.4s  5 built, 16 to pick from
-2026-10-14 20:38:07   nhl     1.5s  5 built, 18 to pick from
-2026-10-14 20:38:07   nba     0.2s  1 built, 1 to pick from
-2026-10-14 20:38:08 built 11680 KB in 94s
+2026-10-14 21:07:58   mlb    31.3s  5 built, 16 to pick from
+2026-10-14 21:08:00   nhl     2.0s  5 built, 18 to pick from
+2026-10-14 21:08:01   nba     0.3s  1 built, 1 to pick from
+2026-10-14 21:08:01 built 11680 KB in 121s
