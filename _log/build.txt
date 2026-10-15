@@ -1,4 +1,4 @@
-2026-10-14 22:28:10 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-14 22:34:36 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -14,13 +14,19 @@ Slate      | 1 games · record 0-1 (0%)
 Cache      | 523 files (5.5 MB) · 57 served from disk, 4 fetched
 NHL        | 107 final game(s) this season, 107 with box scores, 0 missing
 NHL        | latest final: 2026-10-14 (game 2026020107) | today 2026-10-15 has 11 game(s), 0 final | feed 3 hit / 9 fetched
-NHL season | 2026: 4200 rows, 0 goalie row(s); goalie-ish columns: position, shots_on_goal, toi, blocked_shots, even_strength_shots_against, power_play_shots_against, shorthanded_shots_against, save_shots_against, save_pctg, even_strength_goals_against, power_play_goals_against, shorthanded_goals_against, goals_against, shots_against, saves
+NHL season | 2026: 4200 rows; positions: C=1216 D=1281 L=646 R=637 NA=420
+NHL season | 2026: saves          non-missing on 420 row(s)
+NHL season | 2026: shots_against  non-missing on 420 row(s)
+NHL season | 2026: save_pctg      non-missing on 223 row(s)
+NHL season | 2026: toi            non-missing on 0 row(s)
+NHL season | 2026: goals_against  non-missing on 420 row(s)
+NHL season | a row that has saves: player_name=J. Markstrom position=NA team_abbrev=FLA toi=64:55 saves=15 shots_against=15
 NHL goalie | 428 appearance(s) across 107 game(s); 214 identifiable starter(s), 71 distinct goalie(s)
 NHL goalie | fields present -- toi 100%, shots 100%, saves 100%, goals against 100%
 NHL goalie | starters league save pct 0.8925 over 5602 shots
-2026-10-14 22:29:11   today  34.3s
-2026-10-14 22:29:33   nfl    18.3s  7 built, 7 to pick from
-2026-10-14 22:29:51   cfb    18.5s  8 built, 8 to pick from
+2026-10-14 22:35:35   today  33.3s
+2026-10-14 22:35:57   nfl    17.7s  7 built, 7 to pick from
+2026-10-14 22:36:15   cfb    17.8s  8 built, 8 to pick from
 
 ── Slate 2026-09-30 ──
 Win model  | learned weights: run model 0.950, Pythagorean gap 0.867 (fit on 2,433 graded mlb-runs-v10 games, 36% data, half-life 25 d)
@@ -138,7 +144,7 @@ Win model  | calibration a=1.153 b=-0.005  (fit on 2459 graded games before 2026
 NRFI model | calibration a=0.341 b=-0.052  (fit on 1825 graded 1st innings before 2026-10-17)
 Slate      | 1 games · none graded yet
 Cache      | 526 files (5.6 MB) · 19 served from disk, 4 fetched
-2026-10-14 22:32:02   mlb   130.2s  15 built, 16 to pick from
-2026-10-14 22:32:07   nhl     5.5s  15 built, 18 to pick from
-2026-10-14 22:32:08   nba     0.3s  1 built, 1 to pick from
-2026-10-14 22:32:08 built 11801 KB in 238s
+2026-10-14 22:38:09   mlb   114.1s  15 built, 16 to pick from
+2026-10-14 22:38:14   nhl     5.5s  15 built, 18 to pick from
+2026-10-14 22:38:15   nba     0.3s  1 built, 1 to pick from
+2026-10-14 22:38:15 built 11801 KB in 219s
