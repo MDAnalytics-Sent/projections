@@ -8545,7 +8545,7 @@ dash_record <- function(ok) {                        # ok: logical vector of gra
 #
 #   all  every settled pick       val  the ones this page would have listed
 #   dog  the model backing the book's underdog -- the projected upsets
-dash_edge_record <- function(L, edge_min = DASH_VALUE_EDGE, min_n = 20L) {
+dash_edge_record <- function(L, min_n = 20L) {
   if (is.null(L) || !nrow(L) || !all(c("Result", "Profit", "ModelP", "VegasP") %in% names(L))) return(NULL)
   g <- L[L$Result %in% c("W", "L") & is.finite(suppressWarnings(as.numeric(L$Profit))), , drop = FALSE]
   if (nrow(g) < min_n) return(NULL)
@@ -8563,7 +8563,7 @@ dash_edge_record <- function(L, edge_min = DASH_VALUE_EDGE, min_n = 20L) {
   # the number of settled bets a 5%-a-bet edge would need before it clears the noise
   sd1 <- if (nrow(g) > 1) stats::sd(g$pl) else 1
   list(all = cut(g),
-       val = cut(g[dash_is_value(g$ModelP, g$VegasP, g$EV, edge_min), , drop = FALSE]),
+       val = cut(g[dash_is_value(g$ModelP, g$VegasP, g$EV), , drop = FALSE]),
        dog = cut(g[is.finite(g$VegasP) & g$VegasP < 0.5, , drop = FALSE]),
        need = ceiling((2.8 * sd1 / 0.05)^2 / 50) * 50,
        from = suppressWarnings(min(as.Date(g$StartT), na.rm = TRUE)))
@@ -8763,32 +8763,36 @@ fair_dec <- function(p) {
   ifelse(is.finite(p) & p > 0.005 & p < 0.995, 1 / p, NA_real_)
 }
 fmt_dec <- function(x) ifelse(is.finite(x), sprintf("%.2f", x), "\u2014")
+# An edge of a third of a percent rounds to "+0%", which reads as nothing at all when it
+# is in fact the smallest positive number on the page. Below one per cent, show it.
+dash_ev <- function(ev) ifelse(!is.finite(ev), "&mdash;",
+                        ifelse(abs(ev) < 0.01, sprintf("%+.2f%%", 100 * ev),
+                                               sprintf("%+.0f%%", 100 * ev)))
 fmt_units <- function(u) ifelse(is.finite(u), sprintf("%s%.2fu", ifelse(u >= 0, "+", "\u2212"), abs(u)), "")
 
 DASH_TOP_N      <- 3      # value picks per league on the overview
-DASH_VALUE_EDGE <- 0.03   # ... each at least 3 points over the line's no-vig chance
-
-# What counts as a value pick, defined once. Two things have to hold: the price pays more
-# than the model's chance is worth (EV > 0, which already clears the book's margin), and
-# the model is at least three points over the line's fair chance -- a buffer, because the
-# model's own error is wider than a one-point disagreement.
+# What counts as a value pick, defined once and in the units that matter: the price pays
+# more than the model's chance is worth. EV = model chance x decimal price - 1, so a
+# positive figure already clears the book's margin. No threshold beyond zero, because
+# zero is the only bar on this page that is not arbitrary.
 #
-# One definition because there used to be two. The summary at the top of the overview
-# asked only for EV > 0 while the league cards below also wanted the buffer, so a game
-# inside it was listed as today's value and called no value a few inches further down.
-dash_is_value <- function(p, vegas, ev, edge_min = DASH_VALUE_EDGE)
-  is.finite(ev) & ev > 0 & is.finite(p) & is.finite(vegas) & (p - vegas) >= edge_min
-# ahead of the price, but inside that buffer: worth counting, not worth listing
-dash_is_near <- function(p, vegas, ev, edge_min = DASH_VALUE_EDGE)
-  is.finite(ev) & ev > 0 & !dash_is_value(p, vegas, ev, edge_min)
-# ... and why a slate has nothing to list, in the one case or the other. Shared so the
-# summary and the league cards cannot give two accounts of the same games.
-dash_why_none <- function(n, near) {
-  gm <- function(k) sprintf("%d game%s", k, if (k == 1) "" else "s")
-  if (near > 0) sprintf("the model is ahead of the price on %s, but by less than the %d-point buffer",
-                        gm(near), round(100 * DASH_VALUE_EDGE))
-  else sprintf("the book prices all %s at or above the model", gm(n))
-}
+# There used to be a second condition -- the model at least three points of win
+# probability over the line's fair chance. It went, for three reasons. It read as three
+# points of margin, which is what "points" means everywhere else here. It was 0.34 of a
+# standard deviation of the model's own typical gap from the price (6.8pp, sd 8.9pp), so
+# it screened almost nothing, and it bought 0.4% of expected value at college football's
+# typical price against 1.3% at hockey's -- not even the same bar across sports. And it
+# did not work: across the settled ledger the win rate is 46, 47, 48, 47 and 50 per cent
+# at buffers of 0, 3, 6, 10 and 15 points. The returns drift up with the buffer only
+# because a higher one selects longer prices, so a win pays more; the picks are no better.
+#
+# What guards the list instead is on the list: the model's number beside the book's on
+# every row, and the measured record underneath it.
+dash_is_value <- function(p, vegas, ev) is.finite(ev) & ev > 0
+# why a slate has nothing to list
+dash_why_none <- function(n)
+  sprintf("on %s the price already implies at least the model's chance",
+          sprintf("%s game%s", if (n == 1) "the" else sprintf("all %d", n), if (n == 1) "" else "s"))
 
 # ---- lines ledger -----------------------------------------------------------------
 # Every game of the day the overview priced: the model's pick, its chance, the line's
@@ -10857,17 +10861,17 @@ server <- function(input, output, session) {
                 format(rec$need, big.mark = ","))
       paste0('<div class="vs-rec"><b>What this has been worth.</b> ',
         sprintf('%s settled picks since %s: %s, %s a bet. ',
-                fig("%d", a$n), trimws(format(rec$from, "%e %b")), fig("%d\u2013%d", a$w, a$l), pct(a$roi)),
+                fig("%d", a$n), trimws(format(rec$from, "%e %b")), fig("%d&ndash;%d", a$w, a$l), pct(a$roi)),
         if (is.null(rec$val)) "" else sprintf(
-          'The %s that cleared this list\u2019s own filter went %s, against the %s the model gave them. ',
-          fig("%d", rec$val$n), fig("%d\u2013%d", rec$val$w, rec$val$l), fig("%.0f%%", rec$val$said)),
+          'The %s that cleared this list&rsquo;s own filter went %s, against the %s the model gave them. ',
+          fig("%d", rec$val$n), fig("%d&ndash;%d", rec$val$w, rec$val$l), fig("%.0f%%", rec$val$said)),
         if (is.null(rec$dog)) "" else sprintf(
-          'On the %s where the model took the book\u2019s underdog, the price said %s and %s came in \u2014 the model said %s. ',
+          'On the %s where the model took the book&rsquo;s underdog, the price said %s and %s came in &mdash; the model said %s. ',
           fig("%d", rec$dog$n), fig("%.0f%%", rec$dog$book), fig("%.0f%%", rec$dog$won), fig("%.0f%%", rec$dog$said)),
         verdict, '</div>')
     }
     shell <- function(inner, n_txt = "")
-      HTML(sprintf(paste0('<div class="vsum"><div class="vs-h"><span class="vs-t1">Today\u2019s value</span>',
+      HTML(sprintf(paste0('<div class="vsum"><div class="vs-h"><span class="vs-t1">Today&rsquo;s value</span>',
                           '<span class="vs-n">%s</span></div>%s%s</div>'),
                    n_txt, inner, rec_html))
 
@@ -10875,16 +10879,15 @@ server <- function(input, output, session) {
                                        is.finite(L$EV) & is.finite(L$VegasP), , drop = FALSE] else NULL
     if (is.null(v) || !nrow(v))
       return(shell(sprintf('<div class="vs-none">%s</div>',
-        if (length(R$pending)) "Reading today\u2019s lines\u2026" else
-          "No prices read today yet \u2014 the book posts them closer to the games.")))
+        if (length(R$pending)) "Reading today&rsquo;s lines&hellip;" else
+          "No prices read today yet &mdash; the book posts them closer to the games.")))
 
     v$edge <- v$ModelP - v$VegasP
     npriced <- nrow(v)
-    near <- sum(dash_is_near(v$ModelP, v$VegasP, v$EV))
     pos <- v[dash_is_value(v$ModelP, v$VegasP, v$EV), , drop = FALSE]
     if (!nrow(pos))
-      return(shell(sprintf('<div class="vs-none">Nothing to take today — %s.</div>',
-                           dash_why_none(npriced, near)),
+      return(shell(sprintf('<div class="vs-none">Nothing to take today &mdash; %s.</div>',
+                           dash_why_none(npriced)),
                    sprintf("%d game%s priced", npriced, if (npriced == 1) "" else "s")))
 
     # a game already under way is still shown, with its result, but it sinks below the
@@ -10914,27 +10917,23 @@ server <- function(input, output, session) {
     tr <- vapply(seq_len(nrow(shown)), function(i) sprintf(paste0(
       '<tr><td class="st hide-sm">%s</td><td class="lgc">%s</td><td>%s</td><td class="num">%d%%</td>',
       '<td class="num dim">%d%%</td><td class="num"><span class="odds">%s</span></td>',
-      '<td class="num"><span class="ev%s">+%d%%</span></td></tr>'),
+      '<td class="num"><span class="ev%s">%s</span></td></tr>'),
       stat(shown$League[i], shown$Matchup[i], shown$StartT[i]), dash_chip(shown$League[i]),
       pick_cell(shown$League[i], shown$Matchup[i], shown$Pick[i], shown$VegasP[i] < 0.5),
       round(100 * shown$ModelP[i]), round(100 * shown$VegasP[i]),
       fmt_dec(as.numeric(shown$Odds[i])),
-      if (shown$EV[i] >= 0.15) " hi" else "", round(100 * shown$EV[i])), "")
+      if (shown$EV[i] >= 0.15) " hi" else "", dash_ev(shown$EV[i])), "")
     ndog <- sum(pos$VegasP < 0.5)
     shell(paste0(
       sprintf(paste0('<table class="sp-t"><thead><tr><th class="hide-sm"></th><th></th><th>Pick</th>',
                      '<th class="num">Model</th><th class="num">Vegas</th><th class="num">Price</th>',
                      '<th class="num">Value</th></tr></thead><tbody>%s</tbody></table>'),
               paste(tr, collapse = "")),
-      if (nrow(pos) > nrow(shown)) sprintf('<div class="vs-more">and %d more clearing the same bar.</div>',
-                                           nrow(pos) - nrow(shown)) else "",
-      # the games just short of the bar are counted here rather than listed, so the cards
-      # below cannot be the first place this slate is mentioned
-      if (near) sprintf('<div class="vs-more">%d more ahead of the price, but inside the %d-point buffer.</div>',
-                        near, round(100 * DASH_VALUE_EDGE)) else ""),
+      if (nrow(pos) > nrow(shown)) sprintf('<div class="vs-more">and %d more paying above the model&rsquo;s chance.</div>',
+                                           nrow(pos) - nrow(shown)) else ""),
       sprintf("%d value pick%s from %d priced game%s%s",
               nrow(pos), if (nrow(pos) == 1) "" else "s", npriced, if (npriced == 1) "" else "s",
-              if (ndog) sprintf(" \u00b7 %d projected upset%s", ndog, if (ndog == 1) "" else "s") else ""))
+              if (ndog) sprintf(" &middot; %d projected upset%s", ndog, if (ndog == 1) "" else "s") else ""))
   })
 
   # -- one card per league ---------------------------------------------------------------
@@ -10993,15 +10992,15 @@ server <- function(input, output, session) {
             tr <- vapply(seq_len(nrow(v)), function(i) { st <- status(v$Matchup[i], v$StartT[i]); sprintf(paste0(
               '<tr><td class="st hide-sm">%s</td><td>%s</td><td class="num">%d%%</td>',
               '<td class="num hide-sm dim">%d%%</td><td class="num"><span class="odds">%s</span></td>',
-              '<td class="num"><span class="ev%s">+%d%%</span></td></tr>'),
+              '<td class="num"><span class="ev%s">%s</span></td></tr>'),
               st, team_cell(v$Matchup[i], v$Pick[i], st),
               round(100 * v$ModelP[i]), round(100 * v$VegasP[i]), fmt_dec(as.numeric(v$Odds[i])),
-              if (v$EV[i] >= 0.15) " hi" else "", round(100 * v$EV[i])) }, "")
+              if (v$EV[i] >= 0.15) " hi" else "", dash_ev(v$EV[i])) }, "")
             body <- sprintf(paste0('<table class="sp-t"><thead><tr><th class="hide-sm"></th><th>Best value</th><th class="num">Model</th>',
                                    '<th class="num hide-sm">Vegas</th><th class="num">Odds</th><th class="num">Edge</th></tr></thead>',
                                    '<tbody>%s</tbody></table>'), paste(tr, collapse = ""))
-          } else body <- sprintf('<div class="sp-none">No value in today\'s lines \u2014 %s.</div>',
-                                 dash_why_none(nrow(lt), sum(dash_is_near(lt$ModelP, lt$VegasP, lt$EV))))
+          } else body <- sprintf('<div class="sp-none">No value in today\'s lines &mdash; %s.</div>',
+                                 dash_why_none(nrow(lt)))
         } else {
           ahead <- !(tg$live %in% TRUE) & !(tg$final_ %in% TRUE) & !is.na(tg$t) & tg$t > Sys.time()
           why <- if (any(ahead)) "No lines posted yet" else "Today's games started before their lines were read"
@@ -11026,10 +11025,11 @@ server <- function(input, output, session) {
         paste(c(mlb = "MLB", nfl = "NFL", cfb = "NCAAF", nhl = "NHL", nba = "NBA")[R$pending], collapse = ", "))),
       if (length(R$errs)) div(class = "err", paste(R$errs, collapse = " \u00b7 ")),
       if (length(cards)) div(class = "dash-cav", HTML(paste0(
-        "<b>Value</b> = the model's pick at a price above its chance: <b>Edge</b> = model chance \u00d7 decimal odds \u2212 1, ",
-        "with the model at least 3 points over the line's no-vig chance (<b>Vegas</b>). DraftKings lines via ESPN; ",
-        "a price is kept as it stood at the start. What picks like these have actually returned is measured at ",
-        "the top of this page, from the settled ones.")))
+        "<b>Value</b> = the model's pick at a price that pays more than its chance is worth: model chance ",
+        "&times; decimal odds &minus; 1, so a positive figure already clears the book's margin. <b>Vegas</b> is the ",
+        "line's own chance with that margin taken out, shown beside the model's so the size of the ",
+        "disagreement is on every row. DraftKings lines via ESPN; a price is kept as it stood at the start. ",
+        "What picks like these have actually returned is measured at the top of this page, from the settled ones.")))
     )
   })
 
