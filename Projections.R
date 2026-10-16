@@ -6306,7 +6306,10 @@ append_ledger <- function(new) {
   L <- read_ledger()
   new <- new[!new$game_id %in% L$game_id, , drop = FALSE]
   if (nrow(new) == 0) return(invisible(L))
-  L <- rbind(L, new)
+  # bind_rows, not rbind: a settled row later gains result columns (home_score,
+  # away_score, won, settled_at), so the stored ledger is wider than a fresh pick.
+  # rbind refuses that and the pick was lost instead of written.
+  L <- dplyr::bind_rows(L, new)
   tmp <- paste0(LEDGER_FILE, ".tmp")
   saveRDS(L, tmp); file.rename(tmp, LEDGER_FILE)
   invisible(L)
@@ -8197,6 +8200,21 @@ PROJ_CSS_DASH <- "
       .rs.live{background:rgba(245,158,11,.14);color:#fcd34d}
       .sp-none{padding:14px 16px;color:#64748b;font-size:12.5px}
       .sp-sub{padding:11px 16px 2px;color:#64748b;font-family:'IBM Plex Mono',monospace;font-size:11px}
+      .vsum{background:#0b1018;border:1px solid #1e293b;border-radius:10px;overflow:hidden;margin:20px 0 4px}
+      .vs-h{display:flex;align-items:baseline;gap:12px;padding:13px 16px 11px;background:#0d1320;border-bottom:1px solid #1e293b}
+      .vs-h .vs-t1{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:700;letter-spacing:.3px;color:#e2e8f0}
+      .vs-h .vs-n{color:#64748b;font-size:12px}
+      .vsum .sp-t td{padding:8px 16px}
+      .vsum .sp-t td.lgc{width:1%;white-space:nowrap}
+      .dog{display:inline-block;margin-left:8px;padding:1px 6px;border-radius:3px;background:rgba(251,146,60,.14);
+           border:1px solid rgba(251,146,60,.35);color:#fdba74;font-family:'IBM Plex Mono',monospace;
+           font-size:9.5px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;vertical-align:1px}
+      .vs-more{padding:9px 16px;color:#64748b;font-size:12px;border-top:1px solid rgba(30,41,59,.75)}
+      .vs-rec{padding:12px 16px 13px;background:#090d14;border-top:1px solid #1e293b;color:#94a3b8;
+              font-size:12px;line-height:1.75}
+      .vs-rec b{color:#cbd5e1;font-weight:600}
+      .vs-rec .vfig{font-family:'IBM Plex Mono',monospace;color:#e2e8f0}
+      .vs-none{padding:16px;color:#64748b;font-size:13px}
       .dash-cav{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#475569;margin:12px 2px 0;line-height:1.65;max-width:1000px}
       .dash-cav b{color:#64748b;font-weight:600}
       table.dataTable td.tdx-cell{padding:0!important;background:#0b1120!important;border-top:none!important}
@@ -8520,6 +8538,37 @@ dash_record <- function(ok) {                        # ok: logical vector of gra
        pct = if (n) 100 * w / n else NA_real_)
 }
 
+# What picks like the ones on the overview have actually done, measured from the lines
+# ledger: every pick whose price was frozen at the start and whose game then finished.
+# Computed rather than written down, so the page cannot keep advertising an edge the
+# results have stopped supporting.
+#
+#   all  every settled pick       val  the ones this page would have listed
+#   dog  the model backing the book's underdog -- the projected upsets
+dash_edge_record <- function(L, edge_min = DASH_VALUE_EDGE, min_n = 20L) {
+  if (is.null(L) || !nrow(L) || !all(c("Result", "Profit", "ModelP", "VegasP") %in% names(L))) return(NULL)
+  g <- L[L$Result %in% c("W", "L") & is.finite(suppressWarnings(as.numeric(L$Profit))), , drop = FALSE]
+  if (nrow(g) < min_n) return(NULL)
+  g$y <- as.integer(g$Result == "W")
+  g$pl <- suppressWarnings(as.numeric(g$Profit))
+  g$ed <- suppressWarnings(as.numeric(g$ModelP)) - suppressWarnings(as.numeric(g$VegasP))
+  cut <- function(x) {
+    if (!nrow(x)) return(NULL)
+    roi <- 100 * sum(x$pl) / nrow(x)
+    se <- if (nrow(x) > 1) 100 * stats::sd(x$pl) / sqrt(nrow(x)) else NA_real_
+    list(n = nrow(x), w = sum(x$y), l = sum(1L - x$y), roi = roi, se = se,
+         said = 100 * mean(x$ModelP, na.rm = TRUE), book = 100 * mean(x$VegasP, na.rm = TRUE),
+         won = 100 * mean(x$y))
+  }
+  # the number of settled bets a 5%-a-bet edge would need before it clears the noise
+  sd1 <- if (nrow(g) > 1) stats::sd(g$pl) else 1
+  list(all = cut(g),
+       val = cut(g[is.finite(g$EV) & g$EV > 0 & is.finite(g$ed) & g$ed >= edge_min, , drop = FALSE]),
+       dog = cut(g[is.finite(g$VegasP) & g$VegasP < 0.5, , drop = FALSE]),
+       need = ceiling((2.8 * sd1 / 0.05)^2 / 50) * 50,
+       from = suppressWarnings(min(as.Date(g$StartT), na.rm = TRUE)))
+}
+
 # ==================== MARKET LINES ====================
 # The book's moneylines come from ESPN's public scoreboard feed (DraftKings lines; no
 # key, no scraping of a sportsbook). Kept per league and date: who plays, when, both
@@ -8814,12 +8863,18 @@ lines_record <- function(L) {
 # Short team names for the overview: "Atlanta Braves" -> "Braves" (college names stay).
 DASH_TWO_WORD <- c("red sox", "white sox", "blue jays", "maple leafs", "golden knights",
                    "red wings", "blue jackets", "trail blazers")
+# Cities whose name takes two words. The NHL feed names a team by its place alone
+# ("New York", "New Jersey"), so dropping the first word to get a nickname instead
+# produced "York" and "Jersey" on the overview.
+DASH_CITY_2W <- c("new", "los", "san", "st.", "saint", "las", "salt", "kansas",
+                  "tampa", "green", "oklahoma", "golden", "west", "north", "south", "east")
 dash_short <- function(lg, x) {
   x <- as.character(x); out <- x
   for (i in which(lg %in% c("MLB", "NHL", "NBA") & !is.na(x))) {
     if (grepl(" Hockey Club$", x[i])) { out[i] <- sub(" Hockey Club$", "", x[i]); next }
     w <- strsplit(x[i], " ", fixed = TRUE)[[1]]; n <- length(w)
     if (n >= 3L && tolower(paste(w[n - 1L], w[n])) %in% DASH_TWO_WORD) out[i] <- paste(w[n - 1L], w[n])
+    else if (n == 2L && tolower(w[1]) %in% DASH_CITY_2W) out[i] <- x[i]   # a place, not a nickname
     else if (n >= 2L) out[i] <- w[n]
   }
   out
@@ -8948,6 +9003,7 @@ ui <- fluidPage(
           div(class = "dash-top",
               div(div(class = "hdr", "Today"), uiOutput("dash_date")),
               actionButton("dash_refresh", "\u27f3  Refresh", class = "btn-run")),
+          uiOutput("dash_value"),
           uiOutput("dash_sports")
         )),
       conditionalPanel(
@@ -10747,6 +10803,113 @@ server <- function(input, output, session) {
     div(class = "sub", trimws(format(td, "%A, %B %e")))
   })
 
+  # -- today's value, every league in one list -------------------------------------------
+  # Ranked by what the price pays, not by how sure the model is. The two are not the same
+  # thing and the difference is large: three points of model edge is worth about +12% at a
+  # pick'em, +0.2% on a two-touchdown favourite and less than nothing beyond that, because
+  # the price has already taken it. Sorting by confidence therefore puts the least valuable
+  # bets at the top, which is what this replaces.
+  DASH_VAL_ROWS <- 12L
+  output$dash_value <- renderUI({
+    req(dash$y)
+    td <- today_local(); tz <- view_tz()
+    B <- dash_board(); R <- B$R; rows <- R$rows
+    dash_graded()
+    L <- tryCatch(lines_ledger_load(), error = function(e) NULL)
+    rec <- tryCatch(dash_edge_record(L), error = function(e) NULL)
+
+    # the record, in words, computed every time -- see dash_edge_record
+    fig <- function(...) sprintf('<span class="vfig">%s</span>', sprintf(...))
+    # A proper minus sign, so a negative return does not read as a hyphen beside the dashes
+    # around it -- as an HTML entity, which is plain ASCII here and a minus in the browser.
+    # The character itself does not survive the trip: the publisher runs in the C locale,
+    # where sub() refused the replacement outright and both paste0() and a format string
+    # ended up writing the literal text "<e2><88><92>" into the page.
+    pct <- function(v) fig(if (v < 0) "&minus;%.1f%%" else "+%.1f%%", abs(v))
+    rec_html <- if (is.null(rec) || is.null(rec$all)) "" else {
+      a <- rec$all
+      verdict <- if (is.na(a$se)) "" else if (a$roi - 1.96 * a$se > 0)
+        "That is ahead of the price by more than the noise in it." else if (a$roi + 1.96 * a$se < 0)
+        "That is behind the price by more than the noise in it." else
+        sprintf("That is indistinguishable from the price either way: showing a 5%%-a-bet edge would take about %s settled bets.",
+                format(rec$need, big.mark = ","))
+      paste0('<div class="vs-rec"><b>What this has been worth.</b> ',
+        sprintf('%s settled picks since %s: %s, %s a bet. ',
+                fig("%d", a$n), trimws(format(rec$from, "%e %b")), fig("%d\u2013%d", a$w, a$l), pct(a$roi)),
+        if (is.null(rec$val)) "" else sprintf(
+          'The %s that cleared this list\u2019s own filter went %s, against the %s the model gave them. ',
+          fig("%d", rec$val$n), fig("%d\u2013%d", rec$val$w, rec$val$l), fig("%.0f%%", rec$val$said)),
+        if (is.null(rec$dog)) "" else sprintf(
+          'On the %s where the model took the book\u2019s underdog, the price said %s and %s came in \u2014 the model said %s. ',
+          fig("%d", rec$dog$n), fig("%.0f%%", rec$dog$book), fig("%.0f%%", rec$dog$won), fig("%.0f%%", rec$dog$said)),
+        verdict, '</div>')
+    }
+    shell <- function(inner, n_txt = "")
+      HTML(sprintf(paste0('<div class="vsum"><div class="vs-h"><span class="vs-t1">Today\u2019s value</span>',
+                          '<span class="vs-n">%s</span></div>%s%s</div>'),
+                   n_txt, inner, rec_html))
+
+    v <- if (!is.null(L) && nrow(L)) L[!is.na(L$StartT) & dash_local_date(L$StartT, tz) == td &
+                                       is.finite(L$EV) & is.finite(L$VegasP), , drop = FALSE] else NULL
+    if (is.null(v) || !nrow(v))
+      return(shell(sprintf('<div class="vs-none">%s</div>',
+        if (length(R$pending)) "Reading today\u2019s lines\u2026" else
+          "No prices read today yet \u2014 the book posts them closer to the games.")))
+
+    v$edge <- v$ModelP - v$VegasP
+    npriced <- nrow(v)
+    pos <- v[v$EV > 0, , drop = FALSE]
+    if (!nrow(pos))
+      return(shell(sprintf('<div class="vs-none">Nothing to take today: the book prices all %d game%s at or above the model.</div>',
+                           npriced, if (npriced == 1) "" else "s"),
+                   sprintf("%d game%s priced", npriced, if (npriced == 1) "" else "s")))
+
+    # a game already under way is still shown, with its result, but it sinks below the
+    # ones that can still be acted on
+    started <- !is.na(pos$StartT) & pos$StartT <= Sys.time()
+    pos <- pos[order(started, -pos$EV), , drop = FALSE]
+    shown <- utils::head(pos, DASH_VAL_ROWS)
+
+    stat <- function(lg, m, tt) {
+      k <- if (is.null(rows) || !nrow(rows)) NA_integer_ else match(paste(lg, m), paste(rows$lg, rows$matchup))
+      if (is.na(k)) return(sprintf('<span class="when">%s</span>', dash_esc(dash_when(tt, tz, td))))
+      r <- rows[k, ]
+      if (!is.na(r$res)) sprintf('<span class="rs %s">%s %s</span>', if (r$res) "ok" else "no",
+                                 if (r$res) "&#10003;" else "&#10007;", dash_esc(r$score))
+      else if (isTRUE(r$live)) sprintf('<span class="rs live">Live %s</span>', dash_esc(r$score))
+      else if (isTRUE(r$final_)) '<span class="nt">Final</span>'
+      else sprintf('<span class="when">%s</span>', dash_esc(dash_when(if (is.na(tt)) r$t else tt, tz, td)))
+    }
+    pick_cell <- function(lg, m, pk, dog) {
+      q <- strsplit(as.character(m), " @ ", fixed = TRUE)[[1]]
+      home <- length(q) == 2L && identical(q[2], as.character(pk))
+      opp <- if (length(q) < 2L) "" else if (home) q[1] else q[2]
+      sprintf('<span class="bet">%s</span><span class="vs">%s %s</span>%s',
+              dash_esc(dash_short(lg, pk)), if (home) "vs" else "@", dash_esc(dash_short(lg, opp)),
+              if (isTRUE(dog)) ' <span class="dog">Upset</span>' else "")
+    }
+    tr <- vapply(seq_len(nrow(shown)), function(i) sprintf(paste0(
+      '<tr><td class="st hide-sm">%s</td><td class="lgc">%s</td><td>%s</td><td class="num">%d%%</td>',
+      '<td class="num dim">%d%%</td><td class="num"><span class="odds">%s</span></td>',
+      '<td class="num"><span class="ev%s">+%d%%</span></td></tr>'),
+      stat(shown$League[i], shown$Matchup[i], shown$StartT[i]), dash_chip(shown$League[i]),
+      pick_cell(shown$League[i], shown$Matchup[i], shown$Pick[i], shown$VegasP[i] < 0.5),
+      round(100 * shown$ModelP[i]), round(100 * shown$VegasP[i]),
+      fmt_dec(as.numeric(shown$Odds[i])),
+      if (shown$EV[i] >= 0.15) " hi" else "", round(100 * shown$EV[i])), "")
+    ndog <- sum(pos$VegasP < 0.5)
+    shell(paste0(
+      sprintf(paste0('<table class="sp-t"><thead><tr><th class="hide-sm"></th><th></th><th>Pick</th>',
+                     '<th class="num">Model</th><th class="num">Vegas</th><th class="num">Price</th>',
+                     '<th class="num">Value</th></tr></thead><tbody>%s</tbody></table>'),
+              paste(tr, collapse = "")),
+      if (nrow(pos) > nrow(shown)) sprintf('<div class="vs-more">and %d more worth a price above the model.</div>',
+                                           nrow(pos) - nrow(shown)) else ""),
+      sprintf("%d of %d priced game%s pay more than the model\u2019s chance%s",
+              nrow(pos), npriced, if (npriced == 1) "" else "s",
+              if (ndog) sprintf(" \u00b7 %d projected upset%s", ndog, if (ndog == 1) "" else "s") else ""))
+  })
+
   # -- one card per league ---------------------------------------------------------------
   output$dash_sports <- renderUI({
     req(dash$y)
@@ -10838,8 +11001,8 @@ server <- function(input, output, session) {
       if (length(cards)) div(class = "dash-cav", HTML(paste0(
         "<b>Value</b> = the model's pick at a price above its chance: <b>Edge</b> = model chance \u00d7 decimal odds \u2212 1, ",
         "with the model at least 3 points over the line's no-vig chance (<b>Vegas</b>). DraftKings lines via ESPN; ",
-        "a price is kept as it stood at the start. Betting edges like these has returned +4% a bet in MLB (Mar\u2013Jun 2026) ",
-        "and lost 6\u201312% in the NFL (2017\u201325).")))
+        "a price is kept as it stood at the start. What picks like these have actually returned is measured at ",
+        "the top of this page, from the settled ones.")))
     )
   })
 

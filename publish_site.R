@@ -92,7 +92,7 @@ site_capture <- function(app, tz, out_dir) {
   M$file <- file.path(out_dir, "d", "manifest.json")
   M$man <- tryCatch(jsonlite::fromJSON(M$file, simplifyVector = FALSE), error = function(e) list())
   R <- new.env(); R$states <- list(); R$inline <- list(); R$err <- list(); R$season <- list()
-  R$today <- ""; R$today_date <- ""
+  R$today <- ""; R$today_date <- ""; R$today_value <- ""
   # The server moves its selectors (to this week, to the next game day) by asking the
   # browser to; here those requests are caught and applied as the browser would.
   moved <- new.env(); moved$v <- list()
@@ -268,6 +268,7 @@ site_capture <- function(app, tz, out_dir) {
         session$elapse(250)
       }
       R$today_date <- ui("dash_date"); R$today <- ui("dash_sports")
+      R$today_value <- ui("dash_value")
       site_log(sprintf("  %-5s %5.1fs", "today", as.numeric(difftime(Sys.time(), t0, units = "secs"))))
     })
     step("nfl", function() {
@@ -330,6 +331,7 @@ site_page <- function(app, R, built, tz, out_dir) {
     htmltools::div(class = "lg-pane", `data-lg` = "today",
       htmltools::div(class = "content dash",
         htmltools::div(class = "dash-top", htmltools::div(htmltools::div(class = "hdr", "Today"), H(R$today_date))),
+        H(if (is.null(R$today_value) || !nzchar(R$today_value)) "" else R$today_value),
         H(if (nzchar(R$today)) R$today else '<div class="err">Not available in this update; the next one will try again.</div>'))),
     htmltools::div(class = "lg-pane", `data-lg` = "nfl",
       htmltools::div(class = "content",
