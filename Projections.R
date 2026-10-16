@@ -8563,7 +8563,7 @@ dash_edge_record <- function(L, edge_min = DASH_VALUE_EDGE, min_n = 20L) {
   # the number of settled bets a 5%-a-bet edge would need before it clears the noise
   sd1 <- if (nrow(g) > 1) stats::sd(g$pl) else 1
   list(all = cut(g),
-       val = cut(g[is.finite(g$EV) & g$EV > 0 & is.finite(g$ed) & g$ed >= edge_min, , drop = FALSE]),
+       val = cut(g[dash_is_value(g$ModelP, g$VegasP, g$EV, edge_min), , drop = FALSE]),
        dog = cut(g[is.finite(g$VegasP) & g$VegasP < 0.5, , drop = FALSE]),
        need = ceiling((2.8 * sd1 / 0.05)^2 / 50) * 50,
        from = suppressWarnings(min(as.Date(g$StartT), na.rm = TRUE)))
@@ -8767,6 +8767,28 @@ fmt_units <- function(u) ifelse(is.finite(u), sprintf("%s%.2fu", ifelse(u >= 0, 
 
 DASH_TOP_N      <- 3      # value picks per league on the overview
 DASH_VALUE_EDGE <- 0.03   # ... each at least 3 points over the line's no-vig chance
+
+# What counts as a value pick, defined once. Two things have to hold: the price pays more
+# than the model's chance is worth (EV > 0, which already clears the book's margin), and
+# the model is at least three points over the line's fair chance -- a buffer, because the
+# model's own error is wider than a one-point disagreement.
+#
+# One definition because there used to be two. The summary at the top of the overview
+# asked only for EV > 0 while the league cards below also wanted the buffer, so a game
+# inside it was listed as today's value and called no value a few inches further down.
+dash_is_value <- function(p, vegas, ev, edge_min = DASH_VALUE_EDGE)
+  is.finite(ev) & ev > 0 & is.finite(p) & is.finite(vegas) & (p - vegas) >= edge_min
+# ahead of the price, but inside that buffer: worth counting, not worth listing
+dash_is_near <- function(p, vegas, ev, edge_min = DASH_VALUE_EDGE)
+  is.finite(ev) & ev > 0 & !dash_is_value(p, vegas, ev, edge_min)
+# ... and why a slate has nothing to list, in the one case or the other. Shared so the
+# summary and the league cards cannot give two accounts of the same games.
+dash_why_none <- function(n, near) {
+  gm <- function(k) sprintf("%d game%s", k, if (k == 1) "" else "s")
+  if (near > 0) sprintf("the model is ahead of the price on %s, but by less than the %d-point buffer",
+                        gm(near), round(100 * DASH_VALUE_EDGE))
+  else sprintf("the book prices all %s at or above the model", gm(n))
+}
 
 # ---- lines ledger -----------------------------------------------------------------
 # Every game of the day the overview priced: the model's pick, its chance, the line's
@@ -10858,10 +10880,11 @@ server <- function(input, output, session) {
 
     v$edge <- v$ModelP - v$VegasP
     npriced <- nrow(v)
-    pos <- v[v$EV > 0, , drop = FALSE]
+    near <- sum(dash_is_near(v$ModelP, v$VegasP, v$EV))
+    pos <- v[dash_is_value(v$ModelP, v$VegasP, v$EV), , drop = FALSE]
     if (!nrow(pos))
-      return(shell(sprintf('<div class="vs-none">Nothing to take today: the book prices all %d game%s at or above the model.</div>',
-                           npriced, if (npriced == 1) "" else "s"),
+      return(shell(sprintf('<div class="vs-none">Nothing to take today — %s.</div>',
+                           dash_why_none(npriced, near)),
                    sprintf("%d game%s priced", npriced, if (npriced == 1) "" else "s")))
 
     # a game already under way is still shown, with its result, but it sinks below the
@@ -10903,10 +10926,14 @@ server <- function(input, output, session) {
                      '<th class="num">Model</th><th class="num">Vegas</th><th class="num">Price</th>',
                      '<th class="num">Value</th></tr></thead><tbody>%s</tbody></table>'),
               paste(tr, collapse = "")),
-      if (nrow(pos) > nrow(shown)) sprintf('<div class="vs-more">and %d more worth a price above the model.</div>',
-                                           nrow(pos) - nrow(shown)) else ""),
-      sprintf("%d of %d priced game%s pay more than the model\u2019s chance%s",
-              nrow(pos), npriced, if (npriced == 1) "" else "s",
+      if (nrow(pos) > nrow(shown)) sprintf('<div class="vs-more">and %d more clearing the same bar.</div>',
+                                           nrow(pos) - nrow(shown)) else "",
+      # the games just short of the bar are counted here rather than listed, so the cards
+      # below cannot be the first place this slate is mentioned
+      if (near) sprintf('<div class="vs-more">%d more ahead of the price, but inside the %d-point buffer.</div>',
+                        near, round(100 * DASH_VALUE_EDGE)) else ""),
+      sprintf("%d value pick%s from %d priced game%s%s",
+              nrow(pos), if (nrow(pos) == 1) "" else "s", npriced, if (npriced == 1) "" else "s",
               if (ndog) sprintf(" \u00b7 %d projected upset%s", ndog, if (ndog == 1) "" else "s") else ""))
   })
 
@@ -10959,7 +10986,7 @@ server <- function(input, output, session) {
         }
         if (!is.null(lt) && nrow(lt)) {
           lt$edge <- lt$ModelP - lt$VegasP
-          v <- lt[is.finite(lt$EV) & lt$EV > 0 & is.finite(lt$edge) & lt$edge >= DASH_VALUE_EDGE, , drop = FALSE]
+          v <- lt[dash_is_value(lt$ModelP, lt$VegasP, lt$EV), , drop = FALSE]
           v <- head(v[order(-v$EV), , drop = FALSE], DASH_TOP_N)
           if (nrow(v)) {
             v <- v[order(v$StartT), , drop = FALSE]
@@ -10973,8 +11000,8 @@ server <- function(input, output, session) {
             body <- sprintf(paste0('<table class="sp-t"><thead><tr><th class="hide-sm"></th><th>Best value</th><th class="num">Model</th>',
                                    '<th class="num hide-sm">Vegas</th><th class="num">Odds</th><th class="num">Edge</th></tr></thead>',
                                    '<tbody>%s</tbody></table>'), paste(tr, collapse = ""))
-          } else body <- sprintf('<div class="sp-none">No value in today\'s lines \u2014 the book prices all %d game%s at or above the model.</div>',
-                                 nrow(lt), if (nrow(lt) == 1) "" else "s")
+          } else body <- sprintf('<div class="sp-none">No value in today\'s lines \u2014 %s.</div>',
+                                 dash_why_none(nrow(lt), sum(dash_is_near(lt$ModelP, lt$VegasP, lt$EV))))
         } else {
           ahead <- !(tg$live %in% TRUE) & !(tg$final_ %in% TRUE) & !is.na(tg$t) & tg$t > Sys.time()
           why <- if (any(ahead)) "No lines posted yet" else "Today's games started before their lines were read"
