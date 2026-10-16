@@ -150,11 +150,11 @@
 "NCAAF","401871068","2026-10-15 00:00:00","Western Kentucky @ Sam Houston","Sam Houston","home",0.5952,0.4957,1.926,0.1463,"DraftKings","2026-10-14 23:59:56","L",-1
 "NHL","401892505","2026-10-15 00:30:00","Dallas @ Colorado","Colorado","home",0.5915,0.5934,1.617,-0.0433,"DraftKings","2026-10-15 00:00:17","L",-1
 "MLB","401908025","2026-10-15 17:00:00","Tampa Bay Rays @ Cleveland Guardians","Cleveland Guardians","home",0.526,0.5346,1.82,-0.0429,"DraftKings","2026-10-15 16:40:41","W",0.82
-"NHL","401892510","2026-10-15 23:00:00","Vancouver @ Florida","Florida","home",0.6052,0.718,1.336,-0.1917,"DraftKings","2026-10-15 22:37:43",NA,NA
-"NHL","401892507","2026-10-15 23:00:00","New York @ Ottawa","Ottawa","home",0.5425,0.5934,1.617,-0.1227,"DraftKings","2026-10-15 22:37:43",NA,NA
-"NHL","401892506","2026-10-15 23:00:00","Buffalo @ Toronto","Toronto","home",0.5838,0.5261,1.82,0.0622,"DraftKings","2026-10-15 22:37:43",NA,NA
-"NHL","401892509","2026-10-15 23:00:00","Seattle @ Tampa Bay","Tampa Bay","home",0.523,0.705,1.36,-0.2889,"DraftKings","2026-10-15 22:37:43",NA,NA
-"NHL","401892511","2026-10-15 23:00:00","New York @ New Jersey","New York","away",0.5582,0.4573,2.1,0.1723,"DraftKings","2026-10-15 22:37:43",NA,NA
+"NHL","401892510","2026-10-15 23:00:00","Vancouver @ Florida","Florida","home",0.6052,0.718,1.336,-0.1917,"DraftKings","2026-10-15 22:37:43","W",0.336
+"NHL","401892507","2026-10-15 23:00:00","New York @ Ottawa","Ottawa","home",0.5425,0.5934,1.617,-0.1227,"DraftKings","2026-10-15 22:37:43","W",0.617
+"NHL","401892506","2026-10-15 23:00:00","Buffalo @ Toronto","Toronto","home",0.5838,0.5261,1.82,0.0622,"DraftKings","2026-10-15 22:37:43","L",-1
+"NHL","401892509","2026-10-15 23:00:00","Seattle @ Tampa Bay","Tampa Bay","home",0.523,0.705,1.36,-0.2889,"DraftKings","2026-10-15 22:37:43","W",0.36
+"NHL","401892511","2026-10-15 23:00:00","New York @ New Jersey","New York","away",0.5582,0.4573,2.1,0.1723,"DraftKings","2026-10-15 22:37:43","L",-1
 "NCAAF","401862800","2026-10-15 23:30:00","East Carolina @ UAB","East Carolina","away",0.5455,0.6369,1.505,-0.1789,"DraftKings","2026-10-15 23:01:40",NA,NA
 "NCAAF","401869950","2026-10-15 23:30:00","Georgia Southern @ Old Dominion","Old Dominion","home",0.5369,0.417,2.3,0.2349,"DraftKings","2026-10-15 23:01:40",NA,NA
 "NHL","401892508","2026-10-15 23:30:00","Philadelphia @ Detroit","Detroit","home",0.608,0.5721,1.676,0.0189,"DraftKings","2026-10-15 23:01:40",NA,NA
