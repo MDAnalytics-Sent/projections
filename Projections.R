@@ -9886,7 +9886,10 @@ server <- function(input, output, session) {
     row_cls <- ifelse(!is.na(df$IsCorrect) & df$IsCorrect, "row-correct",
                       ifelse(!is.na(df$IsCorrect) & !df$IsCorrect, "row-incorrect",
                              ifelse(df$IsLive %in% TRUE, "row-live", "")))
-    datatable(disp, options=list(pageLength=30, scrollX=FALSE, dom="ftp",
+    disp$gid <- df$GameID
+    datatable(disp, callback=JS("tdxBind(table, 'games_tbl', 'mlb_tdx', 5);"),
+              options=list(pageLength=30, scrollX=FALSE, dom="ftp",
+                           columnDefs=list(list(targets=5, visible=FALSE)),
                                  rowCallback=JS(sprintf("function(row,data,index){var cls=%s;if(cls[index]&&cls[index]!=='')$(row).addClass(cls[index]);}",
                                                         jsonlite::toJSON(row_cls)))),
               rownames=FALSE, class="stripe", escape=FALSE)
@@ -9957,6 +9960,28 @@ server <- function(input, output, session) {
               rownames=FALSE, class="stripe", escape=FALSE)
   }, server = FALSE)
   
+  # A game's eight likeliest home-run hitters. The slate board keeps every hitter;
+  # this is the same numbers narrowed to the game that was tapped.
+  mlb_tdx_html <- function(gid) tryCatch({
+    s <- store()
+    if (is.null(s) || is.null(s$hr) || !nrow(s$hr)) tdx_none("No home-run projections for this game yet.") else {
+      x <- s$hr[as.character(s$hr$GameID) == as.character(gid), , drop = FALSE]
+      pr <- suppressWarnings(as.numeric(x$HRProbNum)) / 100
+      ok <- is.finite(pr)
+      x <- x[ok, , drop = FALSE]; pr <- pr[ok]
+      o <- order(-pr)
+      x <- utils::head(x[o, , drop = FALSE], 8L); pr <- utils::head(pr[o], 8L)
+      sc <- if ("IsCorrect" %in% names(x)) as.integer(x$IsCorrect) else rep(NA_integer_, nrow(x))
+      tdx_html(sprintf('<span class="tm">%s</span>', dash_esc(x$Player)), x$Team, pr, sc,
+               TDX_HR_NOTE, title = "Most likely home-run hitters", miss = "No home run")
+    }
+  }, error = function(e) tdx_none(if (inherits(e, "shiny.silent.error"))
+    "Home-run projections are still loading \u2014 tap the game again in a moment." else conditionMessage(e)))
+  observeEvent(input$mlb_tdx, {
+    gid <- as.character(input$mlb_tdx$gid %||% "")
+    session$sendCustomMessage("tdx", list(tbl = "games_tbl", gid = gid, html = mlb_tdx_html(gid)))
+  }, ignoreInit = TRUE)
+
   output$hr_section <- renderUI({
     s <- store(); if (is.null(s) || is.null(s$hr) || nrow(s$hr) == 0) return(NULL)
     tagList(div(class="section-hdr",
@@ -10148,10 +10173,40 @@ server <- function(input, output, session) {
                ifelse(b$ok, '<span class="rs ok">Correct</span>',
                             '<span class="rs no">Wrong</span>')),
       check.names = FALSE, stringsAsFactors = FALSE)
+    tbl$gid <- g$game_id
     datatable(tbl[o, ], rownames = FALSE, escape = FALSE, selection = "none",
+              callback = JS("tdxBind(table, 'nboard', 'nhl_tdx', 6);"),
               options = list(pageLength = 20, dom = "t", ordering = FALSE,
-                             columnDefs = list(list(targets = 2:4, className = "dt-right"))))
+                             columnDefs = list(list(targets = 2:4, className = "dt-right"),
+                                               list(targets = 6, visible = FALSE))))
   }, server = FALSE)
+  # A game's eight likeliest goalscorers, pulled from the same slate-wide board shown
+  # below it -- the board carries a team rather than a game, so the game's two teams
+  # are what select it.
+  nhl_tdx_html <- function(gid) tryCatch({
+    x <- ngoal_tbl(); b <- nboard()
+    if (is.null(x) || is.null(b)) tdx_none("No skater projections for this game yet.") else {
+      i <- match(as.character(gid), as.character(b$g$game_id))
+      if (is.na(i)) tdx_none("No skater projections for this game yet.") else {
+        x <- x[x$team %in% c(b$g$home[i], b$g$away[i]) & is.finite(x$p), , drop = FALSE]
+        x <- utils::head(x[order(-x$p), , drop = FALSE], 8L)
+        sc <- ifelse(x$state == "played", x$scored, NA_integer_)
+        d <- ndat()
+        nm <- ifelse(is.na(x$inj),
+               sprintf('%s<span class="tm">%s</span>', lg_badge(unname(d$logo[x$team])), x$pname),
+               sprintf('%s<span class="tm">%s</span><span class="qt dnp">%s</span>',
+                       lg_badge(unname(d$logo[x$team])), x$pname, x$inj))
+        tdx_html(nm, x$pos, x$p, sc, TDX_NOTE,
+                 title = "Most likely goalscorers", miss = "No goal")
+      }
+    }
+  }, error = function(e) tdx_none(if (inherits(e, "shiny.silent.error"))
+    "Skater projections are still loading \u2014 tap the game again in a moment." else conditionMessage(e)))
+  observeEvent(input$nhl_tdx, {
+    gid <- as.character(input$nhl_tdx$gid %||% "")
+    session$sendCustomMessage("tdx", list(tbl = "nboard", gid = gid, html = nhl_tdx_html(gid)))
+  }, ignoreInit = TRUE)
+
   ngoal_tbl <- reactive({
     b <- nboard(); d <- ndat(); req(b, d)
     live <- isTRUE(day_et(b$cut) >= today_et())
@@ -10302,10 +10357,36 @@ server <- function(input, output, session) {
                ifelse(b$ok, '<span class="rs ok">Correct</span>',
                             '<span class="rs no">Wrong</span>')),
       check.names = FALSE, stringsAsFactors = FALSE)
+    tbl$gid <- g$game_id
     datatable(tbl[o, ], rownames = FALSE, escape = FALSE, selection = "none",
+              callback = JS("tdxBind(table, 'bboard', 'nba_tdx', 6);"),
               options = list(pageLength = 20, dom = "t", ordering = FALSE,
-                             columnDefs = list(list(targets = 2:4, className = "dt-right"))))
+                             columnDefs = list(list(targets = 2:4, className = "dt-right"),
+                                               list(targets = 6, visible = FALSE))))
   }, server = FALSE)
+  # Every starter in the game, not a top eight: exactly one of the ten gets the first
+  # basket, so cutting two of them would be hiding candidates rather than noise.
+  nba_tdx_html <- function(gid) tryCatch({
+    x <- bfb_tbl(); b <- bboard()
+    if (is.null(x) || is.null(b)) tdx_none("No starter projections for this game yet.") else {
+      i <- match(as.character(gid), as.character(b$g$game_id))
+      if (is.na(i)) tdx_none("No starter projections for this game yet.") else {
+        x <- x[x$team %in% c(b$g$home[i], b$g$away[i]) & is.finite(x$p_fg), , drop = FALSE]
+        x <- utils::head(x[order(-x$p_fg), , drop = FALSE], 10L)
+        sc <- ifelse(x$state == "played", x$yf, NA_integer_)
+        d <- bdat()
+        nm <- sprintf('%s<span class="tm">%s</span>', lg_badge(unname(d$logo[x$team])), x$pname)
+        tdx_html(nm, x$pos, x$p_fg, sc, TDX_FB_NOTE,
+                 title = "Most likely first basket", miss = "Not first")
+      }
+    }
+  }, error = function(e) tdx_none(if (inherits(e, "shiny.silent.error"))
+    "Starter projections are still loading \u2014 tap the game again in a moment." else conditionMessage(e)))
+  observeEvent(input$nba_tdx, {
+    gid <- as.character(input$nba_tdx$gid %||% "")
+    session$sendCustomMessage("tdx", list(tbl = "bboard", gid = gid, html = nba_tdx_html(gid)))
+  }, ignoreInit = TRUE)
+
   bfb_tbl <- reactive({
     b <- bboard(); d <- bdat(); req(b, d)
     live <- isTRUE(day_et(b$cut) >= today_et())
@@ -10763,19 +10844,26 @@ server <- function(input, output, session) {
   })
 
   # ---- a game's most likely touchdown scorers, opened under its row on a board ----------
-  tdx_html <- function(name_html, sub, p, scored, note) {
+  # One renderer for every sport's dropdown. The wording is a parameter rather than
+  # four near-copies of the same table: football scores touchdowns, hockey goals,
+  # basketball a first basket and baseball home runs, and nothing else differs.
+  tdx_html <- function(name_html, sub, p, scored, note,
+                      title = "Most likely touchdown scorers", miss = "No TD") {
     if (!length(p)) return('<div class="tdx"><div class="tdx-none">No player projections for this game.</div></div>')
-    res <- ifelse(is.na(scored), "", ifelse(scored > 0, '<span class="rs ok">Scored</span>', '<span class="rs no">No TD</span>'))
+    res <- ifelse(is.na(scored), "", ifelse(scored > 0, '<span class="rs ok">Scored</span>',
+                                            sprintf('<span class="rs no">%s</span>', miss)))
     tr <- sprintf(paste0('<tr><td class="pl">%s<span class="ps">%s</span></td><td class="num">%d%%</td>',
                          '<td class="num"><b>%s</b></td><td class="rz">%s</td></tr>'),
                   name_html, sub, round(100 * p), fmt_dec(fair_dec(p)), res)
-    sprintf(paste0('<div class="tdx"><div class="tdx-h">Most likely touchdown scorers<span>%s</span></div>',
+    sprintf(paste0('<div class="tdx"><div class="tdx-h">%s<span>%s</span></div>',
                    '<table class="tdx-t"><thead><tr><th>Player</th><th class="num">Chance</th>',
                    '<th class="num">Fair odds</th><th></th></tr></thead><tbody>%s</tbody></table></div>'),
-            note, paste(tr, collapse = ""))
+            title, note, paste(tr, collapse = ""))
   }
   tdx_none <- function(msg) sprintf('<div class="tdx"><div class="tdx-none">%s</div></div>', htmltools::htmlEscape(msg))
   TDX_NOTE <- " \u00b7 chance he scores, if he plays \u00b7 fair odds = 1 \u00f7 chance: bet only above them"
+  TDX_FB_NOTE <- " \u00b7 chance he scores the game's first basket \u00b7 fair odds = 1 \u00f7 chance"
+  TDX_HR_NOTE <- " \u00b7 chance he hits one, if he plays \u00b7 fair odds = 1 \u00f7 chance"
 
   # Keeps the data caches warm in the background (no sidebar display). Not on a host:
   # each warm-up step blocks the one R process every visitor shares for minutes at a

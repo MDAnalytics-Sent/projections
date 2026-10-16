@@ -120,10 +120,21 @@ site_capture <- function(app, tz, out_dir) {
     })
     ui <- function(id) { v <- out(id); if (is.null(v)) NULL else v$html }
     dts_of <- function(ids) { v <- lapply(ids, out); names(v) <- ids; Filter(Negate(is.null), v) }
-    gids <- function(j) {             # each board row's game id (its hidden 8th column)
+    # Each board row's game id, from the hidden column that carries it. Football keeps it
+    # in the eighth, hockey and basketball the seventh, baseball the sixth -- the boards
+    # have different numbers of columns, so the position has to be told rather than assumed.
+    gids <- function(j, col = 8L) {
       if (is.null(j)) return(character(0))
       d <- tryCatch(jsonlite::fromJSON(j, simplifyVector = FALSE)$x$data, error = function(e) NULL)
-      if (length(d) < 8L) character(0) else vapply(d[[8]], function(z) if (is.null(z)) NA_character_ else as.character(z), "")
+      if (length(d) < col) return(character(0))
+      vapply(d[[col]], function(z) if (is.null(z)) NA_character_ else as.character(z), "")
+    }
+
+    # one game's dropdown for every game on a board
+    tdx_of <- function(j, col, f) {
+      out <- list()
+      for (x in stats::na.omit(gids(j, col))) out[[x]] <- tryCatch(f(x), error = function(e) NULL)
+      out[!vapply(out, is.null, TRUE)]
     }
 
     # one league: each of its days or weeks built (or kept) and listed for the page's selector
@@ -208,24 +219,34 @@ site_capture <- function(app, tz, out_dir) {
     mlb_state <- function(d) {
       set(date_picker = as.Date(d))
       dts <- dts_of(c("games_tbl", "nrfi_tbl", "hr_tbl", "k_tbl"))
+      tdx <- tdx_of(dts$games_tbl, 6L, mlb_tdx_html)
       list(games = !is.null(dts$games_tbl), html = site_frag(c(
-        site_fill(ui("header_badges"), dts), site_fill(ui("accuracy_ui"), dts), site_fill(ui("games_section"), dts),
+        site_fill(ui("header_badges"), dts), site_fill(ui("accuracy_ui"), dts),
+        site_fill(ui("games_section"), dts),
+        '<div class="hint">Tap a game for its likely home-run hitters.</div>',
         site_fill(ui("nrfi_section"), dts), site_fill(ui("hr_section"), dts), site_fill(ui("k_section"), dts),
-        site_fill(ui("diag_section"), dts))))
+        site_fill(ui("diag_section"), dts)),
+        list(tdx = list(games_tbl = tdx))))
     }
     nhl_state <- function(d) {
       set(ndate = as.Date(d))
       dts <- dts_of(c("nboard", "ngoal"))
+      tdx <- tdx_of(dts$nboard, 7L, nhl_tdx_html)
       list(games = !is.null(dts$nboard), html = site_frag(c(
-        site_fill(ui("nrecord"), dts), site_fill(ui("nboard_sec"), dts), site_fill(ui("ngoal_sec"), dts),
-        site_fill(ui("nleak"), dts))))
+        site_fill(ui("nrecord"), dts), site_fill(ui("nboard_sec"), dts),
+        '<div class="hint">Tap a game for its likely goalscorers.</div>',
+        site_fill(ui("ngoal_sec"), dts), site_fill(ui("nleak"), dts)),
+        list(tdx = list(nboard = tdx))))
     }
     nba_state <- function(d) {
       set(bdate = as.Date(d))
       dts <- dts_of(c("bboard", "bfb"))
+      tdx <- tdx_of(dts$bboard, 7L, nba_tdx_html)
       list(games = !is.null(dts$bboard), html = site_frag(c(
-        site_fill(ui("brecord"), dts), site_fill(ui("bboard_sec"), dts), site_fill(ui("bfb_sec"), dts),
-        site_fill(ui("bleak"), dts))))
+        site_fill(ui("brecord"), dts), site_fill(ui("bboard_sec"), dts),
+        '<div class="hint">Tap a game for its likely first basket.</div>',
+        site_fill(ui("bfb_sec"), dts), site_fill(ui("bleak"), dts)),
+        list(tdx = list(bboard = tdx))))
     }
     window_days <- format(seq(today - SITE_BACK, today + SITE_AHEAD, by = 1))
     game_days <- function(dates, cur) {
@@ -338,7 +359,8 @@ site_page <- function(app, R, built, tz, out_dir) {
   zone <- format(built, "%Z", tz = tz)
   states <- lapply(R$states, function(s) list(keys = I(s$keys), cur = s$cur))
   site_data <- list(built = as.numeric(built), stamp = paste(stamp, zone), states = states,
-                    tdx = list(board = structure(list(), names = character(0)), cboard = structure(list(), names = character(0))),
+                    tdx = stats::setNames(rep(list(structure(list(), names = character(0))), 5L),
+                                          c("board", "cboard", "nboard", "bboard", "games_tbl")),
                     detail = list(board = structure(list(), names = character(0))))
   sj <- gsub("</", "<\\/", as.character(jsonlite::toJSON(site_data, auto_unbox = TRUE, null = "null")), fixed = TRUE)
 
