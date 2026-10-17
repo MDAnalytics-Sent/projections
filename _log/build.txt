@@ -1,4 +1,4 @@
-2026-10-16 22:34:42 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-16 23:02:58 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -14,16 +14,16 @@ Cache      | 544 files (5.7 MB) · 57 served from disk, 4 fetched
 CFB td     | 13696 graded prop(s) on file; the earliest slates have nothing before them to correct against
 NHL goalie | 16174 appearance(s), 8088 start(s), 166 goalie(s), 4 season(s) 2023-2026
 NHL goalie | starter edge on 4013 of 14856 game(s) (27%); sd 0.177, range -0.74 to +0.69 goals
-NHL        | 119 final game(s) this season, 119 with box scores, 0 missing
-NHL        | latest final: 2026-10-16 (game 2026020119) | today 2026-10-17 has 14 game(s), 0 final | feed 3 hit / 9 fetched
-NHL goalie | 476 appearance(s) across 119 game(s); 238 identifiable starter(s), 71 distinct goalie(s)
+NHL        | 120 final game(s) this season, 120 with box scores, 0 missing
+NHL        | latest final: 2026-10-16 (game 2026020120) | today 2026-10-17 has 14 game(s), 0 final | feed 3 hit / 9 fetched
+NHL goalie | 480 appearance(s) across 120 game(s); 240 identifiable starter(s), 71 distinct goalie(s)
 NHL goalie | fields present -- toi 100%, shots 100%, saves 100%, goals against 100%
-NHL goalie | starters league save pct 0.8928 over 6269 shots
+NHL goalie | starters league save pct 0.8927 over 6318 shots
 NHL goalie | measured -0.09 goals of margin per goal of starter edge (se 0.23) on 7667 prior-season game(s) -- NOT used: needs the right sign and two standard errors
-2026-10-16 22:35:59   today  49.5s
+2026-10-16 23:03:54   today  34.4s
 CFB td     | recalibrated on 8045 graded prop(s) settled before this slate: slope 1.20, shift -0.16 -- a raw 25% becomes 19%, a raw 60% becomes 58%
-2026-10-16 22:36:19   nfl    15.7s  3 built, 7 to pick from
-2026-10-16 22:36:28   cfb     8.5s  3 built, 8 to pick from
+2026-10-16 23:04:08   nfl    10.1s  3 built, 7 to pick from
+2026-10-16 23:04:13   cfb     5.5s  3 built, 8 to pick from
 
 ── Slate 2026-10-15 ──
 Win model  | learned weights: run model 0.934, Pythagorean gap 0.827 (fit on 2,459 graded mlb-runs-v10 games, 44% data, half-life 45 d)
@@ -45,7 +45,7 @@ Win model  | learned weights: run model 0.938, Pythagorean gap 0.779 (fit on 2,4
 Win model  | calibration a=1.148 b=-0.004  (fit on 2461 graded games before 2026-10-16)
 NRFI model | calibration a=0.328 b=-0.043  (fit on 1827 graded 1st innings before 2026-10-16)
 Slate      | 1 games · none graded yet
-Cache      | 544 files (5.7 MB) · 18 served from disk, 6 fetched
+Cache      | 544 files (5.7 MB) · 24 served from disk, 0 fetched
 
 ── Slate 2026-10-17 ──
 Win model  | learned weights: run model 0.938, Pythagorean gap 0.776 (fit on 2,461 graded mlb-runs-v10 games, 59% data, half-life 90 d)
@@ -59,7 +59,7 @@ Win model  | learned weights: run model 0.939, Pythagorean gap 0.774 (fit on 2,4
 Win model  | calibration a=1.147 b=-0.004  (fit on 2461 graded games before 2026-10-18)
 NRFI model | calibration a=0.328 b=-0.043  (fit on 1827 graded 1st innings before 2026-10-18)
 Slate      | 1 games · none graded yet
-Cache      | 544 files (5.7 MB) · 19 served from disk, 3 fetched
+Cache      | 544 files (5.7 MB) · 21 served from disk, 1 fetched
 
 ── Slate 2026-10-19 ──
 Win model  | learned weights: run model 0.939, Pythagorean gap 0.771 (fit on 2,461 graded mlb-runs-v10 games, 58% data, half-life 90 d)
@@ -67,7 +67,7 @@ Win model  | calibration a=1.146 b=-0.004  (fit on 2461 graded games before 2026
 NRFI model | calibration a=0.328 b=-0.043  (fit on 1827 graded 1st innings before 2026-10-19)
 Slate      | 1 games · none graded yet
 Cache      | 544 files (5.7 MB) · 18 served from disk, 4 fetched
-2026-10-16 22:37:01   mlb    32.6s  5 built, 16 to pick from
-2026-10-16 22:37:03   nhl     2.1s  5 built, 18 to pick from
-2026-10-16 22:37:04   nba     0.4s  1 built, 1 to pick from
-2026-10-16 22:37:04 built 12143 KB in 142s
+2026-10-16 23:04:36   mlb    22.0s  5 built, 16 to pick from
+2026-10-16 23:04:37   nhl     1.4s  5 built, 18 to pick from
+2026-10-16 23:04:37   nba     0.3s  1 built, 1 to pick from
+2026-10-16 23:04:37 built 12144 KB in 99s
