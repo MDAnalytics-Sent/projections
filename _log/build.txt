@@ -1,4 +1,4 @@
-2026-10-18 14:32:31 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-18 15:00:43 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -11,7 +11,7 @@ Win model  | calibration a=1.153 b=-0.006  (fit on 2462 graded games before 2026
 NRFI model | calibration a=0.324 b=-0.047  (fit on 1828 graded 1st innings before 2026-10-18)
 Slate      | 1 games · none graded yet
 Cache      | 549 files (5.7 MB) · 58 served from disk, 3 fetched
-CFB td     | 15357 graded prop(s) on file; the earliest slates have nothing before them to correct against
+CFB td     | 15489 graded prop(s) on file; the earliest slates have nothing before them to correct against
 NHL goalie | 16278 appearance(s), 8140 start(s), 166 goalie(s), 4 season(s) 2023-2026
 NHL goalie | starter edge on 4039 of 14856 game(s) (27%); sd 0.177, range -0.74 to +0.69 goals
 NHL        | 134 final game(s) this season, 134 with box scores, 0 missing
@@ -20,10 +20,10 @@ NHL goalie | 536 appearance(s) across 134 game(s); 268 identifiable starter(s), 
 NHL goalie | fields present -- toi 100%, shots 100%, saves 100%, goals against 100%
 NHL goalie | starters league save pct 0.8931 over 7064 shots
 NHL goalie | measured -0.09 goals of margin per goal of starter edge (se 0.23) on 7667 prior-season game(s) -- NOT used: needs the right sign and two standard errors
-2026-10-18 14:33:54   today  41.1s
+2026-10-18 15:01:42   today  36.9s
 CFB td     | recalibrated on 9313 graded prop(s) settled before this slate: slope 1.16, shift -0.26 -- a raw 25% becomes 18%, a raw 60% becomes 55%
-2026-10-18 14:34:13   nfl    14.6s  3 built, 7 to pick from
-2026-10-18 14:34:21   cfb     8.4s  3 built, 9 to pick from
+2026-10-18 15:01:53   nfl     9.2s  3 built, 7 to pick from
+2026-10-18 15:01:58   cfb     5.1s  3 built, 9 to pick from
 
 ── Slate 2026-10-17 ──
 Win model  | learned weights: run model 0.938, Pythagorean gap 0.776 (fit on 2,461 graded mlb-runs-v10 games, 59% data, half-life 90 d)
@@ -63,8 +63,8 @@ Cache      | 549 files (5.7 MB) · 19 served from disk, 4 fetched
 
 ── Slate 2026-10-21 ──
 Slate      | 0 games · none graded yet
-Cache      | 549 files (5.7 MB) · 11 served from disk, 9 fetched
-2026-10-18 14:34:52   mlb    30.2s  5 built, 16 to pick from
-2026-10-18 14:34:54   nhl     2.0s  5 built, 18 to pick from
-2026-10-18 14:34:55   nba     0.7s  2 built, 2 to pick from
-2026-10-18 14:34:55 built 11861 KB in 144s
+Cache      | 549 files (5.7 MB) · 19 served from disk, 1 fetched
+2026-10-18 15:02:17   mlb    18.7s  5 built, 16 to pick from
+2026-10-18 15:02:19   nhl     1.2s  5 built, 18 to pick from
+2026-10-18 15:02:19   nba     0.4s  2 built, 2 to pick from
+2026-10-18 15:02:19 built 11866 KB in 96s
