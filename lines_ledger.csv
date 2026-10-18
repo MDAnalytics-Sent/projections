@@ -206,8 +206,8 @@
 "NCAAF","401860903","2026-10-17 22:00:00","Washington State @ Oregon State","Oregon State","home",0.8732,0.8721,1.1,-0.0395,"DraftKings","2026-10-17 21:34:12","W",0.1
 "NHL","401892522","2026-10-17 22:00:00","Seattle @ Florida","Florida","home",0.5075,0.6225,1.541,-0.2181,"DraftKings","2026-10-17 21:34:12","W",0.541
 "NCAAF","401856726","2026-10-17 23:00:00","Arkansas @ Vanderbilt","Vanderbilt","home",0.7515,0.6636,1.444,0.0855,"DraftKings","2026-10-17 22:59:39","L",-1
-"NCAAF","401856832","2026-10-17 23:00:00","TCU @ Baylor","Baylor","home",0.523,0.6164,1.556,-0.1864,"DraftKings","2026-10-17 22:59:39",NA,NA
-"NCAAF","401858263","2026-10-17 23:00:00","Florida State @ Miami","Miami","home",0.9058,0.904,1.062,-0.0376,"DraftKings","2026-10-17 22:59:39",NA,NA
+"NCAAF","401856832","2026-10-17 23:00:00","TCU @ Baylor","Baylor","home",0.523,0.6164,1.556,-0.1864,"DraftKings","2026-10-17 22:59:39","L",-1
+"NCAAF","401858263","2026-10-17 23:00:00","Florida State @ Miami","Miami","home",0.9058,0.904,1.062,-0.0376,"DraftKings","2026-10-17 22:59:39","W",0.062
 "NCAAF","401862806","2026-10-17 23:00:00","Kent State @ South Florida","South Florida","home",0.8892,0.8989,1.069,-0.0495,"DraftKings","2026-10-17 22:59:39","W",0.069
 "NCAAF","401864520","2026-10-17 23:00:00","Nevada @ North Dakota State","North Dakota State","home",0.8353,0.84,1.143,-0.0454,"DraftKings","2026-10-17 22:59:39","W",0.143
 "NCAAF","401869934","2026-10-17 23:00:00","Arkansas State @ Southern Miss","Southern Miss","home",0.5738,0.3425,2.8,0.6066,"DraftKings","2026-10-17 22:59:39","L",-1
@@ -217,11 +217,11 @@
 "NHL","401892525","2026-10-17 23:00:00","San Jose @ Detroit","Detroit","home",0.548,0.5721,1.676,-0.0816,"DraftKings","2026-10-17 22:59:39","W",0.676
 "NHL","401892523","2026-10-17 23:00:00","New York @ Toronto","Toronto","home",0.534,0.5427,1.769,-0.0552,"DraftKings","2026-10-17 22:59:39","L",-1
 "NHL","401892528","2026-10-17 23:00:00","Dallas @ Chicago","Dallas","away",0.5346,0.6575,1.459,-0.2202,"DraftKings","2026-10-17 22:59:39","W",0.459
-"NCAAF","401856722","2026-10-17 23:30:00","Kentucky @ Oklahoma","Oklahoma","home",0.7949,0.7002,1.37,0.0894,"DraftKings","2026-10-17 23:29:58",NA,NA
+"NCAAF","401856722","2026-10-17 23:30:00","Kentucky @ Oklahoma","Oklahoma","home",0.7949,0.7002,1.37,0.0894,"DraftKings","2026-10-17 23:29:58","L",-1
 "NCAAF","401856809","2026-10-17 23:30:00","Notre Dame @ BYU","Notre Dame","away",0.7223,0.7715,1.244,-0.1015,"DraftKings","2026-10-17 23:29:58",NA,NA
 "NCAAF","401856831","2026-10-17 23:30:00","Oklahoma State @ Houston","Houston","home",0.7492,0.6225,1.541,0.1542,"DraftKings","2026-10-17 23:29:58",NA,NA
 "NCAAF","401858265","2026-10-17 23:30:00","Louisville @ Syracuse","Louisville","away",0.6925,0.8316,1.154,-0.201,"DraftKings","2026-10-17 23:29:58",NA,NA
-"NCAAF","401858494","2026-10-17 23:30:00","Wisconsin @ UCLA","UCLA","home",0.7586,0.5261,1.82,0.3804,"DraftKings","2026-10-17 23:29:58",NA,NA
+"NCAAF","401858494","2026-10-17 23:30:00","Wisconsin @ UCLA","UCLA","home",0.7586,0.5261,1.82,0.3804,"DraftKings","2026-10-17 23:29:58","W",0.82
 "MLB","401908027","2026-10-18 00:00:00","Tampa Bay Rays @ Cleveland Guardians","Tampa Bay Rays","away",0.549,0.5058,1.926,0.0573,"DraftKings","2026-10-17 23:57:20",NA,NA
 "NCAAF","401862804","2026-10-18 00:00:00","Navy @ UTSA","UTSA","home",0.6689,0.6575,1.459,-0.0243,"DraftKings","2026-10-17 23:57:20",NA,NA
 "NCAAF","401871091","2026-10-18 00:00:00","Louisiana Tech @ UL Monroe","Louisiana Tech","away",0.7124,0.8173,1.174,-0.1637,"DraftKings","2026-10-17 23:57:20",NA,NA
