@@ -1,4 +1,4 @@
-2026-10-18 10:00:18 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-18 10:34:13 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -20,10 +20,10 @@ NHL goalie | 536 appearance(s) across 134 game(s); 268 identifiable starter(s), 
 NHL goalie | fields present -- toi 100%, shots 100%, saves 100%, goals against 100%
 NHL goalie | starters league save pct 0.8931 over 7064 shots
 NHL goalie | measured -0.09 goals of margin per goal of starter edge (se 0.23) on 7667 prior-season game(s) -- NOT used: needs the right sign and two standard errors
-2026-10-18 10:01:22   today  41.2s
+2026-10-18 10:35:25   today  46.5s
 CFB td     | recalibrated on 9313 graded prop(s) settled before this slate: slope 1.16, shift -0.26 -- a raw 25% becomes 18%, a raw 60% becomes 55%
-2026-10-18 10:01:39   nfl    13.3s  3 built, 7 to pick from
-2026-10-18 10:01:45   cfb     6.8s  3 built, 9 to pick from
+2026-10-18 10:35:45   nfl    15.8s  3 built, 7 to pick from
+2026-10-18 10:35:54   cfb     8.8s  3 built, 9 to pick from
 
 ── Slate 2026-10-17 ──
 Win model  | learned weights: run model 0.938, Pythagorean gap 0.776 (fit on 2,461 graded mlb-runs-v10 games, 59% data, half-life 90 d)
@@ -52,7 +52,7 @@ Win model  | learned weights: run model 0.946, Pythagorean gap 0.761 (fit on 2,4
 Win model  | calibration a=1.152 b=-0.006  (fit on 2462 graded games before 2026-10-19)
 NRFI model | calibration a=0.324 b=-0.047  (fit on 1828 graded 1st innings before 2026-10-19)
 Slate      | 1 games · none graded yet
-Cache      | 549 files (5.7 MB) · 19 served from disk, 4 fetched
+Cache      | 549 files (5.7 MB) · 11 served from disk, 12 fetched
 
 ── Slate 2026-10-20 ──
 Win model  | learned weights: run model 0.946, Pythagorean gap 0.759 (fit on 2,462 graded mlb-runs-v10 games, 58% data, half-life 90 d)
@@ -64,7 +64,7 @@ Cache      | 549 files (5.7 MB) · 19 served from disk, 4 fetched
 ── Slate 2026-10-21 ──
 Slate      | 0 games · none graded yet
 Cache      | 549 files (5.7 MB) · 19 served from disk, 1 fetched
-2026-10-18 10:02:10   mlb    24.4s  5 built, 16 to pick from
-2026-10-18 10:02:12   nhl     1.7s  5 built, 18 to pick from
-2026-10-18 10:02:13   nba     0.5s  2 built, 2 to pick from
-2026-10-18 10:02:13 built 12262 KB in 114s
+2026-10-18 10:36:25   mlb    30.8s  5 built, 16 to pick from
+2026-10-18 10:36:27   nhl     2.4s  5 built, 18 to pick from
+2026-10-18 10:36:28   nba     0.7s  2 built, 2 to pick from
+2026-10-18 10:36:28 built 12263 KB in 135s
