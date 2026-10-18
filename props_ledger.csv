@@ -245,8 +245,6 @@
 "2026-10-18",849806,"HR",605141,"Mookie Betts","Los Angeles Dodgers",NA,"Los Angeles Dodgers @ Milwaukee Brewers",NA,"HR",0.117,FALSE,FALSE,NA,NA
 "2026-10-18",849806,"HR",596142,"Gary Sánchez","Milwaukee Brewers",NA,"Los Angeles Dodgers @ Milwaukee Brewers",NA,"HR",0.11,FALSE,FALSE,NA,NA
 "2026-10-18",849806,"HR",694192,"Jackson Chourio","Milwaukee Brewers",NA,"Los Angeles Dodgers @ Milwaukee Brewers",NA,"HR",0.109,FALSE,FALSE,NA,NA
-"2026-10-16",849817,"K",607259,"Nick Martinez",NA,"away","Tampa Bay Rays @ Cleveland Guardians",3.5,"Under",0.56,FALSE,FALSE,NA,NA
-"2026-10-16",849817,"K",542888,"Shawn Armstrong",NA,"home","Tampa Bay Rays @ Cleveland Guardians",2.5,"Over",0.52,FALSE,FALSE,NA,NA
 "2026-10-17",849816,"HR",691406,"Junior Caminero","Tampa Bay Rays",NA,"Tampa Bay Rays @ Cleveland Guardians",NA,"HR",0.11,FALSE,FALSE,NA,NA
 "2026-10-17",849816,"HR",683748,"Victor Mesa Jr.","Tampa Bay Rays",NA,"Tampa Bay Rays @ Cleveland Guardians",NA,"HR",0.109,FALSE,FALSE,NA,NA
 "2026-10-17",849816,"HR",663993,"Nathaniel Lowe","Cleveland Guardians",NA,"Tampa Bay Rays @ Cleveland Guardians",NA,"HR",0.1,FALSE,FALSE,NA,NA
@@ -255,6 +253,8 @@
 "2026-10-17",849816,"HR",666018,"Jonathan Aranda","Tampa Bay Rays",NA,"Tampa Bay Rays @ Cleveland Guardians",NA,"HR",0.082,FALSE,FALSE,NA,NA
 "2026-10-17",849816,"K",607259,"Nick Martinez",NA,"away","Tampa Bay Rays @ Cleveland Guardians",3.5,"Under",0.56,FALSE,FALSE,NA,NA
 "2026-10-17",849816,"K",542888,"Shawn Armstrong",NA,"home","Tampa Bay Rays @ Cleveland Guardians",2.5,"Over",0.52,FALSE,FALSE,NA,NA
+"2026-10-16",849817,"K",607259,"Nick Martinez",NA,"away","Tampa Bay Rays @ Cleveland Guardians",3.5,"Under",0.56,FALSE,FALSE,NA,NA
+"2026-10-16",849817,"K",542888,"Shawn Armstrong",NA,"home","Tampa Bay Rays @ Cleveland Guardians",2.5,"Over",0.52,FALSE,FALSE,NA,NA
 "2026-10-18",849817,"HR",691406,"Junior Caminero","Tampa Bay Rays",NA,"Tampa Bay Rays @ Cleveland Guardians",NA,"HR",0.132,FALSE,FALSE,NA,NA
 "2026-10-18",849817,"HR",683748,"Victor Mesa Jr.","Tampa Bay Rays",NA,"Tampa Bay Rays @ Cleveland Guardians",NA,"HR",0.13,FALSE,FALSE,NA,NA
 "2026-10-18",849817,"HR",663993,"Nathaniel Lowe","Cleveland Guardians",NA,"Tampa Bay Rays @ Cleveland Guardians",NA,"HR",0.12,FALSE,FALSE,NA,NA
