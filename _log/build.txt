@@ -1,4 +1,4 @@
-2026-10-18 21:38:13 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-18 22:13:39 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -15,15 +15,15 @@ CFB td     | 15623 graded prop(s) on file; the earliest slates have nothing befo
 NHL goalie | 16278 appearance(s), 8140 start(s), 166 goalie(s), 4 season(s) 2023-2026
 NHL goalie | starter edge on 4039 of 14856 game(s) (27%); sd 0.177, range -0.74 to +0.69 goals
 NHL        | 136 final game(s) this season, 136 with box scores, 0 missing
-NHL        | latest final: 2026-10-18 (game 2026020136) | today 2026-10-18 has 2 game(s), 2 final | feed 3 hit / 9 fetched
+NHL        | latest final: 2026-10-18 (game 2026020136) | today 2026-10-19 has 4 game(s), 0 final | feed 3 hit / 9 fetched
 NHL goalie | 544 appearance(s) across 136 game(s); 272 identifiable starter(s), 71 distinct goalie(s)
 NHL goalie | fields present -- toi 100%, shots 100%, saves 100%, goals against 100%
 NHL goalie | starters league save pct 0.8938 over 7182 shots
 NHL goalie | measured -0.09 goals of margin per goal of starter edge (se 0.23) on 7667 prior-season game(s) -- NOT used: needs the right sign and two standard errors
-2026-10-18 21:39:21   today  41.8s
+2026-10-18 22:14:50   today  43.5s
 CFB td     | recalibrated on 9313 graded prop(s) settled before this slate: slope 1.16, shift -0.26 -- a raw 25% becomes 18%, a raw 60% becomes 55%
-2026-10-18 21:39:37   nfl    12.7s  3 built, 7 to pick from
-2026-10-18 21:39:44   cfb     7.0s  3 built, 9 to pick from
+2026-10-18 22:15:07   nfl    13.3s  3 built, 7 to pick from
+2026-10-18 22:15:14   cfb     7.3s  3 built, 9 to pick from
 
 ── Slate 2026-10-17 ──
 Win model  | learned weights: run model 0.938, Pythagorean gap 0.776 (fit on 2,461 graded mlb-runs-v10 games, 59% data, half-life 90 d)
@@ -63,8 +63,8 @@ Cache      | 549 files (5.7 MB) · 19 served from disk, 4 fetched
 
 ── Slate 2026-10-21 ──
 Slate      | 0 games · none graded yet
-Cache      | 549 files (5.7 MB) · 19 served from disk, 1 fetched
-2026-10-18 21:40:09   mlb    24.4s  5 built, 16 to pick from
-2026-10-18 21:40:11   nhl     1.6s  5 built, 18 to pick from
-2026-10-18 21:40:11   nba     0.5s  2 built, 2 to pick from
-2026-10-18 21:40:11 built 12275 KB in 118s
+Cache      | 549 files (5.7 MB) · 11 served from disk, 9 fetched
+2026-10-18 22:15:43   mlb    28.2s  5 built, 16 to pick from
+2026-10-18 22:15:44   nhl     1.6s  5 built, 18 to pick from
+2026-10-18 22:15:45   nba     0.5s  2 built, 2 to pick from
+2026-10-18 22:15:45 built 12362 KB in 126s
