@@ -7480,6 +7480,8 @@ NBA_LEDGER   <- file.path(LEDGER_DIR, "nba_predictions.rds")
 NBA_INJ_URL  <- "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/injuries"
 NBA_INJ_TTL  <- 30
 NBA_ROS_URL  <- "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/%s/roster"
+NBA_SUM_URL  <- "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=%s"
+NBA_FB_LIVE_MAX <- 40L      # finished games read per load, so a cold start cannot stall
 NBA_ROS_TTL  <- 12 * 60     # a roster changes rarely; a stale one is the whole bug
 # Basketball rests healthy players, so the feed carries states hockey's does not.
 NBA_INJ_OUT  <- c("out", "injured reserve", "suspension", "suspended",
@@ -7792,6 +7794,81 @@ nba_roster <- function(ids) {
   dplyr::bind_rows(out)
 }
 
+# One finished game's starters, and who opened the scoring, from ESPN's summary. The
+# shape mirrors nba_fb_hist's rows so the two can simply be stacked.
+nba_fbh_one <- function(gid, season, ko) {
+  espn_cached(sprintf("nbafb_%s", gid), ttl = 60 * 24, function() {
+    j <- espn_get(sprintf(NBA_SUM_URL, gid))
+    if (is.null(j)) return(NULL)
+    rows <- list()
+    for (tm in (j$boxscore$players %||% list())) {
+      tid <- as.character(tm$team$id %||% "")
+      if (!nzchar(tid)) next
+      for (st in (tm$statistics %||% list())) for (a in (st$athletes %||% list())) {
+        if (!isTRUE(a$starter)) next
+        pid <- as.character(a$athlete$id %||% "")
+        if (!nzchar(pid)) next
+        rows[[length(rows) + 1L]] <- data.frame(team = tid, pid = pid,
+          pname = as.character(a$athlete$displayName %||% ""),
+          pos = as.character(a$athlete$position$abbreviation %||% ""),
+          stringsAsFactors = FALSE)
+      }
+    }
+    if (!length(rows)) return(NULL)
+    d <- dplyr::bind_rows(rows)
+    d <- d[!duplicated(d$pid), , drop = FALSE]
+    # the opening period's first play worth at least this many points
+    first_scorer <- function(minval) {
+      for (pl in (j$plays %||% list())) {
+        if (!isTRUE(pl$scoringPlay)) next
+        per <- suppressWarnings(as.integer(pl$period$number %||% NA))
+        if (!is.na(per) && per != 1L) next
+        sv <- suppressWarnings(as.numeric(pl$scoreValue %||% NA))
+        if (!is.finite(sv) || sv < minval) next
+        for (q in (pl$participants %||% list())) {
+          id <- as.character(q$athlete$id %||% "")
+          if (nzchar(id)) return(id)
+        }
+        id <- as.character(pl$athlete$id %||% "")
+        if (nzchar(id)) return(id)
+      }
+      NA_character_
+    }
+    wf <- first_scorer(2); wa <- first_scorer(1)
+    d$y_fg  <- as.integer(!is.na(wf) & d$pid == wf)
+    d$y_any <- as.integer(!is.na(wa) & d$pid == wa)
+    d$game_id <- as.character(gid)
+    d$season <- as.integer(season)
+    d$ko <- ko
+    out <- d[, c("game_id", "season", "team", "pid", "pname", "pos", "y_fg", "y_any", "ko")]
+    # a finished game is finished: keep it rather than ask again
+    attr(out, "final") <- TRUE
+    out
+  })
+}
+
+# Every finished game the season files have not caught up with yet, appended.
+nba_live_fbh <- function(H, sch, now = Sys.time()) {
+  if (is.null(sch) || !nrow(sch)) return(H)
+  have <- if (is.null(H) || !nrow(H)) character(0) else unique(as.character(H$game_id))
+  cur <- suppressWarnings(max(sch$season, na.rm = TRUE))
+  if (!is.finite(cur)) return(H)
+  done <- sch[sch$season >= cur - 1L & sch$has_score %in% TRUE &
+              !is.na(sch$ko) & sch$ko < now, , drop = FALSE]
+  need <- setdiff(as.character(done$game_id), have)
+  if (!length(need)) return(H)
+  need <- utils::head(need, NBA_FB_LIVE_MAX)
+  add <- lapply(need, function(g) {
+    k <- match(g, as.character(sch$game_id))
+    if (is.na(k)) return(NULL)
+    tryCatch(nba_fbh_one(g, sch$season[k], sch$ko[k]), error = function(e) NULL)
+  })
+  add <- add[!vapply(add, is.null, TRUE)]
+  if (!length(add)) return(H)
+  out <- dplyr::bind_rows(H, dplyr::bind_rows(add))
+  out[order(out$ko), , drop = FALSE]
+}
+
 nba_fb <- function(H, cutoff, teams, inj = NULL, tkey = NULL, ros = NULL) {
   if (is.null(H) || !nrow(H)) return(NULL)
   h <- H[H$ko < cutoff, ]
@@ -7862,7 +7939,10 @@ nba_load <- function() {
   lg <- c(stats::setNames(sch$home_logo, sch$home), stats::setNames(sch$away_logo, sch$away))
   game_grade_history(NBA_LEDGER, sch)
   list(sch = sch, pan = pan, endr = endr, ents = ents,
-       fbh = nba_fb_hist(sch),
+       # the season files first, then this season's finished games from ESPN, which the
+       # season files will not carry until long after they have been played
+       fbh = tryCatch(nba_live_fbh(nba_fb_hist(sch), sch),
+                      error = function(e) nba_fb_hist(sch)),
        nm = nm[!duplicated(names(nm))], logo = lg[!duplicated(names(lg))])
 }
 
