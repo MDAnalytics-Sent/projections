@@ -7478,6 +7478,8 @@ NBA_FB_RECENT <- 12L
 NBA_LEDGER   <- file.path(LEDGER_DIR, "nba_predictions.rds")
 NBA_INJ_URL  <- "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/injuries"
 NBA_INJ_TTL  <- 30
+NBA_ROS_URL  <- "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/%s/roster"
+NBA_ROS_TTL  <- 12 * 60     # a roster changes rarely; a stale one is the whole bug
 # Basketball rests healthy players, so the feed carries states hockey's does not.
 NBA_INJ_OUT  <- c("out", "injured reserve", "suspension", "suspended",
                   "not with team", "out for season")
@@ -7736,7 +7738,60 @@ nba_fb_hist <- function(sch) {
 nba_inj <- function()
   espn_inj(NBA_INJ_URL, file.path(nba_dir, "inj.rds"), NBA_INJ_TTL, NBA_INJ_OUT)
 
-nba_fb <- function(H, cutoff, teams, inj = NULL, tkey = NULL) {
+# Today's roster for one team. The upstream game-roster files are published per season
+# and the current season's does not appear until it is well under way, so the newest
+# line-ups on hand in October are last season's: a player who moved in the summer is
+# still filed under the team he left. This is the only source that knows otherwise.
+#
+# Every failure returns whatever is cached, or NULL, and the caller then behaves as it
+# did before -- a feed outage must not empty a board.
+nba_roster_one <- function(id, timeout = 15) {
+  f <- file.path(nba_dir, sprintf("ros_%s.rds", id))
+  cached <- function() {
+    if (!file.exists(f)) return(NULL)        # readRDS warns on a missing file; the log is read
+    o <- try(readRDS(f), silent = TRUE)
+    if (!inherits(o, "try-error") && is.data.frame(o) && nrow(o)) o else NULL
+  }
+  if (file.exists(f) && age_min(f) < NBA_ROS_TTL) {
+    o <- cached(); if (!is.null(o)) return(o)
+  }
+  r <- tryCatch(httr::GET(sprintf(NBA_ROS_URL, id), httr::timeout(timeout)),
+                error = function(e) NULL)
+  if (is.null(r) || !identical(httr::status_code(r), 200L)) return(cached())
+  j <- tryCatch(jsonlite::fromJSON(httr::content(r, "text", encoding = "UTF-8"),
+                                   simplifyVector = FALSE), error = function(e) NULL)
+  if (is.null(j)) return(cached())
+  # basketball returns one flat list of athletes; other sports group them under items
+  ath <- j$athletes %||% list()
+  if (length(ath) && !is.null(ath[[1]]$items))
+    ath <- unlist(lapply(ath, function(z) z$items %||% list()), recursive = FALSE)
+  rows <- lapply(ath, function(a) {
+    pid <- as.character(a$id %||% "")
+    if (!nzchar(pid)) return(NULL)
+    data.frame(team = as.character(id), pid = pid,
+               pname = as.character(a$displayName %||% a$fullName %||% ""),
+               pos = as.character(a$position$abbreviation %||% a$position$name %||% ""),
+               stringsAsFactors = FALSE)
+  })
+  rows <- rows[!vapply(rows, is.null, TRUE)]
+  if (!length(rows)) return(cached())
+  d <- dplyr::bind_rows(rows)
+  dir.create(dirname(f), recursive = TRUE, showWarnings = FALSE)
+  try(saveRDS(d, f), silent = TRUE)
+  d
+}
+# the rosters of the teams on one slate, skipping any that cannot be read
+nba_roster <- function(ids) {
+  ids <- unique(as.character(ids))
+  ids <- ids[!is.na(ids) & nzchar(ids)]
+  if (!length(ids)) return(NULL)
+  out <- lapply(ids, function(i) tryCatch(nba_roster_one(i), error = function(e) NULL))
+  out <- out[!vapply(out, is.null, TRUE)]
+  if (!length(out)) return(NULL)
+  dplyr::bind_rows(out)
+}
+
+nba_fb <- function(H, cutoff, teams, inj = NULL, tkey = NULL, ros = NULL) {
   if (is.null(H) || !nrow(H)) return(NULL)
   h <- H[H$ko < cutoff, ]
   if (!nrow(h)) return(NULL)
@@ -7744,14 +7799,26 @@ nba_fb <- function(H, cutoff, teams, inj = NULL, tkey = NULL) {
                          data = h, FUN = sum)
   last <- h[!duplicated(h$pid, fromLast = TRUE), c("pid", "pname", "pos", "team", "ko")]
   x <- merge(ag, last, by = "pid")
+  # Where a current roster could be read it decides the team, not the last box score,
+  # and it decides the candidate set: without this season's games there is no way to
+  # tell who starts, and the last-twelve-games heuristic would be reading last season.
+  # Teams whose roster could not be read keep the old behaviour exactly.
+  have <- if (is.null(ros) || !nrow(ros)) character(0) else unique(as.character(ros$team))
+  if (length(have)) {
+    j <- match(x$pid, ros$pid)
+    i <- which(!is.na(j))
+    x$team[i] <- as.character(ros$team[j[i]])
+    rp <- as.character(ros$pos[j[i]]);   g <- !is.na(rp) & nzchar(rp); x$pos[i[g]]   <- rp[g]
+    rn <- as.character(ros$pname[j[i]]); g <- !is.na(rn) & nzchar(rn); x$pname[i[g]] <- rn[g]
+    # a player absent from every roster read is dropped only from the teams that were read
+    x <- x[!is.na(j) | !(x$team %in% have), , drop = FALSE]
+  }
   rec <- h[h$team %in% teams, ]
-  if (nrow(rec)) {
-    keep <- unlist(lapply(split(rec, rec$team), function(z) {
-      g <- unique(z$game_id[order(z$ko, decreasing = TRUE)])
-      unique(z$pid[z$game_id %in% utils::head(g, NBA_FB_RECENT)])
-    }), use.names = FALSE)
-    x <- x[x$pid %in% keep & x$team %in% teams, ]
-  } else x <- x[0, ]
+  keep <- if (!nrow(rec)) character(0) else unlist(lapply(split(rec, rec$team), function(z) {
+    g <- unique(z$game_id[order(z$ko, decreasing = TRUE)])
+    unique(z$pid[z$game_id %in% utils::head(g, NBA_FB_RECENT)])
+  }), use.names = FALSE)
+  x <- x[x$team %in% teams & (x$team %in% have | x$pid %in% keep), , drop = FALSE]
   if (!nrow(x)) return(NULL)
   x <- espn_inj_gate(x, inj, tkey)
   if (!nrow(x)) return(NULL)
@@ -10474,7 +10541,10 @@ server <- function(input, output, session) {
     live <- isTRUE(day_et(b$cut) >= today_et())
     inj <- if (live) tryCatch(nba_inj(), error = function(e) NULL) else NULL
     tk  <- if (live) tryCatch(espn_team_key(d$sch), error = function(e) NULL) else NULL
-    x <- nba_fb(d$fbh, b$cut, unique(c(b$g$home, b$g$away)), inj, tk)
+    tms <- unique(c(b$g$home, b$g$away))
+    # only for a slate that has not been played: on a past date the box-score team is right
+    ros <- if (live) tryCatch(nba_roster(tms), error = function(e) NULL) else NULL
+    x <- nba_fb(d$fbh, b$cut, tms, inj, tk, ros)
     if (is.null(x) || !nrow(x)) return(NULL)
     st <- grade_state(x$pid, x$team, b, d$fbh)
     j <- attr(st, "row"); r <- attr(st, "src")
@@ -10492,7 +10562,7 @@ server <- function(input, output, session) {
     tally <- if (any(!is.na(k$yf)))
       sprintf(" \u00b7 top 10: %d first FG, %d first score",
               sum(k$yf, na.rm = TRUE), sum(k$ya, na.rm = TRUE)) else ""
-    tagList(div(class = "sec-hdr", sprintf("First basket \u2014 %d starters%s",
+    tagList(div(class = "sec-hdr", sprintf("First basket \u2014 %d players%s",
                                            nrow(x), tally)),
             DTOutput("bfb"),
             div(class = "hint",
