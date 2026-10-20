@@ -1,4 +1,4 @@
-2026-10-19 23:26:52 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-19 23:36:38 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -21,10 +21,10 @@ NHL goalie | 560 appearance(s) across 140 game(s); 280 identifiable starter(s), 
 NHL goalie | fields present -- toi 100%, shots 100%, saves 100%, goals against 100%
 NHL goalie | starters league save pct 0.8937 over 7403 shots
 NHL goalie | measured -0.09 goals of margin per goal of starter edge (se 0.23) on 7667 prior-season game(s) -- NOT used: needs the right sign and two standard errors
-2026-10-19 23:28:05   today  44.6s
+2026-10-19 23:37:42   today  40.3s
 CFB td     | recalibrated on 9313 graded prop(s) settled before this slate: slope 1.16, shift -0.26 -- a raw 25% becomes 18%, a raw 60% becomes 55%
-2026-10-19 23:28:40   nfl    30.5s  8 built, 8 to pick from
-2026-10-19 23:29:01   cfb    21.1s  9 built, 9 to pick from
+2026-10-19 23:38:17   nfl    30.5s  8 built, 8 to pick from
+2026-10-19 23:38:36   cfb    19.4s  9 built, 9 to pick from
 
 ── Slate 2026-10-05 ──
 Win model  | learned weights: run model 1.011, Pythagorean gap 0.695 (fit on 2,444 graded mlb-runs-v10 games, 33% data, half-life 25 d)
@@ -127,7 +127,7 @@ Cache      | 552 files (5.8 MB) · 25 served from disk, 0 fetched
 
 ── Slate 2026-10-20 ──
 Slate      | 0 games · none graded yet
-Cache      | 552 files (5.7 MB) · 11 served from disk, 9 fetched
+Cache      | 552 files (5.7 MB) · 19 served from disk, 1 fetched
 
 ── Slate 2026-10-21 ──
 Slate      | 0 games · none graded yet
@@ -136,7 +136,7 @@ Cache      | 552 files (5.7 MB) · 19 served from disk, 1 fetched
 ── Slate 2026-10-22 ──
 Slate      | 0 games · none graded yet
 Cache      | 552 files (5.7 MB) · 19 served from disk, 1 fetched
-2026-10-19 23:30:44   mlb   103.3s  15 built, 14 to pick from
-2026-10-19 23:30:50   nhl     5.1s  15 built, 18 to pick from
-2026-10-19 23:30:54   nba     3.9s  3 built, 3 to pick from
-2026-10-19 23:30:54 built 12693 KB in 242s
+2026-10-19 23:39:54   mlb    77.4s  15 built, 14 to pick from
+2026-10-19 23:39:59   nhl     5.1s  15 built, 18 to pick from
+2026-10-19 23:40:01   nba     2.4s  3 built, 3 to pick from
+2026-10-19 23:40:02 built 12693 KB in 203s
