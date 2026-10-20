@@ -7475,6 +7475,7 @@ NBA_FB_KPL   <- 70
 NBA_FB_BASE  <- c(C = 0.1309, F = 0.1009, G = 0.0908, PF = 0.0794,
                   PG = 0.0798, SF = 0.0851, SG = 0.0919)
 NBA_FB_RECENT <- 12L
+NBA_FB_START_N <- 20L   # games of his team's recent run used to ask whether he starts
 NBA_LEDGER   <- file.path(LEDGER_DIR, "nba_predictions.rds")
 NBA_INJ_URL  <- "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/injuries"
 NBA_INJ_TTL  <- 30
@@ -7799,6 +7800,22 @@ nba_fb <- function(H, cutoff, teams, inj = NULL, tkey = NULL, ros = NULL) {
                          data = h, FUN = sum)
   last <- h[!duplicated(h$pid, fromLast = TRUE), c("pid", "pname", "pos", "team", "ko")]
   x <- merge(ag, last, by = "pid")
+  # Does he actually start? His share of the last 20 games played by the team he was most
+  # recently with. This is the question the old last-twelve-games filter was asking as a
+  # yes or no, and the board needs it as a number: the rate below is the chance of the
+  # first basket GIVEN a start, so without this it is quoted for men who will not be on
+  # the floor. Measured before the roster is applied and against his historical team,
+  # because someone who moved in the summer has started no games for his new club.
+  # each team's last 20 games, worked out once rather than once per player
+  tg20 <- lapply(split(h$game_id, h$team), function(v) utils::tail(unique(v), NBA_FB_START_N))
+  pg <- split(h$game_id, h$pid)       # each man's starts
+  x$s <- vapply(seq_len(nrow(x)), function(i) {
+    tg <- tg20[[as.character(x$team[i])]]
+    if (!length(tg)) return(0)
+    mean(tg %in% pg[[as.character(x$pid[i])]])
+  }, 0)
+  x <- x[x$s > 0, , drop = FALSE]     # nobody who has not started lately can be ranked
+  if (!nrow(x)) return(NULL)
   # Where a current roster could be read it decides the team, not the last box score,
   # and it decides the candidate set: without this season's games there is no way to
   # tell who starts, and the last-twelve-games heuristic would be reading last season.
@@ -7823,8 +7840,9 @@ nba_fb <- function(H, cutoff, teams, inj = NULL, tkey = NULL, ros = NULL) {
   x <- espn_inj_gate(x, inj, tkey)
   if (!nrow(x)) return(NULL)
   b <- unname(NBA_FB_BASE[x$pos]); b[is.na(b)] <- 0.10
-  x$p_fg  <- (x$f + NBA_FB_KPL * b) / (x$n + NBA_FB_KPL)
-  x$p_any <- (x$a + NBA_FB_KPL * b) / (x$n + NBA_FB_KPL)
+  # his rate if he starts, times the chance he does
+  x$p_fg  <- (x$f + NBA_FB_KPL * b) / (x$n + NBA_FB_KPL) * x$s
+  x$p_any <- (x$a + NBA_FB_KPL * b) / (x$n + NBA_FB_KPL) * x$s
   x[order(-x$p_fg), c("pid", "pname", "pos", "team", "n", "f", "a", "p_fg", "p_any")]
 }
 
@@ -10568,10 +10586,13 @@ server <- function(input, output, session) {
             div(class = "hint",
                 "First FG excludes free throws; first score counts them. 99.9% of first field ",
                 "goals are scored by a starter, and a free throw opens the game 7.1% of the time. ",
-                "Walk-forward over 2022-2026 the top pick hit 15.0% on first FG and 15.8% on ",
-                "first score, against a 10% uniform baseline; top three cover 38.4%. A team ",
-                "strength term was tested and earned zero weight, so this is player history ",
-                "shrunk toward the positional rate."))
+                "Each number is the man's own history shrunk toward his positional rate, times ",
+                "his share of his team's last 20 games \u2014 so it is the chance he takes the first ",
+                "basket, not the chance he takes it if he starts. Rosters come from the team feed, ",
+                "because the season files that record who played are published a season behind. ",
+                "Walk-forward on 1,479 games from 2023 the top pick hit 12.9%, against 10% for ",
+                "picking a starter at random, and a game's stated chances sum to 1.02. A team ",
+                "strength term was tested and earned zero weight."))
   })
   output$bfb <- renderDT({
     x <- bfb_tbl(); req(x)
