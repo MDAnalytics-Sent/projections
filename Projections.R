@@ -7794,29 +7794,69 @@ nba_roster <- function(ids) {
   dplyr::bind_rows(out)
 }
 
+# The five a side starts, out of a game summary. ESPN posts them shortly before tip-off
+# and keeps them there afterwards, so one reader serves both the line-up the board needs
+# tonight and the record it needs once the game is over.
+#
+# Two shapes are accepted because the payload changes as the game does: before tip the
+# names sit under rosters, afterwards under the box score.
+espn_nba_starters <- function(j) {
+  if (is.null(j)) return(NULL)
+  rows <- list()
+  add <- function(tid, a, flag) {
+    if (!isTRUE(flag)) return(invisible())
+    pid <- as.character(a$id %||% "")
+    if (!nzchar(pid) || !nzchar(tid)) return(invisible())
+    rows[[length(rows) + 1L]] <<- data.frame(team = tid, pid = pid,
+      pname = as.character(a$displayName %||% a$fullName %||% ""),
+      pos = as.character(a$position$abbreviation %||% a$position$name %||% ""),
+      stringsAsFactors = FALSE)
+  }
+  for (tm in (j$boxscore$players %||% list())) {
+    tid <- as.character(tm$team$id %||% "")
+    for (st in (tm$statistics %||% list())) for (a in (st$athletes %||% list()))
+      add(tid, a$athlete, a$starter)
+  }
+  for (tm in (j$rosters %||% list())) {
+    tid <- as.character(tm$team$id %||% "")
+    for (a in (tm$roster %||% list())) add(tid, a$athlete %||% a, a$starter)
+  }
+  if (!length(rows)) return(NULL)
+  d <- dplyr::bind_rows(rows)
+  d[!duplicated(d$pid), , drop = FALSE]
+}
+
+# Tonight's five a side, for a game that has not been played. Checked often, because the
+# line-up appears at some point in the hour before tip-off and nothing before it does.
+nba_starters <- function(gid) {
+  espn_cached(sprintf("nbast_%s", gid), ttl = 10, function() {
+    j <- espn_get(sprintf(NBA_SUM_URL, gid))
+    d <- espn_nba_starters(j)
+    if (is.null(d) || !nrow(d)) return(NULL)
+    # once the game is over the five can never change again
+    attr(d, "final") <- isTRUE(j$header$competitions[[1]]$status$type$completed)
+    d
+  })
+}
+# the five a side for every game on a slate, where they are known
+nba_starters_slate <- function(gids) {
+  gids <- unique(as.character(gids))
+  gids <- gids[!is.na(gids) & nzchar(gids)]
+  if (!length(gids)) return(NULL)
+  out <- lapply(gids, function(g) tryCatch(nba_starters(g), error = function(e) NULL))
+  out <- out[!vapply(out, is.null, TRUE)]
+  if (!length(out)) return(NULL)
+  dplyr::bind_rows(out)
+}
+
 # One finished game's starters, and who opened the scoring, from ESPN's summary. The
 # shape mirrors nba_fb_hist's rows so the two can simply be stacked.
 nba_fbh_one <- function(gid, season, ko) {
   espn_cached(sprintf("nbafb_%s", gid), ttl = 60 * 24, function() {
     j <- espn_get(sprintf(NBA_SUM_URL, gid))
     if (is.null(j)) return(NULL)
-    rows <- list()
-    for (tm in (j$boxscore$players %||% list())) {
-      tid <- as.character(tm$team$id %||% "")
-      if (!nzchar(tid)) next
-      for (st in (tm$statistics %||% list())) for (a in (st$athletes %||% list())) {
-        if (!isTRUE(a$starter)) next
-        pid <- as.character(a$athlete$id %||% "")
-        if (!nzchar(pid)) next
-        rows[[length(rows) + 1L]] <- data.frame(team = tid, pid = pid,
-          pname = as.character(a$athlete$displayName %||% ""),
-          pos = as.character(a$athlete$position$abbreviation %||% ""),
-          stringsAsFactors = FALSE)
-      }
-    }
-    if (!length(rows)) return(NULL)
-    d <- dplyr::bind_rows(rows)
-    d <- d[!duplicated(d$pid), , drop = FALSE]
+    d <- espn_nba_starters(j)
+    if (is.null(d) || !nrow(d)) return(NULL)
     # the opening period's first play worth at least this many points
     first_scorer <- function(minval) {
       for (pl in (j$plays %||% list())) {
@@ -7869,7 +7909,7 @@ nba_live_fbh <- function(H, sch, now = Sys.time()) {
   out[order(out$ko), , drop = FALSE]
 }
 
-nba_fb <- function(H, cutoff, teams, inj = NULL, tkey = NULL, ros = NULL) {
+nba_fb <- function(H, cutoff, teams, inj = NULL, tkey = NULL, ros = NULL, st = NULL) {
   if (is.null(H) || !nrow(H)) return(NULL)
   h <- H[H$ko < cutoff, ]
   if (!nrow(h)) return(NULL)
@@ -7913,6 +7953,29 @@ nba_fb <- function(H, cutoff, teams, inj = NULL, tkey = NULL, ros = NULL) {
     unique(z$pid[z$game_id %in% utils::head(g, NBA_FB_RECENT)])
   }), use.names = FALSE)
   x <- x[x$team %in% teams & (x$team %in% have | x$pid %in% keep), , drop = FALSE]
+  if (!nrow(x)) return(NULL)
+  # The announced five, where a game has them. This is the whole of the problem: five
+  # names a side, each worth about a tenth of the first basket before anything else is
+  # considered. Where they are known nobody else can take it, so the share is 1 for them
+  # and the rest of that team leaves the board.
+  if (!is.null(st) && nrow(st)) {
+    st <- st[st$team %in% teams, , drop = FALSE]
+    known <- unique(as.character(st$team))
+    if (length(known)) {
+      is_st <- paste(x$team, x$pid) %in% paste(st$team, st$pid)
+      x$s[is_st] <- 1
+      x <- x[is_st | !(x$team %in% known), , drop = FALSE]
+      # a man starting with no first-basket history still belongs on the board, at his
+      # position's rate: that is the honest number for someone unknown, and leaving him
+      # off would be the same error in a quieter form
+      new <- st[!paste(st$team, st$pid) %in% paste(x$team, x$pid), , drop = FALSE]
+      if (nrow(new))
+        x <- dplyr::bind_rows(x, data.frame(pid = as.character(new$pid),
+          n = 0, f = 0, a = 0, pname = as.character(new$pname),
+          pos = as.character(new$pos), team = as.character(new$team),
+          ko = rep(cutoff, nrow(new)), s = 1, stringsAsFactors = FALSE))
+    }
+  }
   if (!nrow(x)) return(NULL)
   x <- espn_inj_gate(x, inj, tkey)
   if (!nrow(x)) return(NULL)
@@ -10642,7 +10705,8 @@ server <- function(input, output, session) {
     tms <- unique(c(b$g$home, b$g$away))
     # only for a slate that has not been played: on a past date the box-score team is right
     ros <- if (live) tryCatch(nba_roster(tms), error = function(e) NULL) else NULL
-    x <- nba_fb(d$fbh, b$cut, tms, inj, tk, ros)
+    st  <- if (live) tryCatch(nba_starters_slate(b$g$game_id), error = function(e) NULL) else NULL
+    x <- nba_fb(d$fbh, b$cut, tms, inj, tk, ros, st)
     if (is.null(x) || !nrow(x)) return(NULL)
     st <- grade_state(x$pid, x$team, b, d$fbh)
     j <- attr(st, "row"); r <- attr(st, "src")
@@ -10668,7 +10732,9 @@ server <- function(input, output, session) {
                 "goals are scored by a starter, and a free throw opens the game 7.1% of the time. ",
                 "Each number is the man's own history shrunk toward his positional rate, times ",
                 "his share of his team's last 20 games \u2014 so it is the chance he takes the first ",
-                "basket, not the chance he takes it if he starts. Rosters come from the team feed, ",
+                "basket, not the chance he takes it if he starts. Once a line-up is posted, about an ",
+                "hour before tip-off, the five are taken as given and nobody else is listed. Rosters ",
+                "come from the team feed, ",
                 "because the season files that record who played are published a season behind. ",
                 "Walk-forward on 1,479 games from 2023 the top pick hit 12.9%, against 10% for ",
                 "picking a starter at random, and a game's stated chances sum to 1.02. A team ",
