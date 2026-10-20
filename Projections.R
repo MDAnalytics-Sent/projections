@@ -7838,9 +7838,16 @@ nba_starters <- function(gid) {
     d
   })
 }
-# the five a side for every game on a slate, where they are known
-nba_starters_slate <- function(gids) {
-  gids <- unique(as.character(gids))
+# The five a side for every game on a slate, where they are known. Games further off than
+# NBA_ST_WINDOW are skipped: no line-up exists for a game three days away, and asking
+# every ten minutes for one would be a few thousand pointless requests a week.
+NBA_ST_WINDOW <- 8      # hours before tip-off worth asking
+nba_starters_slate <- function(gids, ko = NULL, now = Sys.time()) {
+  keep <- if (is.null(ko)) rep(TRUE, length(gids)) else {
+    hrs <- as.numeric(difftime(ko, now, units = "hours"))
+    is.na(hrs) | hrs <= NBA_ST_WINDOW
+  }
+  gids <- unique(as.character(gids[keep]))
   gids <- gids[!is.na(gids) & nzchar(gids)]
   if (!length(gids)) return(NULL)
   out <- lapply(gids, function(g) tryCatch(nba_starters(g), error = function(e) NULL))
@@ -10705,7 +10712,7 @@ server <- function(input, output, session) {
     tms <- unique(c(b$g$home, b$g$away))
     # only for a slate that has not been played: on a past date the box-score team is right
     ros <- if (live) tryCatch(nba_roster(tms), error = function(e) NULL) else NULL
-    st  <- if (live) tryCatch(nba_starters_slate(b$g$game_id), error = function(e) NULL) else NULL
+    st  <- if (live) tryCatch(nba_starters_slate(b$g$game_id, b$g$ko), error = function(e) NULL) else NULL
     x <- nba_fb(d$fbh, b$cut, tms, inj, tk, ros, st)
     if (is.null(x) || !nrow(x)) return(NULL)
     st <- grade_state(x$pid, x$team, b, d$fbh)
