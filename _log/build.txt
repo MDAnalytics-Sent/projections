@@ -1,4 +1,4 @@
-2026-10-21 05:40:53 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-21 06:10:51 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -9,18 +9,18 @@ To publish the web page, run:  source("publish_site.R")   (Shiny version: source
 Slate      | 0 games · none graded yet
 Cache      | 560 files (5.8 MB) · 21 served from disk, 1 fetched
 CFB td     | 16197 graded prop(s) on file; the earliest slates have nothing before them to correct against
-NHL goalie | 16302 appearance(s), 8152 start(s), 166 goalie(s), 4 season(s) 2023-2026
-NHL goalie | starter edge on 4045 of 14856 game(s) (27%); sd 0.177, range -0.74 to +0.69 goals
+NHL goalie | 16346 appearance(s), 8174 start(s), 166 goalie(s), 4 season(s) 2023-2026
+NHL goalie | starter edge on 4056 of 14856 game(s) (27%); sd 0.178, range -0.74 to +0.69 goals
 NHL        | 151 final game(s) this season, 151 with box scores, 0 missing
-NHL        | latest final: 2026-10-20 (game 2026020151) | today 2026-10-21 has 2 game(s), 0 final | feed 4 hit / 9 fetched
+NHL        | latest final: 2026-10-20 (game 2026020151) | today 2026-10-21 has 2 game(s), 0 final | feed 3 hit / 10 fetched
 NHL goalie | 604 appearance(s) across 151 game(s); 302 identifiable starter(s), 72 distinct goalie(s)
 NHL goalie | fields present -- toi 100%, shots 100%, saves 100%, goals against 100%
 NHL goalie | starters league save pct 0.8935 over 8031 shots
 NHL goalie | measured -0.09 goals of margin per goal of starter edge (se 0.23) on 7667 prior-season game(s) -- NOT used: needs the right sign and two standard errors
-2026-10-21 05:41:43   today  29.9s
+2026-10-21 06:12:15   today  55.8s
 CFB td     | recalibrated on 9313 graded prop(s) settled before this slate: slope 1.16, shift -0.26 -- a raw 25% becomes 18%, a raw 60% becomes 55%
-2026-10-21 05:41:55   nfl     9.8s  3 built, 8 to pick from
-2026-10-21 05:42:00   cfb     5.2s  3 built, 9 to pick from
+2026-10-21 06:12:34   nfl    15.1s  3 built, 8 to pick from
+2026-10-21 06:12:42   cfb     8.3s  3 built, 9 to pick from
 
 ── Slate 2026-10-20 ──
 Slate      | 0 games · none graded yet
@@ -32,7 +32,7 @@ Cache      | 560 files (5.8 MB) · 18 served from disk, 0 fetched
 
 ── Slate 2026-10-21 ──
 Slate      | 0 games · none graded yet
-Cache      | 560 files (5.8 MB) · 18 served from disk, 0 fetched
+Cache      | 560 files (5.8 MB) · 11 served from disk, 7 fetched
 
 ── Slate 2026-10-22 ──
 Slate      | 0 games · none graded yet
@@ -51,7 +51,7 @@ Win model  | calibration a=1.150 b=-0.005  (fit on 2463 graded games before 2026
 NRFI model | calibration a=0.300 b=-0.046  (fit on 1830 graded 1st innings before 2026-10-24)
 Slate      | 1 games · none graded yet
 Cache      | 560 files (5.8 MB) · 17 served from disk, 4 fetched
-2026-10-21 05:42:18   mlb    17.3s  5 built, 15 to pick from
-2026-10-21 05:42:19   nhl     1.4s  5 built, 18 to pick from
-2026-10-21 05:42:20   nba     1.0s  5 built, 5 to pick from
-2026-10-21 05:42:20 built 13377 KB in 87s
+2026-10-21 06:13:11   mlb    29.1s  5 built, 15 to pick from
+2026-10-21 06:13:14   nhl     2.1s  5 built, 18 to pick from
+2026-10-21 06:13:16   nba     2.4s  5 built, 5 to pick from
+2026-10-21 06:13:16 built 13378 KB in 145s
