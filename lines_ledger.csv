@@ -259,8 +259,8 @@
 "NHL","401892538","2026-10-20 01:00:00","Pittsburgh @ Utah","Utah","home",0.5981,0.6225,1.541,-0.0785,"DraftKings","2026-10-20 00:50:13","W",0.541
 "NBA","401909088","2026-10-20 19:00:00","Boston Celtics @ Detroit Pistons","Detroit Pistons","home",0.5705,0.4739,2.02,0.1523,"DraftKings","2026-10-20 18:42:27","W",1.02
 "NBA","401909089","2026-10-20 23:00:00","Philadelphia 76ers @ New York Knicks","New York Knicks","home",0.6516,0.6092,1.571,0.024,"DraftKings","2026-10-20 22:37:50","L",-1
-"NCAAF","401871055","2026-10-20 23:00:00","Middle Tennessee @ Florida International","Florida International","home",0.8055,0.7715,1.244,0.002,"DraftKings","2026-10-20 22:37:50",NA,NA
-"NCAAF","401871069","2026-10-20 23:00:00","Missouri State @ Delaware","Delaware","home",0.6643,0.5934,1.617,0.0744,"DraftKings","2026-10-20 22:37:50",NA,NA
+"NCAAF","401871055","2026-10-20 23:00:00","Middle Tennessee @ Florida International","Florida International","home",0.8055,0.7715,1.244,0.002,"DraftKings","2026-10-20 22:37:50","L",-1
+"NCAAF","401871069","2026-10-20 23:00:00","Missouri State @ Delaware","Delaware","home",0.6643,0.5934,1.617,0.0744,"DraftKings","2026-10-20 22:37:50","W",0.617
 "NHL","401892541","2026-10-20 23:00:00","Anaheim @ New York","New York","home",0.5832,0.583,1.645,-0.0406,"DraftKings","2026-10-20 22:37:50","W",0.645
 "NHL","401892540","2026-10-20 23:00:00","Colorado @ New Jersey","Colorado","away",0.526,0.4783,2,0.0519,"DraftKings","2026-10-20 22:37:50","L",-1
 "NHL","401892539","2026-10-20 23:00:00","San Jose @ Montréal","Montréal","home",0.5749,0.6636,1.444,-0.1695,"DraftKings","2026-10-20 22:37:50","L",-1
@@ -268,7 +268,7 @@
 "NHL","401892542","2026-10-20 23:00:00","Los Angeles @ Washington","Washington","home",0.6343,0.5934,1.617,0.0259,"DraftKings","2026-10-20 22:37:50","L",-1
 "NCAAF","401871092","2026-10-20 23:30:00","South Alabama @ Marshall","Marshall","home",0.514,0.4675,2.05,0.0536,"DraftKings","2026-10-20 23:06:30",NA,NA
 "NHL","401892545","2026-10-21 00:00:00","Boston @ Dallas","Dallas","home",0.5143,0.6038,1.588,-0.1832,"DraftKings","2026-10-20 23:35:35",NA,NA
-"NHL","401892544","2026-10-21 00:00:00","Winnipeg @ St. Louis","St. Louis","home",0.5534,0.5514,1.741,-0.0367,"DraftKings","2026-10-20 23:35:35",NA,NA
+"NHL","401892544","2026-10-21 00:00:00","Winnipeg @ St. Louis","St. Louis","home",0.5534,0.5514,1.741,-0.0367,"DraftKings","2026-10-20 23:35:35","W",0.741
 "NBA","401909090","2026-10-21 01:30:00","Oklahoma City Thunder @ San Antonio Spurs","San Antonio Spurs","home",0.5289,0.4826,1.98,0.0475,"DraftKings","2026-10-21 00:48:39",NA,NA
 "NHL","401892546","2026-10-21 01:00:00","Minnesota @ Edmonton","Edmonton","home",0.569,0.5427,1.769,0.0066,"DraftKings","2026-10-21 00:48:39",NA,NA
 "NHL","401892547","2026-10-21 01:40:00","Detroit @ Seattle","Seattle","home",0.6008,0.4739,2.02,0.2137,"DraftKings","2026-10-21 00:48:39",NA,NA
