@@ -1,4 +1,4 @@
-2026-10-21 03:16:14 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-21 04:11:56 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -17,10 +17,10 @@ NHL goalie | 604 appearance(s) across 151 game(s); 302 identifiable starter(s), 
 NHL goalie | fields present -- toi 100%, shots 100%, saves 100%, goals against 100%
 NHL goalie | starters league save pct 0.8935 over 8031 shots
 NHL goalie | measured -0.09 goals of margin per goal of starter edge (se 0.23) on 7667 prior-season game(s) -- NOT used: needs the right sign and two standard errors
-2026-10-21 03:17:25   today  45.9s
+2026-10-21 04:13:02   today  39.7s
 CFB td     | recalibrated on 9313 graded prop(s) settled before this slate: slope 1.16, shift -0.26 -- a raw 25% becomes 18%, a raw 60% becomes 55%
-2026-10-21 03:17:45   nfl    15.8s  3 built, 8 to pick from
-2026-10-21 03:17:54   cfb     9.0s  3 built, 9 to pick from
+2026-10-21 04:13:18   nfl    12.6s  3 built, 8 to pick from
+2026-10-21 04:13:25   cfb     6.8s  3 built, 9 to pick from
 
 ── Slate 2026-10-20 ──
 Slate      | 0 games · none graded yet
@@ -43,7 +43,7 @@ Win model  | learned weights: run model 0.948, Pythagorean gap 0.752 (fit on 2,4
 Win model  | calibration a=1.151 b=-0.005  (fit on 2463 graded games before 2026-10-23)
 NRFI model | calibration a=0.300 b=-0.046  (fit on 1830 graded 1st innings before 2026-10-23)
 Slate      | 1 games · none graded yet
-Cache      | 560 files (5.8 MB) · 41 served from disk, 10 fetched
+Cache      | 560 files (5.8 MB) · 47 served from disk, 4 fetched
 
 ── Slate 2026-10-24 ──
 Win model  | learned weights: run model 0.948, Pythagorean gap 0.750 (fit on 2,463 graded mlb-runs-v10 games, 58% data, half-life 90 d)
@@ -51,7 +51,7 @@ Win model  | calibration a=1.150 b=-0.005  (fit on 2463 graded games before 2026
 NRFI model | calibration a=0.300 b=-0.046  (fit on 1830 graded 1st innings before 2026-10-24)
 Slate      | 1 games · none graded yet
 Cache      | 560 files (5.8 MB) · 17 served from disk, 4 fetched
-2026-10-21 03:18:22   mlb    27.5s  5 built, 15 to pick from
-2026-10-21 03:18:24   nhl     2.3s  5 built, 18 to pick from
-2026-10-21 03:18:26   nba     1.8s  5 built, 5 to pick from
-2026-10-21 03:18:26 built 13377 KB in 133s
+2026-10-21 04:13:49   mlb    23.9s  5 built, 15 to pick from
+2026-10-21 04:13:51   nhl     1.7s  5 built, 18 to pick from
+2026-10-21 04:13:52   nba     1.4s  5 built, 5 to pick from
+2026-10-21 04:13:52 built 13377 KB in 116s
