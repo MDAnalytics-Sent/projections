@@ -1,4 +1,4 @@
-2026-10-22 10:43:44 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-22 11:13:04 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -20,12 +20,12 @@ NHL goalie | measured -0.09 goals of margin per goal of starter edge (se 0.23) o
 NBA ingest | 1 of 1 finished game(s) read from the summary feed (10 name(s)); history ends 2026-10-21
 NBA roster | 4 of 4 team(s) returned a roster (68 name(s))
 NBA line-up| 0 of 1 game(s) within 8h of tip-off returned a five (0 name(s))
-2026-10-22 10:44:59   today  47.2s
+2026-10-22 11:14:21   today  48.1s
 CFB td     | recalibrated on 9313 graded prop(s) settled before this slate: slope 1.16, shift -0.26 -- a raw 25% becomes 18%, a raw 60% becomes 55%
 NBA roster | 4 of 4 team(s) returned a roster (68 name(s))
 NBA line-up| 0 of 1 game(s) within 8h of tip-off returned a five (0 name(s))
-2026-10-22 10:45:18   nfl    14.9s  3 built, 8 to pick from
-2026-10-22 10:45:26   cfb     8.6s  3 built, 9 to pick from
+2026-10-22 11:14:40   nfl    15.5s  3 built, 8 to pick from
+2026-10-22 11:14:49   cfb     8.9s  3 built, 9 to pick from
 
 ── Slate 2026-10-21 ──
 Slate      | 0 games · none graded yet
@@ -56,12 +56,12 @@ Cache      | 564 files (5.8 MB) · 11 served from disk, 10 fetched
 ── Slate 2026-10-25 ──
 Slate      | 0 games · none graded yet
 Cache      | 564 files (5.8 MB) · 17 served from disk, 1 fetched
-2026-10-22 10:45:55   mlb    28.3s  5 built, 14 to pick from
-2026-10-22 10:45:57   nhl     2.0s  5 built, 18 to pick from
+2026-10-22 11:15:20   mlb    29.9s  5 built, 14 to pick from
+2026-10-22 11:15:22   nhl     2.1s  5 built, 18 to pick from
 NBA roster | 4 of 4 team(s) returned a roster (68 name(s))
 NBA line-up| 0 of 1 game(s) within 8h of tip-off returned a five (0 name(s))
 NBA roster | 24 of 24 team(s) returned a roster (416 name(s))
 NBA roster | 16 of 16 team(s) returned a roster (279 name(s))
 NBA roster | 14 of 14 team(s) returned a roster (241 name(s))
-2026-10-22 10:45:59   nba     1.8s  5 built, 6 to pick from
-2026-10-22 10:45:59 built 13269 KB in 135s
+2026-10-22 11:15:24   nba     1.9s  5 built, 6 to pick from
+2026-10-22 11:15:24 built 13270 KB in 140s
