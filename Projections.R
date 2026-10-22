@@ -10769,7 +10769,16 @@ server <- function(input, output, session) {
     tms <- unique(c(b$g$home, b$g$away))
     # only for a slate that has not been played: on a past date the box-score team is right
     ros <- if (live) tryCatch(nba_roster(tms), error = function(e) NULL) else NULL
-    st  <- if (live) tryCatch(nba_starters_slate(b$g$game_id, b$g$ko), error = function(e) NULL) else NULL
+    # The five a side. For a slate still to come that means the posted line-up, when there
+    # is one. For one already played it is simply a fact, recorded in the history, and there
+    # is no sense listing men who were never on the floor and marking them "did not start".
+    # The chances themselves still come only from games before this slate, so knowing who
+    # started leaks nothing into them -- it decides who is listed, not how likely he was.
+    st <- if (live) tryCatch(nba_starters_slate(b$g$game_id, b$g$ko), error = function(e) NULL)
+          else {
+            z <- d$fbh[as.character(d$fbh$game_id) %in% as.character(b$g$game_id), , drop = FALSE]
+            if (!nrow(z)) NULL else unique(z[, c("team", "pid", "pname", "pos")])
+          }
     x <- nba_fb(d$fbh, b$cut, tms, inj, tk, ros, st)
     if (is.null(x) || !nrow(x)) return(NULL)
     st <- grade_state(x$pid, x$team, b, d$fbh)
