@@ -7866,7 +7866,23 @@ nba_starters <- function(gid) {
   espn_cached(sprintf("nbast_%s", gid), ttl = 10, function() {
     j <- espn_get(sprintf(NBA_SUM_URL, gid))
     d <- espn_nba_starters(j)
-    if (is.null(d) || !nrow(d)) return(NULL)
+    if (is.null(d) || !nrow(d)) {
+      # One probe a run. A five that is not there and a five this reader cannot find
+      # look identical from the outside and need opposite fixes, so say which it is.
+      if (!is.null(j) && !isTRUE(.espn_mem[[".st_probe"]])) {
+        .espn_mem[[".st_probe"]] <- TRUE
+        rk <- if (is.null(j$rosters) || !length(j$rosters)) "absent" else
+          paste(utils::head(names(j$rosters[[1]]), 8), collapse = ",")
+        r1 <- if (is.null(j$rosters) || !length(j$rosters) ||
+                  is.null(j$rosters[[1]]$roster) || !length(j$rosters[[1]]$roster)) "absent" else
+          paste(utils::head(names(j$rosters[[1]]$roster[[1]]), 10), collapse = ",")
+        bx <- if (is.null(j$boxscore$players) || !length(j$boxscore$players)) "absent" else
+          sprintf("%d team(s)", length(j$boxscore$players))
+        mlog(sprintf("NBA probe  | keys: %s", paste(utils::head(names(j), 12), collapse = ",")))
+        mlog(sprintf("NBA probe  | rosters[1]: %s | roster[1]: %s | boxscore$players: %s", rk, r1, bx))
+      }
+      return(NULL)
+    }
     # once the game is over the five can never change again
     attr(d, "final") <- isTRUE(j$header$competitions[[1]]$status$type$completed)
     d
