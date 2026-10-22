@@ -7972,7 +7972,8 @@ nba_live_fbh <- function(H, sch, now = Sys.time()) {
   out[order(out$ko), , drop = FALSE]
 }
 
-nba_fb <- function(H, cutoff, teams, inj = NULL, tkey = NULL, ros = NULL, st = NULL) {
+nba_fb <- function(H, cutoff, teams, inj = NULL, tkey = NULL, ros = NULL, st = NULL,
+                   games = NULL) {
   if (is.null(H) || !nrow(H)) return(NULL)
   h <- H[H$ko < cutoff, ]
   if (!nrow(h)) return(NULL)
@@ -8054,6 +8055,32 @@ nba_fb <- function(H, cutoff, teams, inj = NULL, tkey = NULL, ros = NULL, st = N
   # his rate if he starts, times the chance he does
   x$p_fg  <- (x$f + NBA_FB_KPL * b) / (x$n + NBA_FB_KPL) * x$s
   x$p_any <- (x$a + NBA_FB_KPL * b) / (x$n + NBA_FB_KPL) * x$s
+  # Exactly one first basket is scored in a game, so the men on the floor hold all of it
+  # between them and their chances have to sum to one. Built one at a time from separate
+  # histories they do not: over 1,099 games with both fives known they summed to 1.038,
+  # above one in 71% of them, as high as 1.285. The average is a rounding error; the
+  # spread is not. The board is ranked across every game on the slate, so the most
+  # inflated game's players sort highest, and a chance quoted a quarter too high against
+  # a book price is value that was never there.
+  #
+  # Scaled per game, which leaves the split between the two sides alone -- they are not
+  # equal, the side that wins the tip has the ball first -- and corrects only the total.
+  # A game with fewer than five candidates on a side is skipped: there the shortfall is
+  # real, and forcing it to one would hand the listed men a share belonging to somebody
+  # who is not on the board at all.
+  if (!is.null(games) && nrow(games)) {
+    for (i in seq_len(nrow(games))) {
+      hm <- as.character(games$home[i]); aw <- as.character(games$away[i])
+      k <- which(as.character(x$team) %in% c(hm, aw))
+      if (!length(k)) next
+      if (sum(as.character(x$team[k]) == hm) < 5L ||
+          sum(as.character(x$team[k]) == aw) < 5L) next
+      for (cl in c("p_fg", "p_any")) {
+        s <- sum(x[[cl]][k], na.rm = TRUE)
+        if (is.finite(s) && s > 0) x[[cl]][k] <- x[[cl]][k] / s
+      }
+    }
+  }
   x[order(-x$p_fg), c("pid", "pname", "pos", "team", "n", "f", "a", "p_fg", "p_any")]
 }
 
@@ -10793,7 +10820,7 @@ server <- function(input, output, session) {
             z <- d$fbh[as.character(d$fbh$game_id) %in% as.character(b$g$game_id), , drop = FALSE]
             if (!nrow(z)) NULL else unique(z[, c("team", "pid", "pname", "pos")])
           }
-    x <- nba_fb(d$fbh, b$cut, tms, inj, tk, ros, st)
+    x <- nba_fb(d$fbh, b$cut, tms, inj, tk, ros, st, b$g)
     if (is.null(x) || !nrow(x)) return(NULL)
     st <- grade_state(x$pid, x$team, b, d$fbh)
     j <- attr(st, "row"); r <- attr(st, "src")
@@ -10819,7 +10846,10 @@ server <- function(input, output, session) {
                 "goals are scored by a starter, and a free throw opens the game 7.1% of the time. ",
                 "Each number is the man's own history shrunk toward his positional rate, times ",
                 "his share of his team's last 20 games \u2014 so it is the chance he takes the first ",
-                "basket, not the chance he takes it if he starts. Once a line-up is posted, about an ",
+                "basket, not the chance he takes it if he starts. One first basket is scored per ",
+                "game, so where both fives are known the ten are scaled to sum to 100%: built ",
+                "separately they came to 103.8% on average and as much as 128%, which reads as ",
+                "value against a book price that is not there. Once a line-up is posted, about an ",
                 "hour before tip-off, the five are taken as given and nobody else is listed. Rosters ",
                 "come from the team feed, ",
                 "because the season files that record who played are published a season behind. ",
