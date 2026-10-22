@@ -7481,6 +7481,7 @@ NBA_INJ_URL  <- "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/in
 NBA_INJ_TTL  <- 30
 NBA_ROS_URL  <- "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/%s/roster"
 NBA_SUM_URL  <- "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=%s"
+NBA_SCORE_DAYS <- 3L        # days back the scoreboard is asked who won
 NBA_FB_LIVE_MAX <- 40L      # finished games read per load, so a cold start cannot stall
 NBA_ROS_TTL  <- 12 * 60     # a roster changes rarely; a stale one is the whole bug
 # Basketball rests healthy players, so the feed carries states hockey's does not.
@@ -7518,6 +7519,28 @@ nba_sync <- function(force = FALSE) {
   paste(f, as.numeric(file.mtime(f)), collapse = "|")
 }
 
+# The season file learns a result whenever it is next republished, which can be the best
+# part of a day after the game. The scoreboard knows within minutes, so recent dates are
+# overlaid from it: without this a slate sits all morning with picks and no results, and
+# the record cannot move. Only the score is taken; the pick is never touched.
+nba_overlay_scores <- function(s, days = NBA_SCORE_DAYS, now = now_et()) {
+  if (is.null(s) || !nrow(s)) return(s)
+  today <- as.Date(format(now, "%Y-%m-%d"))
+  for (i in 0:days) {
+    ev <- tryCatch(espn_scoreboard("nba", today - i), error = function(e) NULL)
+    if (is.null(ev) || !nrow(ev) || !all(c("eid", "h_score", "a_score", "done") %in% names(ev))) next
+    ev <- ev[ev$done %in% TRUE & is.finite(ev$h_score) & is.finite(ev$a_score), , drop = FALSE]
+    if (!nrow(ev)) next
+    j <- match(as.character(ev$eid), as.character(s$game_id))
+    k <- which(!is.na(j))
+    if (!length(k)) next
+    s$home_score[j[k]] <- ev$h_score[k]
+    s$away_score[j[k]] <- ev$a_score[k]
+    s$done[j[k]] <- TRUE
+  }
+  s
+}
+
 nba_sched <- function() {
   out <- lapply(NBA_SEASONS, function(y) {
     f <- nba_path("sch", y); if (!file.exists(f)) return(NULL)
@@ -7549,6 +7572,7 @@ nba_sched <- function() {
   s <- s[!duplicated(s$game_id), ]
   attr(s$ko, "tzone") <- TZ_ET
   s$date <- as.Date(format(s$ko, "%Y-%m-%d"))
+  s <- tryCatch(nba_overlay_scores(s), error = function(e) s)   # before anything reads a score
   s$final_at  <- s$ko + 4 * 3600
   fin <- s$done %in% TRUE
   if (any(fin)) s$final_at[fin] <- s$ko[fin]
