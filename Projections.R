@@ -7880,6 +7880,26 @@ nba_starters <- function(gid) {
           sprintf("%d team(s)", length(j$boxscore$players))
         mlog(sprintf("NBA probe  | keys: %s", paste(utils::head(names(j), 12), collapse = ",")))
         mlog(sprintf("NBA probe  | rosters[1]: %s | roster[1]: %s | boxscore$players: %s", rk, r1, bx))
+        # The summary has no line-up before tip-off. Does any other endpoint of the same
+        # provider? One look each, raw, asking only whether the word appears at all.
+        tid <- tryCatch(as.character(j$boxscore$teams[[1]]$team$id), error = function(e) NA_character_)
+        urls <- c(
+          core_roster = sprintf("https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/events/%s/competitions/%s/competitors/%s/roster", gid, gid, tid %||% "0"),
+          core_event  = sprintf("https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/events/%s", gid),
+          web_summary = sprintf("https://site.web.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=%s", gid),
+          probables   = sprintf("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=%s&enable=rosters,probables,lineups", gid))
+        for (nm in names(urls)) {
+          r <- tryCatch(httr::GET(urls[[nm]], httr::timeout(10),
+                                  httr::user_agent("Mozilla/5.0 (Projections)")),
+                        error = function(e) NULL)
+          code <- if (is.null(r)) NA_integer_ else httr::status_code(r)
+          txt <- if (isTRUE(code == 200L)) tryCatch(httr::content(r, "text", encoding = "UTF-8"),
+                                                    error = function(e) "") else ""
+          mlog(sprintf("NBA probe  | %-12s http %-4s %6d bytes | says \"starter\": %-5s | says \"lineup\": %s",
+                       nm, if (is.na(code)) "err" else as.character(code), nchar(txt),
+                       grepl("\"starter\"", txt, fixed = TRUE),
+                       grepl("ineup", txt, fixed = TRUE)))
+        }
       }
       return(NULL)
     }
