@@ -1,4 +1,4 @@
-2026-10-21 20:38:34 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-21 21:10:08 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -8,19 +8,19 @@ To publish the web page, run:  source("publish_site.R")   (Shiny version: source
 ── Slate 2026-10-21 ──
 Slate      | 0 games · none graded yet
 Cache      | 560 files (5.8 MB) · 21 served from disk, 1 fetched
-CFB td     | 16232 graded prop(s) on file; the earliest slates have nothing before them to correct against
+CFB td     | 16268 graded prop(s) on file; the earliest slates have nothing before them to correct against
 NHL goalie | 16346 appearance(s), 8174 start(s), 166 goalie(s), 4 season(s) 2023-2026
 NHL goalie | starter edge on 4056 of 14856 game(s) (27%); sd 0.178, range -0.74 to +0.69 goals
 NHL        | 153 final game(s) this season, 153 with box scores, 0 missing
 NHL        | latest final: 2026-10-21 (game 2026020153) | today 2026-10-21 has 2 game(s), 2 final | feed 3 hit / 10 fetched
 NHL goalie | 612 appearance(s) across 153 game(s); 306 identifiable starter(s), 72 distinct goalie(s)
 NHL goalie | fields present -- toi 100%, shots 100%, saves 100%, goals against 100%
-NHL goalie | starters league save pct 0.8936 over 8132 shots
+NHL goalie | starters league save pct 0.8936 over 8133 shots
 NHL goalie | measured -0.09 goals of margin per goal of starter edge (se 0.23) on 7667 prior-season game(s) -- NOT used: needs the right sign and two standard errors
-2026-10-21 20:39:23   today  28.3s
+2026-10-21 21:11:11   today  38.2s
 CFB td     | recalibrated on 9313 graded prop(s) settled before this slate: slope 1.16, shift -0.26 -- a raw 25% becomes 18%, a raw 60% becomes 55%
-2026-10-21 20:39:35   nfl     9.5s  3 built, 8 to pick from
-2026-10-21 20:39:40   cfb     4.9s  3 built, 9 to pick from
+2026-10-21 21:11:27   nfl    12.2s  3 built, 8 to pick from
+2026-10-21 21:11:34   cfb     7.1s  3 built, 9 to pick from
 
 ── Slate 2026-10-20 ──
 Slate      | 0 games · none graded yet
@@ -51,8 +51,8 @@ Win model  | calibration a=1.150 b=-0.005  (fit on 2463 graded games before 2026
 NRFI model | calibration a=0.300 b=-0.046  (fit on 1830 graded 1st innings before 2026-10-24)
 Slate      | 1 games · none graded yet
 Cache      | 560 files (5.8 MB) · 17 served from disk, 4 fetched
-2026-10-21 20:39:57   mlb    17.0s  5 built, 15 to pick from
-2026-10-21 20:39:58   nhl     1.3s  5 built, 18 to pick from
-2026-10-21 20:40:03   nba     4.4s  5 built, 5 to pick from
-2026-10-21 20:40:03   could not compute: bboard (row names contain missing values); bfb (row names contain missing values); brecord (row names contain missing values); bboard_sec (row names contain missing values); bfb_sec (row names contain missing values)
-2026-10-21 20:40:03 built 13064 KB in 89s
+2026-10-21 21:11:55   mlb    21.2s  5 built, 15 to pick from
+2026-10-21 21:11:57   nhl     1.6s  5 built, 18 to pick from
+2026-10-21 21:12:02   nba     4.8s  5 built, 5 to pick from
+2026-10-21 21:12:02   could not compute: bboard (row names contain missing values); bfb (row names contain missing values); brecord (row names contain missing values); bboard_sec (row names contain missing values); bfb_sec (row names contain missing values)
+2026-10-21 21:12:02 built 13064 KB in 113s
