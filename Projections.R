@@ -7888,17 +7888,34 @@ nba_starters <- function(gid) {
           core_event  = sprintf("https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/events/%s", gid),
           web_summary = sprintf("https://site.web.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=%s", gid),
           probables   = sprintf("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=%s&enable=rosters,probables,lineups", gid))
-        for (nm in names(urls)) {
-          r <- tryCatch(httr::GET(urls[[nm]], httr::timeout(10),
+        get1 <- function(u) {
+          r <- tryCatch(httr::GET(u, httr::timeout(10),
                                   httr::user_agent("Mozilla/5.0 (Projections)")),
                         error = function(e) NULL)
           code <- if (is.null(r)) NA_integer_ else httr::status_code(r)
           txt <- if (isTRUE(code == 200L)) tryCatch(httr::content(r, "text", encoding = "UTF-8"),
                                                     error = function(e) "") else ""
+          list(code = code, txt = txt)
+        }
+        for (nm in names(urls)) {
+          z <- get1(urls[[nm]])
           mlog(sprintf("NBA probe  | %-12s http %-4s %6d bytes | says \"starter\": %-5s | says \"lineup\": %s",
-                       nm, if (is.na(code)) "err" else as.character(code), nchar(txt),
-                       grepl("\"starter\"", txt, fixed = TRUE),
-                       grepl("ineup", txt, fixed = TRUE)))
+                       nm, if (is.na(z$code)) "err" else as.character(z$code), nchar(z$txt),
+                       grepl("\"starter\"", z$txt, fixed = TRUE),
+                       grepl("ineup", z$txt, fixed = TRUE)))
+          # the core API is hypermedia: a payload that mentions line-ups should carry a
+          # link to them, and that link is the thing worth having
+          if (identical(nm, "core_event") && grepl("ineup", z$txt, fixed = TRUE)) {
+            hits <- unique(regmatches(z$txt, gregexpr('https?://[^"]*[Ll]ineup[^"]*', z$txt))[[1]])
+            if (!length(hits)) mlog("NBA probe  | mentions line-ups but carries no link to them")
+            for (u in utils::head(hits, 2L)) {
+              mlog(sprintf("NBA probe  | link: %s", substr(u, 1, 150)))
+              y <- get1(u)
+              mlog(sprintf("NBA probe  | followed  http %-4s %6d bytes | says \"starter\": %-5s | first 220: %s",
+                           if (is.na(y$code)) "err" else as.character(y$code), nchar(y$txt),
+                           grepl("\"starter\"", y$txt, fixed = TRUE), substr(y$txt, 1, 220)))
+            }
+          }
         }
       }
       return(NULL)
