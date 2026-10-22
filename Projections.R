@@ -7820,7 +7820,10 @@ nba_roster <- function(ids) {
   ids <- ids[!is.na(ids) & nzchar(ids)]
   if (!length(ids)) return(NULL)
   out <- lapply(ids, function(i) tryCatch(nba_roster_one(i), error = function(e) NULL))
-  out <- out[!vapply(out, is.null, TRUE)]
+  got <- !vapply(out, is.null, TRUE)
+  mlog(sprintf("NBA roster | %d of %d team(s) returned a roster (%d name(s))",
+               sum(got), length(ids), sum(vapply(out[got], nrow, 0L))))
+  out <- out[got]
   if (!length(out)) return(NULL)
   dplyr::bind_rows(out)
 }
@@ -7882,7 +7885,11 @@ nba_starters_slate <- function(gids, ko = NULL, now = Sys.time()) {
   gids <- gids[!is.na(gids) & nzchar(gids)]
   if (!length(gids)) return(NULL)
   out <- lapply(gids, function(g) tryCatch(nba_starters(g), error = function(e) NULL))
-  out <- out[!vapply(out, is.null, TRUE)]
+  got <- !vapply(out, is.null, TRUE)
+  n <- sum(vapply(out[got], nrow, 0L))
+  mlog(sprintf("NBA line-up| %d of %d game(s) within %dh of tip-off returned a five (%d name(s))",
+               sum(got), length(gids), NBA_ST_WINDOW, n))
+  out <- out[got]
   if (!length(out)) return(NULL)
   dplyr::bind_rows(out)
 }
@@ -7941,7 +7948,11 @@ nba_live_fbh <- function(H, sch, now = Sys.time()) {
     if (is.na(k)) return(NULL)
     tryCatch(nba_fbh_one(g, sch$season[k], sch$ko[k]), error = function(e) NULL)
   })
-  add <- add[!vapply(add, is.null, TRUE)]
+  ok <- !vapply(add, is.null, TRUE)
+  mlog(sprintf("NBA ingest | %d of %d finished game(s) read from the summary feed (%d name(s)); history ends %s",
+               sum(ok), length(need), sum(vapply(add[ok], nrow, 0L)),
+               if (!nrow(H)) "never" else format(max(H$ko), "%Y-%m-%d")))
+  add <- add[ok]
   if (!length(add)) return(H)
   out <- dplyr::bind_rows(H, dplyr::bind_rows(add))
   out[order(out$ko), , drop = FALSE]
@@ -8851,7 +8862,10 @@ ESPN_LG    <- c(NFL = "nfl", NCAAF = "cfb", MLB = "mlb", NHL = "nhl", NBA = "nba
 # visitor shares the one R process on a host).
 espn_get <- function(url, timeout = 8) {
   down <- .espn_mem[[".down"]]
-  if (!is.null(down) && as.numeric(difftime(Sys.time(), down, units = "mins")) < 3) return(NULL)
+  if (!is.null(down) && as.numeric(difftime(Sys.time(), down, units = "mins")) < 3) {
+    .espn_mem[[".skipped"]] <- (.espn_mem[[".skipped"]] %||% 0L) + 1L
+    return(NULL)
+  }
   r <- tryCatch(httr::GET(url, httr::timeout(timeout), httr::user_agent("Mozilla/5.0 (Projections)")),
                 error = function(e) NULL)
   code <- if (is.null(r)) NA_integer_ else httr::status_code(r)
@@ -8860,7 +8874,11 @@ espn_get <- function(url, timeout = 8) {
     j <- if (is.null(txt)) NULL else tryCatch(jsonlite::fromJSON(txt, simplifyVector = FALSE), error = function(e) NULL)
     if (!is.null(j)) return(j)
   }
-  if (is.na(code) || code >= 500L || code == 403L || code == 429L) .espn_mem[[".down"]] <- Sys.time()
+  if (is.na(code) || code >= 500L || code == 403L || code == 429L) {
+    .espn_mem[[".down"]] <- Sys.time()
+    mlog(sprintf("Network    | ESPN answered %s; pausing its requests for 3 minutes",
+                 if (is.na(code)) "not at all" else as.character(code)))
+  }
   NULL
 }
 
