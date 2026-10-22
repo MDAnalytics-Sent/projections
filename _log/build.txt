@@ -1,4 +1,4 @@
-2026-10-22 11:13:04 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-22 11:37:57 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -19,13 +19,13 @@ NHL goalie | starters league save pct 0.8936 over 8133 shots
 NHL goalie | measured -0.09 goals of margin per goal of starter edge (se 0.23) on 7667 prior-season game(s) -- NOT used: needs the right sign and two standard errors
 NBA ingest | 1 of 1 finished game(s) read from the summary feed (10 name(s)); history ends 2026-10-21
 NBA roster | 4 of 4 team(s) returned a roster (68 name(s))
-NBA line-up| 0 of 1 game(s) within 8h of tip-off returned a five (0 name(s))
-2026-10-22 11:14:21   today  48.1s
+NBA line-up| 0 of 2 game(s) within 8h of tip-off returned a five (0 name(s))
+2026-10-22 11:38:56   today  37.4s
 CFB td     | recalibrated on 9313 graded prop(s) settled before this slate: slope 1.16, shift -0.26 -- a raw 25% becomes 18%, a raw 60% becomes 55%
 NBA roster | 4 of 4 team(s) returned a roster (68 name(s))
-NBA line-up| 0 of 1 game(s) within 8h of tip-off returned a five (0 name(s))
-2026-10-22 11:14:40   nfl    15.5s  3 built, 8 to pick from
-2026-10-22 11:14:49   cfb     8.9s  3 built, 9 to pick from
+NBA line-up| 0 of 2 game(s) within 8h of tip-off returned a five (0 name(s))
+2026-10-22 11:39:12   nfl    11.9s  3 built, 8 to pick from
+2026-10-22 11:39:18   cfb     6.5s  3 built, 9 to pick from
 
 ── Slate 2026-10-21 ──
 Slate      | 0 games · none graded yet
@@ -51,17 +51,17 @@ Win model  | learned weights: run model 0.948, Pythagorean gap 0.750 (fit on 2,4
 Win model  | calibration a=1.150 b=-0.005  (fit on 2463 graded games before 2026-10-24)
 NRFI model | calibration a=0.300 b=-0.046  (fit on 1830 graded 1st innings before 2026-10-24)
 Slate      | 1 games · none graded yet
-Cache      | 564 files (5.8 MB) · 11 served from disk, 10 fetched
+Cache      | 564 files (5.8 MB) · 17 served from disk, 4 fetched
 
 ── Slate 2026-10-25 ──
 Slate      | 0 games · none graded yet
 Cache      | 564 files (5.8 MB) · 17 served from disk, 1 fetched
-2026-10-22 11:15:20   mlb    29.9s  5 built, 14 to pick from
-2026-10-22 11:15:22   nhl     2.1s  5 built, 18 to pick from
+2026-10-22 11:39:39   mlb    20.6s  5 built, 14 to pick from
+2026-10-22 11:39:41   nhl     1.5s  5 built, 18 to pick from
 NBA roster | 4 of 4 team(s) returned a roster (68 name(s))
-NBA line-up| 0 of 1 game(s) within 8h of tip-off returned a five (0 name(s))
+NBA line-up| 0 of 2 game(s) within 8h of tip-off returned a five (0 name(s))
 NBA roster | 24 of 24 team(s) returned a roster (416 name(s))
 NBA roster | 16 of 16 team(s) returned a roster (279 name(s))
 NBA roster | 14 of 14 team(s) returned a roster (241 name(s))
-2026-10-22 11:15:24   nba     1.9s  5 built, 6 to pick from
-2026-10-22 11:15:24 built 13270 KB in 140s
+2026-10-22 11:39:42   nba     1.3s  5 built, 6 to pick from
+2026-10-22 11:39:42 built 13269 KB in 105s
