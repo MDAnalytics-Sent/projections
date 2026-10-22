@@ -1,4 +1,4 @@
-2026-10-22 14:51:57 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-22 14:56:31 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -20,12 +20,12 @@ NHL goalie | measured -0.09 goals of margin per goal of starter edge (se 0.23) o
 NBA ingest | 1 of 1 finished game(s) read from the summary feed (10 name(s)); history ends 2026-10-21
 NBA roster | 4 of 4 team(s) returned a roster (68 name(s))
 NBA line-up| 0 of 2 game(s) within 8h of tip-off returned a five (0 name(s))
-2026-10-22 14:53:09   today  47.1s
+2026-10-22 14:57:30   today  38.3s
 CFB td     | recalibrated on 9313 graded prop(s) settled before this slate: slope 1.16, shift -0.26 -- a raw 25% becomes 18%, a raw 60% becomes 55%
 NBA roster | 4 of 4 team(s) returned a roster (68 name(s))
 NBA line-up| 0 of 2 game(s) within 8h of tip-off returned a five (0 name(s))
-2026-10-22 14:53:29   nfl    17.3s  8 built, 8 to pick from
-2026-10-22 14:53:49   cfb    19.2s  9 built, 9 to pick from
+2026-10-22 14:57:46   nfl    13.8s  8 built, 8 to pick from
+2026-10-22 14:58:01   cfb    14.7s  9 built, 9 to pick from
 
 ── Slate 2026-10-08 ──
 Win model  | learned weights: run model 0.989, Pythagorean gap 0.717 (fit on 2,452 graded mlb-runs-v10 games, 32% data, half-life 25 d)
@@ -37,7 +37,7 @@ Cache      | 564 files (5.8 MB) · 77 served from disk, 2 fetched
 
 ── Slate 2026-10-22 ──
 Slate      | 0 games · none graded yet
-Cache      | 564 files (5.8 MB) · 11 served from disk, 7 fetched
+Cache      | 564 files (5.8 MB) · 18 served from disk, 0 fetched
 
 ── Slate 2026-10-09 ──
 Slate      | 0 games · none graded yet
@@ -73,7 +73,7 @@ Win model  | calibration a=1.167 b=-0.006  (fit on 2457 graded games before 2026
 Win model  | 1 of 1 games served from locked history (picks frozen at first pitch)
 NRFI model | calibration a=0.340 b=-0.052  (fit on 1823 graded 1st innings before 2026-10-13)
 Slate      | 1 games · record 0-1 (0%)
-Cache      | 564 files (5.8 MB) · 21 served from disk, 2 fetched
+Cache      | 564 files (5.8 MB) · 15 served from disk, 8 fetched
 
 ── Slate 2026-10-14 ──
 Win model  | learned weights: run model 0.942, Pythagorean gap 0.826 (fit on 2,458 graded mlb-runs-v10 games, 45% data, half-life 45 d)
@@ -112,7 +112,7 @@ Cache      | 564 files (5.8 MB) · 17 served from disk, 0 fetched
 
 ── Slate 2026-10-22 ──
 Slate      | 0 games · none graded yet
-Cache      | 564 files (5.8 MB) · 18 served from disk, 0 fetched
+Cache      | 564 files (5.8 MB) · 17 served from disk, 1 fetched
 
 ── Slate 2026-10-23 ──
 Win model  | learned weights: run model 0.948, Pythagorean gap 0.752 (fit on 2,463 graded mlb-runs-v10 games, 58% data, half-life 90 d)
@@ -131,12 +131,12 @@ Cache      | 564 files (5.8 MB) · 18 served from disk, 4 fetched
 ── Slate 2026-10-25 ──
 Slate      | 0 games · none graded yet
 Cache      | 564 files (5.8 MB) · 17 served from disk, 1 fetched
-2026-10-22 14:54:55   mlb    65.9s  15 built, 14 to pick from
-2026-10-22 14:55:00   nhl     5.2s  15 built, 18 to pick from
+2026-10-22 14:58:53   mlb    52.0s  15 built, 14 to pick from
+2026-10-22 14:58:57   nhl     4.2s  15 built, 18 to pick from
 NBA roster | 4 of 4 team(s) returned a roster (68 name(s))
 NBA line-up| 0 of 2 game(s) within 8h of tip-off returned a five (0 name(s))
 NBA roster | 24 of 24 team(s) returned a roster (416 name(s))
 NBA roster | 16 of 16 team(s) returned a roster (279 name(s))
 NBA roster | 14 of 14 team(s) returned a roster (241 name(s))
-2026-10-22 14:55:04   nba     3.8s  6 built, 6 to pick from
-2026-10-22 14:55:04 built 13273 KB in 187s
+2026-10-22 14:59:01   nba     4.1s  6 built, 6 to pick from
+2026-10-22 14:59:02 built 13274 KB in 150s
