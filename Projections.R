@@ -7674,10 +7674,17 @@ nba_predict <- function(panel, endr, ents, m, g, cutoff) {
   gp <- if (nrow(hist)) nrow(hist) / max(1L, length(unique(hist$team))) else 0
   r <- nba_rate(hist, ents, NBA_LAM, pr, NBA_PW / (1 + gp / NBA_PW_G))
   lastd <- if (nrow(hist)) tapply(as.numeric(hist$date), hist$team, max) else numeric(0)
-  rst <- function(t) { v <- lastd[t]; ifelse(is.na(v), 2, pmin(pmax(as.numeric(g$date) - v, 0), 3)) }
+  # unname, like rd below: looking a team up in lastd when it has not played yet returns NA
+  # carrying an NA name, and data.frame() takes a single NA name as a row name and stops. A
+  # slate of two or more games hid it, because duplicate NA names make R fall back to
+  # integers -- so only a game alone in its minute, early in a season, ever hit it.
+  rst <- function(t) {
+    v <- unname(lastd[as.character(t)])
+    ifelse(is.na(v), 2, pmin(pmax(as.numeric(g$date) - v, 0), 3))
+  }
   rd <- unname(r[g$home]) - unname(r[g$away]); rd[is.na(rd)] <- 0
   nd <- data.frame(rd = rd, hfa = ifelse(g$neutral, 0, 1),
-                   rdiff = rst(g$home) - rst(g$away))
+                   rdiff = rst(g$home) - rst(g$away), row.names = NULL)
   nd$rdiff[is.na(nd$rdiff)] <- 0
   pred <- as.numeric(stats::predict(m$marg, newdata = nd))
   conf <- as.numeric(stats::predict(m$conf, newdata = data.frame(pred = pred), type = "response"))
