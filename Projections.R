@@ -7966,22 +7966,14 @@ nba_fb <- function(H, cutoff, teams, inj = NULL, tkey = NULL, ros = NULL, st = N
                          data = h, FUN = sum)
   last <- h[!duplicated(h$pid, fromLast = TRUE), c("pid", "pname", "pos", "team", "ko")]
   x <- merge(ag, last, by = "pid")
-  # Does he actually start? His share of the last 20 games played by the team he was most
-  # recently with. This is the question the old last-twelve-games filter was asking as a
-  # yes or no, and the board needs it as a number: the rate below is the chance of the
-  # first basket GIVEN a start, so without this it is quoted for men who will not be on
-  # the floor. Measured before the roster is applied and against his historical team,
-  # because someone who moved in the summer has started no games for his new club.
-  # each team's last 20 games, worked out once rather than once per player
-  tg20 <- lapply(split(h$game_id, h$team), function(v) utils::tail(unique(v), NBA_FB_START_N))
+  x$hteam <- x$team                   # the club he last turned out for, kept for below
   pg <- split(h$game_id, h$pid)       # each man's starts
-  x$s <- vapply(seq_len(nrow(x)), function(i) {
-    tg <- tg20[[as.character(x$team[i])]]
-    if (!length(tg)) return(0)
-    mean(tg %in% pg[[as.character(x$pid[i])]])
-  }, 0)
-  x <- x[x$s > 0, , drop = FALSE]     # nobody who has not started lately can be ranked
-  if (!nrow(x)) return(NULL)
+  # Each team's recent games, worked out once rather than once per player: this season's
+  # if it has any, otherwise the last twenty whenever they were.
+  cur <- suppressWarnings(max(h$season, na.rm = TRUE))
+  hc <- h[h$season == cur, , drop = FALSE]
+  tg_cur <- lapply(split(hc$game_id, hc$team), function(v) utils::tail(unique(v), NBA_FB_START_N))
+  tg_any <- lapply(split(h$game_id, h$team),  function(v) utils::tail(unique(v), NBA_FB_START_N))
   # Where a current roster could be read it decides the team, not the last box score,
   # and it decides the candidate set: without this season's games there is no way to
   # tell who starts, and the last-twelve-games heuristic would be reading last season.
@@ -8002,6 +7994,22 @@ nba_fb <- function(H, cutoff, teams, inj = NULL, tkey = NULL, ros = NULL, st = N
     unique(z$pid[z$game_id %in% utils::head(g, NBA_FB_RECENT)])
   }), use.names = FALSE)
   x <- x[x$team %in% teams & (x$team %in% have | x$pid %in% keep), , drop = FALSE]
+  if (!nrow(x)) return(NULL)
+  # Does he actually start? His share of his team's recent games -- and this season's
+  # games decide it the moment there are any. A line-up from last April says nothing
+  # about tonight: a twenty-game window spent nineteen-twentieths in the previous season
+  # is what left two thirds of this board listed and then marked "did not start".
+  #
+  # Read against the club the roster puts him on, so a man who moved in the summer is
+  # judged on his new one as soon as it has played. Until it has, his old club's last
+  # twenty answer the only question there is: does this man start at all.
+  x$s <- vapply(seq_len(nrow(x)), function(i) {
+    tg <- tg_cur[[as.character(x$team[i])]]
+    if (!length(tg)) tg <- tg_any[[as.character(x$hteam[i])]]
+    if (!length(tg)) return(0)
+    mean(tg %in% pg[[as.character(x$pid[i])]])
+  }, 0)
+  x <- x[x$s > 0, , drop = FALSE]     # a man who has not been starting cannot be ranked
   if (!nrow(x)) return(NULL)
   # The announced five, where a game has them. This is the whole of the problem: five
   # names a side, each worth about a tenth of the first basket before anything else is
