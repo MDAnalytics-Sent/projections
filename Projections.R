@@ -7866,68 +7866,29 @@ nba_starters <- function(gid) {
   espn_cached(sprintf("nbast_%s", gid), ttl = 10, function() {
     j <- espn_get(sprintf(NBA_SUM_URL, gid))
     d <- espn_nba_starters(j)
-    if (is.null(d) || !nrow(d)) {
-      # One probe a run. A five that is not there and a five this reader cannot find
-      # look identical from the outside and need opposite fixes, so say which it is.
-      if (!is.null(j) && !isTRUE(.espn_mem[[".st_probe"]])) {
-        .espn_mem[[".st_probe"]] <- TRUE
-        rk <- if (is.null(j$rosters) || !length(j$rosters)) "absent" else
-          paste(utils::head(names(j$rosters[[1]]), 8), collapse = ",")
-        r1 <- if (is.null(j$rosters) || !length(j$rosters) ||
-                  is.null(j$rosters[[1]]$roster) || !length(j$rosters[[1]]$roster)) "absent" else
-          paste(utils::head(names(j$rosters[[1]]$roster[[1]]), 10), collapse = ",")
-        bx <- if (is.null(j$boxscore$players) || !length(j$boxscore$players)) "absent" else
-          sprintf("%d team(s)", length(j$boxscore$players))
-        mlog(sprintf("NBA probe  | keys: %s", paste(utils::head(names(j), 12), collapse = ",")))
-        mlog(sprintf("NBA probe  | rosters[1]: %s | roster[1]: %s | boxscore$players: %s", rk, r1, bx))
-        # The summary has no line-up before tip-off. Does any other endpoint of the same
-        # provider? One look each, raw, asking only whether the word appears at all.
-        tid <- tryCatch(as.character(j$boxscore$teams[[1]]$team$id), error = function(e) NA_character_)
-        urls <- c(
-          core_roster = sprintf("https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/events/%s/competitions/%s/competitors/%s/roster", gid, gid, tid %||% "0"),
-          core_event  = sprintf("https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/events/%s", gid),
-          web_summary = sprintf("https://site.web.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=%s", gid),
-          probables   = sprintf("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=%s&enable=rosters,probables,lineups", gid))
-        get1 <- function(u) {
-          r <- tryCatch(httr::GET(u, httr::timeout(10),
-                                  httr::user_agent("Mozilla/5.0 (Projections)")),
-                        error = function(e) NULL)
-          code <- if (is.null(r)) NA_integer_ else httr::status_code(r)
-          txt <- if (isTRUE(code == 200L)) tryCatch(httr::content(r, "text", encoding = "UTF-8"),
-                                                    error = function(e) "") else ""
-          list(code = code, txt = txt)
-        }
-        for (nm in names(urls)) {
-          z <- get1(urls[[nm]])
-          mlog(sprintf("NBA probe  | %-12s http %-4s %6d bytes | says \"starter\": %-5s | says \"lineup\": %s",
-                       nm, if (is.na(z$code)) "err" else as.character(z$code), nchar(z$txt),
-                       grepl("\"starter\"", z$txt, fixed = TRUE),
-                       grepl("ineup", z$txt, fixed = TRUE)))
-          # the core API is hypermedia: a payload that mentions line-ups should carry a
-          # link to them, and that link is the thing worth having
-          if (identical(nm, "core_event") && grepl("ineup", z$txt, fixed = TRUE)) {
-            hits <- unique(regmatches(z$txt, gregexpr('https?://[^"]*[Ll]ineup[^"]*', z$txt))[[1]])
-            if (!length(hits)) mlog("NBA probe  | mentions line-ups but carries no link to them")
-            for (u in utils::head(hits, 2L)) {
-              mlog(sprintf("NBA probe  | link: %s", substr(u, 1, 150)))
-              y <- get1(u)
-              mlog(sprintf("NBA probe  | followed  http %-4s %6d bytes | says \"starter\": %-5s | first 220: %s",
-                           if (is.na(y$code)) "err" else as.character(y$code), nchar(y$txt),
-                           grepl("\"starter\"", y$txt, fixed = TRUE), substr(y$txt, 1, 220)))
-            }
-          }
-        }
-      }
-      return(NULL)
-    }
+    # No line-up before tip-off, and this was asked properly rather than assumed. Five
+    # endpoints of the same provider, on a game yet to be played: the site summary (no
+    # rosters, no boxscore players), the same summary with rosters, probables and
+    # lineups asked for explicitly (byte-identical to the plain one -- the parameter is
+    # ignored), the core competitor roster, the core event, and the web summary. Not one
+    # of them carries a starter flag. The core event does contain the word "lineup", and
+    # following every URL in it that mentions one found no such resource to follow.
+    #
+    # So this returns NULL until the game is live, and the board falls back to the share.
+    # Anything better than that needs a line-up aggregator, which means a scraper, and
+    # the last scraper here was removed for being the least reliable input in the file.
+    if (is.null(d) || !nrow(d)) return(NULL)
     # once the game is over the five can never change again
     attr(d, "final") <- isTRUE(j$header$competitions[[1]]$status$type$completed)
     d
   })
 }
-# The five a side for every game on a slate, where they are known. Games further off than
-# NBA_ST_WINDOW are skipped: no line-up exists for a game three days away, and asking
-# every ten minutes for one would be a few thousand pointless requests a week.
+# The five a side for every game on a slate, where they are known -- which, the provider
+# having no pre-game line-up, means games that have already tipped. That is still worth
+# asking for: a board opened at nine o'clock has the seven o'clock games exact rather
+# than estimated. Games further off than NBA_ST_WINDOW are skipped, since nothing can
+# be known about them and asking every ten minutes would be a few thousand pointless
+# requests a week.
 NBA_ST_WINDOW <- 8      # hours before tip-off worth asking
 nba_starters_slate <- function(gids, ko = NULL, now = Sys.time()) {
   keep <- if (is.null(ko)) rep(TRUE, length(gids)) else {
