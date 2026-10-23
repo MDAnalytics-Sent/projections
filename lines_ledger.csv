@@ -289,7 +289,7 @@
 "NBA","401909841","2026-10-22 02:00:00","Phoenix Suns @ Portland Trail Blazers","Portland Trail Blazers","home",0.5416,0.5635,1.704,-0.077,"DraftKings","2026-10-22 00:03:26","W",0.704
 "NBA","401909842","2026-10-22 02:30:00","Sacramento Kings @ LA Clippers","LA Clippers","home",0.6967,0.6225,1.541,0.0733,"DraftKings","2026-10-22 00:03:26","W",0.541
 "NBA","401909093","2026-10-22 23:00:00","Cleveland Cavaliers @ Philadelphia 76ers","Philadelphia 76ers","home",0.5431,0.5635,1.704,-0.0744,"DraftKings","2026-10-22 22:47:04","W",0.704
-"NCAAF","401869845","2026-10-22 23:00:00","James Madison @ App State","James Madison","away",0.7177,0.7958,1.206,-0.1343,"DraftKings","2026-10-22 22:47:04",NA,NA
+"NCAAF","401869845","2026-10-22 23:00:00","James Madison @ App State","James Madison","away",0.7177,0.7958,1.206,-0.1343,"DraftKings","2026-10-22 22:47:04","L",-1
 "NCAAF","401871056","2026-10-22 23:00:00","Liberty @ Kennesaw State","Liberty","away",0.7121,0.76,1.263,-0.1005,"DraftKings","2026-10-22 22:47:04","W",0.263
 "NHL","401892555","2026-10-22 23:00:00","Anaheim @ New Jersey","New Jersey","home",0.5515,0.6575,1.459,-0.1955,"DraftKings","2026-10-22 22:47:04","W",0.459
 "NHL","401892554","2026-10-22 23:00:00","San Jose @ Ottawa","Ottawa","home",0.6088,0.5514,1.741,0.0598,"DraftKings","2026-10-22 22:47:04","L",-1
@@ -298,7 +298,7 @@
 "NHL","401892556","2026-10-22 23:00:00","Florida @ Pittsburgh","Pittsburgh","home",0.5269,0.4957,1.926,0.0148,"DraftKings","2026-10-22 22:47:04","W",0.926
 "NCAAF","401862807","2026-10-22 23:30:00","East Carolina @ Memphis","Memphis","home",0.7866,0.7768,1.235,-0.0284,"DraftKings","2026-10-22 23:24:16",NA,NA
 "NHL","401892557","2026-10-22 23:30:00","Los Angeles @ New York","New York","home",0.6235,0.4892,1.952,0.2173,"DraftKings","2026-10-22 23:24:16","L",-1
-"NHL","401892559","2026-10-23 00:00:00","Winnipeg @ Dallas","Dallas","home",0.6037,0.6447,1.488,-0.1019,"DraftKings","2026-10-22 23:37:09",NA,NA
+"NHL","401892559","2026-10-23 00:00:00","Winnipeg @ Dallas","Dallas","home",0.6037,0.6447,1.488,-0.1019,"DraftKings","2026-10-22 23:37:09","W",0.488
 "NHL","401892558","2026-10-23 00:00:00","Vegas @ St. Louis","Vegas","away",0.5081,0.5325,1.8,-0.0854,"DraftKings","2026-10-22 23:37:09","L",-1
 "NFL","401873010","2026-10-23 00:15:00","Patriots @ Bears","Bears","home",0.5466,0.583,1.645,-0.1008,"DraftKings","2026-10-23 00:04:01",NA,NA
 "NBA","401909094","2026-10-23 01:30:00","Denver Nuggets @ Oklahoma City Thunder","Oklahoma City Thunder","home",0.673,0.7409,1.294,-0.1291,"DraftKings","2026-10-23 00:51:13",NA,NA
