@@ -339,15 +339,6 @@
 "NCAAF","401866476","2026-10-24 17:00:00","Miami (OH) @ Central Michigan","Central Michigan","home",0.6217,0.3908,2.45,0.5231,"DraftKings","2026-10-24 16:37:38",NA,NA
 "NCAAF","401856834","2026-10-24 17:00:00","Baylor @ Kansas","Kansas","home",0.6847,0.5174,1.847,0.265,"DraftKings","2026-10-24 16:37:38",NA,NA
 "NHL","401892566","2026-10-24 17:00:00","Anaheim @ Philadelphia","Philadelphia","home",0.5069,0.5261,1.82,-0.0776,"DraftKings","2026-10-24 16:37:38",NA,NA
-"MLB","401908043","2026-10-25 00:00:00","Tampa Bay Rays @ Milwaukee Brewers","Milwaukee Brewers","home",0.576,0.5217,1.833,0.056,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NBA","401909853","2026-10-24 22:00:00","Miami Heat @ Charlotte Hornets","Charlotte Hornets","home",0.587,0.4365,2.2,0.2915,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NBA","401909854","2026-10-24 23:30:00","Brooklyn Nets @ Cleveland Cavaliers","Cleveland Cavaliers","home",0.6875,0.8,1.2,-0.175,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NBA","401909855","2026-10-24 23:30:00","Milwaukee Bucks @ Philadelphia 76ers","Philadelphia 76ers","home",0.7339,0.8173,1.174,-0.1384,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NBA","401909857","2026-10-25 00:00:00","Washington Wizards @ Chicago Bulls","Chicago Bulls","home",0.5858,0.5427,1.769,0.0363,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NBA","401909858","2026-10-25 00:00:00","San Antonio Spurs @ Dallas Mavericks","San Antonio Spurs","away",0.5673,0.8579,1.118,-0.3659,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NBA","401909856","2026-10-25 00:30:00","Houston Rockets @ Atlanta Hawks","Atlanta Hawks","home",0.5963,0.5,1.909,0.1384,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NBA","401909859","2026-10-25 01:00:00","New Orleans Pelicans @ Denver Nuggets","Denver Nuggets","home",0.7147,0.7958,1.206,-0.138,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NBA","401909860","2026-10-25 02:00:00","Golden State Warriors @ Phoenix Suns","Phoenix Suns","home",0.6445,0.7572,1.267,-0.1836,"DraftKings","2026-10-24 18:38:07",NA,NA
 "NCAAF","401856835","2026-10-24 19:30:00","BYU @ UCF","BYU","away",0.7319,0.7221,1.328,-0.0281,"DraftKings","2026-10-24 18:38:07",NA,NA
 "NCAAF","401856836","2026-10-24 23:00:00","Colorado @ Oklahoma State","Oklahoma State","home",0.622,0.8119,1.182,-0.2649,"DraftKings","2026-10-24 18:38:07",NA,NA
 "NCAAF","401856837","2026-10-25 02:15:00","Houston @ Utah","Utah","home",0.716,0.6854,1.4,0.0024,"DraftKings","2026-10-24 18:38:07",NA,NA
@@ -357,37 +348,46 @@
 "NCAAF","401858495","2026-10-24 19:00:00","Oregon @ Illinois","Oregon","away",0.7945,0.7715,1.244,-0.0117,"DraftKings","2026-10-24 18:38:07",NA,NA
 "NCAAF","401858497","2026-10-24 19:30:00","Iowa @ Minnesota","Iowa","away",0.6577,0.7136,1.345,-0.1155,"DraftKings","2026-10-24 18:38:07",NA,NA
 "NCAAF","401858499","2026-10-24 19:30:00","Michigan State @ UCLA","UCLA","home",0.9026,0.8525,1.125,0.0154,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401856727","2026-10-24 19:30:00","Texas A&M @ Alabama","Alabama","home",0.7785,0.8173,1.174,-0.0861,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401856730","2026-10-24 19:30:00","Oklahoma @ Mississippi State","Oklahoma","away",0.5997,0.5261,1.82,0.0912,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401856731","2026-10-24 19:30:00","Tennessee @ South Carolina","Tennessee","away",0.694,0.4486,2.14,0.4852,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401858273","2026-10-24 19:30:00","Boston College @ Georgia Tech","Georgia Tech","home",0.551,0.675,1.42,-0.2174,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401862810","2026-10-24 19:30:00","North Texas @ Navy","North Texas","away",0.569,0.5721,1.676,-0.0465,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401864526","2026-10-24 19:30:00","Hawai'i @ Northern Illinois","Northern Illinois","home",0.5215,0.4279,2.24,0.1682,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401866447","2026-10-24 19:30:00","Sacramento State @ Ball State","Ball State","home",0.6258,0.8223,1.167,-0.2698,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401866448","2026-10-24 19:30:00","Bowling Green @ Buffalo","Buffalo","home",0.6611,0.583,1.645,0.0876,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401866449","2026-10-24 20:00:00","Eastern Michigan @ Ohio","Ohio","home",0.8156,0.7659,1.253,0.022,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401871094","2026-10-24 20:00:00","UL Monroe @ Troy","Troy","home",0.8388,0.8271,1.16,-0.0269,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401864528","2026-10-24 21:00:00","San José State @ Nevada","Nevada","home",0.5514,0.6575,1.459,-0.1956,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401869967","2026-10-24 21:00:00","Louisiana @ Southern Miss","Louisiana","away",0.6244,0.76,1.263,-0.2113,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401871093","2026-10-24 21:00:00","Old Dominion @ Louisiana Tech","Louisiana Tech","home",0.7575,0.8119,1.182,-0.1047,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401860907","2026-10-24 22:00:00","Boise State @ Washington State","Boise State","away",0.7848,0.8271,1.16,-0.0896,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401860905","2026-10-24 22:30:00","San Diego State @ Colorado State","Colorado State","home",0.5535,0.4892,1.952,0.0807,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401869935","2026-10-24 23:00:00","Georgia State @ Arkansas State","Georgia State","away",0.5075,0.5514,1.741,-0.1166,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401856729","2026-10-24 23:30:00","Vanderbilt @ Kentucky","Kentucky","home",0.7078,0.7819,1.227,-0.1313,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401856732","2026-10-24 23:30:00","Ole Miss @ Texas","Texas","home",0.6141,0.583,1.645,0.0103,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401858275","2026-10-24 23:30:00","Syracuse @ North Carolina","North Carolina","home",0.7432,0.7508,1.278,-0.0503,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401858500","2026-10-24 23:30:00","USC @ Wisconsin","Wisconsin","home",0.5841,0.4365,2.2,0.2851,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401860906","2026-10-24 23:30:00","Utah State @ Texas State","Texas State","home",0.7756,0.8082,1.187,-0.0794,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401862811","2026-10-25 00:00:00","UTSA @ Tulane","UTSA","away",0.5004,0.5721,1.676,-0.1615,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NCAAF","401864527","2026-10-25 02:00:00","North Dakota State @ New Mexico","New Mexico","home",0.6405,0.6309,1.521,-0.026,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NHL","401892567","2026-10-24 19:30:00","Los Angeles @ New Jersey","New Jersey","home",0.5839,0.6447,1.488,-0.1313,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NHL","401892571","2026-10-24 23:00:00","Buffalo @ Washington","Washington","home",0.6006,0.5325,1.8,0.0811,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NHL","401892574","2026-10-24 23:00:00","Toronto @ Edmonton","Edmonton","home",0.6063,0.5996,1.602,-0.0284,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NHL","401892573","2026-10-24 23:00:00","Carolina @ St. Louis","St. Louis","home",0.5068,0.417,2.3,0.1657,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NHL","401892570","2026-10-24 23:00:00","Nashville @ Pittsburgh","Pittsburgh","home",0.5789,0.5325,1.8,0.0421,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NHL","401892572","2026-10-24 23:00:00","Vegas @ Columbus","Vegas","away",0.5384,0.5514,1.741,-0.0628,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NHL","401892569","2026-10-24 23:00:00","New York @ Ottawa","Ottawa","home",0.5148,0.5325,1.8,-0.0734,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NHL","401892568","2026-10-24 23:00:00","San Jose @ Boston","Boston","home",0.6534,0.6309,1.521,-0.0063,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NHL","401892575","2026-10-25 01:00:00","Tampa Bay @ Utah","Utah","home",0.5483,0.5635,1.704,-0.0655,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NHL","401892577","2026-10-25 02:00:00","Minnesota @ Seattle","Seattle","home",0.5459,0.4066,2.36,0.2883,"DraftKings","2026-10-24 18:38:07",NA,NA
-"NHL","401892576","2026-10-25 02:00:00","Detroit @ Calgary","Detroit","away",0.5302,0.5427,1.769,-0.0619,"DraftKings","2026-10-24 18:38:07",NA,NA
+"MLB","401908043","2026-10-25 00:00:00","Tampa Bay Rays @ Milwaukee Brewers","Milwaukee Brewers","home",0.576,0.5217,1.833,0.056,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NBA","401909853","2026-10-24 22:00:00","Miami Heat @ Charlotte Hornets","Charlotte Hornets","home",0.587,0.4365,2.2,0.2915,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NBA","401909854","2026-10-24 23:30:00","Brooklyn Nets @ Cleveland Cavaliers","Cleveland Cavaliers","home",0.6875,0.8,1.2,-0.175,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NBA","401909855","2026-10-24 23:30:00","Milwaukee Bucks @ Philadelphia 76ers","Philadelphia 76ers","home",0.7339,0.8173,1.174,-0.1384,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NBA","401909857","2026-10-25 00:00:00","Washington Wizards @ Chicago Bulls","Chicago Bulls","home",0.5858,0.5427,1.769,0.0363,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NBA","401909858","2026-10-25 00:00:00","San Antonio Spurs @ Dallas Mavericks","San Antonio Spurs","away",0.5673,0.863,1.111,-0.3696,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NBA","401909856","2026-10-25 00:30:00","Houston Rockets @ Atlanta Hawks","Atlanta Hawks","home",0.5963,0.4957,1.926,0.1485,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NBA","401909859","2026-10-25 01:00:00","New Orleans Pelicans @ Denver Nuggets","Denver Nuggets","home",0.7147,0.7958,1.206,-0.138,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NBA","401909860","2026-10-25 02:00:00","Golden State Warriors @ Phoenix Suns","Phoenix Suns","home",0.6445,0.7572,1.267,-0.1836,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401856727","2026-10-24 19:30:00","Texas A&M @ Alabama","Alabama","home",0.7785,0.8173,1.174,-0.0861,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401856730","2026-10-24 19:30:00","Oklahoma @ Mississippi State","Oklahoma","away",0.5997,0.5261,1.82,0.0912,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401856731","2026-10-24 19:30:00","Tennessee @ South Carolina","Tennessee","away",0.694,0.4486,2.14,0.4852,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401858273","2026-10-24 19:30:00","Boston College @ Georgia Tech","Georgia Tech","home",0.551,0.675,1.42,-0.2174,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401862810","2026-10-24 19:30:00","North Texas @ Navy","North Texas","away",0.569,0.5721,1.676,-0.0465,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401864526","2026-10-24 19:30:00","Hawai'i @ Northern Illinois","Northern Illinois","home",0.5215,0.4279,2.24,0.1682,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401866447","2026-10-24 19:30:00","Sacramento State @ Ball State","Ball State","home",0.6258,0.8223,1.167,-0.2698,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401866448","2026-10-24 19:30:00","Bowling Green @ Buffalo","Buffalo","home",0.6611,0.583,1.645,0.0876,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401866449","2026-10-24 20:00:00","Eastern Michigan @ Ohio","Ohio","home",0.8156,0.7659,1.253,0.022,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401871094","2026-10-24 20:00:00","UL Monroe @ Troy","Troy","home",0.8388,0.8271,1.16,-0.0269,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401864528","2026-10-24 21:00:00","San José State @ Nevada","Nevada","home",0.5514,0.6575,1.459,-0.1956,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401869967","2026-10-24 21:00:00","Louisiana @ Southern Miss","Louisiana","away",0.6244,0.76,1.263,-0.2113,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401871093","2026-10-24 21:00:00","Old Dominion @ Louisiana Tech","Louisiana Tech","home",0.7575,0.8119,1.182,-0.1047,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401860907","2026-10-24 22:00:00","Boise State @ Washington State","Boise State","away",0.7848,0.8271,1.16,-0.0896,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401860905","2026-10-24 22:30:00","San Diego State @ Colorado State","Colorado State","home",0.5535,0.4892,1.952,0.0807,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401869935","2026-10-24 23:00:00","Georgia State @ Arkansas State","Georgia State","away",0.5075,0.5514,1.741,-0.1166,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401856729","2026-10-24 23:30:00","Vanderbilt @ Kentucky","Kentucky","home",0.7078,0.7819,1.227,-0.1313,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401856732","2026-10-24 23:30:00","Ole Miss @ Texas","Texas","home",0.6141,0.583,1.645,0.0103,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401858275","2026-10-24 23:30:00","Syracuse @ North Carolina","North Carolina","home",0.7432,0.7508,1.278,-0.0503,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401858500","2026-10-24 23:30:00","USC @ Wisconsin","Wisconsin","home",0.5841,0.4365,2.2,0.2851,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401860906","2026-10-24 23:30:00","Utah State @ Texas State","Texas State","home",0.7756,0.8082,1.187,-0.0794,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401862811","2026-10-25 00:00:00","UTSA @ Tulane","UTSA","away",0.5004,0.5721,1.676,-0.1615,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NCAAF","401864527","2026-10-25 02:00:00","North Dakota State @ New Mexico","New Mexico","home",0.6405,0.6309,1.521,-0.026,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NHL","401892567","2026-10-24 19:30:00","Los Angeles @ New Jersey","New Jersey","home",0.5839,0.6447,1.488,-0.1313,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NHL","401892571","2026-10-24 23:00:00","Buffalo @ Washington","Washington","home",0.6006,0.5325,1.8,0.0811,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NHL","401892574","2026-10-24 23:00:00","Toronto @ Edmonton","Edmonton","home",0.6063,0.5996,1.602,-0.0284,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NHL","401892573","2026-10-24 23:00:00","Carolina @ St. Louis","St. Louis","home",0.5068,0.417,2.3,0.1657,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NHL","401892570","2026-10-24 23:00:00","Nashville @ Pittsburgh","Pittsburgh","home",0.5789,0.5325,1.8,0.0421,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NHL","401892572","2026-10-24 23:00:00","Vegas @ Columbus","Vegas","away",0.5384,0.5514,1.741,-0.0628,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NHL","401892569","2026-10-24 23:00:00","New York @ Ottawa","Ottawa","home",0.5148,0.5325,1.8,-0.0734,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NHL","401892568","2026-10-24 23:00:00","San Jose @ Boston","Boston","home",0.6534,0.6309,1.521,-0.0063,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NHL","401892575","2026-10-25 01:00:00","Tampa Bay @ Utah","Utah","home",0.5483,0.5635,1.704,-0.0655,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NHL","401892577","2026-10-25 02:00:00","Minnesota @ Seattle","Seattle","home",0.5459,0.3908,2.45,0.3374,"DraftKings","2026-10-24 19:09:54",NA,NA
+"NHL","401892576","2026-10-25 02:00:00","Detroit @ Calgary","Detroit","away",0.5302,0.5427,1.769,-0.0619,"DraftKings","2026-10-24 19:09:54",NA,NA
