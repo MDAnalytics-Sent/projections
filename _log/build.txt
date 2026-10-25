@@ -1,4 +1,4 @@
-2026-10-25 12:00:35 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-25 12:36:11 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -12,20 +12,20 @@ CFB td     | 18400 graded prop(s) on file; the earliest slates have nothing befo
 NHL goalie | 16458 appearance(s), 8230 start(s), 166 goalie(s), 4 season(s) 2023-2026
 NHL goalie | starter edge on 4084 of 14856 game(s) (27%); sd 0.178, range -0.74 to +0.69 goals
 NHL        | 179 final game(s) this season, 179 with box scores, 0 missing
-NHL        | latest final: 2026-10-24 (game 2026020179) | today 2026-10-25 has 5 game(s), 0 final | feed 4 hit / 9 fetched
+NHL        | latest final: 2026-10-24 (game 2026020179) | today 2026-10-25 has 5 game(s), 0 final | feed 3 hit / 10 fetched
 NHL goalie | 716 appearance(s) across 179 game(s); 358 identifiable starter(s), 76 distinct goalie(s)
 NHL goalie | fields present -- toi 100%, shots 100%, saves 100%, goals against 100%
 NHL goalie | starters league save pct 0.8932 over 9575 shots
 NHL goalie | measured -0.09 goals of margin per goal of starter edge (se 0.23) on 7667 prior-season game(s) -- NOT used: needs the right sign and two standard errors
-NBA ingest | 9 of 9 finished game(s) read from the summary feed (90 name(s)); history ends 2026-10-23
+NBA ingest | 1 of 1 finished game(s) read from the summary feed (10 name(s)); history ends 2026-10-24
 NBA roster | 14 of 14 team(s) returned a roster (243 name(s))
 NBA line-up| 0 of 7 game(s) within 8h of tip-off returned a five (0 name(s))
-2026-10-25 12:01:40   today  40.1s
+2026-10-25 12:37:21   today  41.8s
 CFB td     | recalibrated on 10483 graded prop(s) settled before this slate: slope 1.17, shift -0.21 -- a raw 25% becomes 18%, a raw 60% becomes 57%
 NBA roster | 14 of 14 team(s) returned a roster (243 name(s))
 NBA line-up| 0 of 7 game(s) within 8h of tip-off returned a five (0 name(s))
-2026-10-25 12:01:57   nfl    12.9s  3 built, 8 to pick from
-2026-10-25 12:02:04   cfb     7.5s  3 built, 10 to pick from
+2026-10-25 12:37:41   nfl    15.1s  3 built, 8 to pick from
+2026-10-25 12:37:51   cfb     9.2s  3 built, 10 to pick from
 
 ── Slate 2026-10-24 ──
 Win model  | learned weights: run model 0.929, Pythagorean gap 0.653 (fit on 2,464 graded mlb-runs-v10 games, 75% data, every game weighted equally)
@@ -55,7 +55,7 @@ Win model  | learned weights: run model 0.960, Pythagorean gap 0.744 (fit on 2,4
 Win model  | calibration a=1.158 b=-0.004  (fit on 2465 graded games before 2026-10-27)
 NRFI model | calibration a=0.270 b=-0.054  (fit on 1832 graded 1st innings before 2026-10-27)
 Slate      | 1 games · none graded yet
-Cache      | 576 files (5.8 MB) · 17 served from disk, 4 fetched
+Cache      | 576 files (5.8 MB) · 11 served from disk, 10 fetched
 
 ── Slate 2026-10-28 ──
 Win model  | learned weights: run model 0.960, Pythagorean gap 0.740 (fit on 2,465 graded mlb-runs-v10 games, 48% data, half-life 60 d)
@@ -63,12 +63,12 @@ Win model  | calibration a=1.157 b=-0.004  (fit on 2465 graded games before 2026
 NRFI model | calibration a=0.270 b=-0.054  (fit on 1832 graded 1st innings before 2026-10-28)
 Slate      | 1 games · none graded yet
 Cache      | 576 files (5.8 MB) · 17 served from disk, 4 fetched
-2026-10-25 12:02:29   mlb    23.9s  5 built, 15 to pick from
-2026-10-25 12:02:30   nhl     1.9s  5 built, 18 to pick from
+2026-10-25 12:38:24   mlb    32.9s  5 built, 15 to pick from
+2026-10-25 12:38:26   nhl     2.2s  5 built, 18 to pick from
 NBA roster | 14 of 14 team(s) returned a roster (243 name(s))
 NBA line-up| 0 of 7 game(s) within 8h of tip-off returned a five (0 name(s))
 NBA roster | 18 of 18 team(s) returned a roster (310 name(s))
 NBA roster | 8 of 8 team(s) returned a roster (139 name(s))
 NBA roster | 24 of 24 team(s) returned a roster (414 name(s))
-2026-10-25 12:02:32   nba     1.6s  5 built, 9 to pick from
-2026-10-25 12:02:32 built 13039 KB in 117s
+2026-10-25 12:38:29   nba     2.8s  5 built, 9 to pick from
+2026-10-25 12:38:29 built 13039 KB in 138s
