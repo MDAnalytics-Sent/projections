@@ -389,5 +389,5 @@
 "NHL","401892575","2026-10-25 01:00:00","Tampa Bay @ Utah","Utah","home",0.5483,0.5721,1.676,-0.0812,"DraftKings","2026-10-25 00:46:04","W",0.676
 "NBA","401909860","2026-10-25 02:00:00","Golden State Warriors @ Phoenix Suns","Phoenix Suns","home",0.6445,0.7715,1.244,-0.1983,"DraftKings","2026-10-25 01:20:11","W",0.244
 "NCAAF","401864527","2026-10-25 02:00:00","North Dakota State @ New Mexico","New Mexico","home",0.6405,0.6309,1.521,-0.026,"DraftKings","2026-10-25 01:20:11",NA,NA
-"NHL","401892577","2026-10-25 02:00:00","Minnesota @ Seattle","Seattle","home",0.5459,0.3775,2.54,0.3865,"DraftKings","2026-10-25 01:20:11",NA,NA
-"NHL","401892576","2026-10-25 02:00:00","Detroit @ Calgary","Detroit","away",0.5302,0.5427,1.769,-0.0619,"DraftKings","2026-10-25 01:20:11",NA,NA
+"NHL","401892577","2026-10-25 02:00:00","Minnesota @ Seattle","Seattle","home",0.5459,0.3775,2.54,0.3865,"DraftKings","2026-10-25 01:20:11","L",-1
+"NHL","401892576","2026-10-25 02:00:00","Detroit @ Calgary","Detroit","away",0.5302,0.5427,1.769,-0.0619,"DraftKings","2026-10-25 01:20:11","L",-1
