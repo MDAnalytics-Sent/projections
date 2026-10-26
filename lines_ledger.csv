@@ -409,8 +409,8 @@
 "NBA","401909863","2026-10-25 23:00:00","Orlando Magic @ New York Knicks","New York Knicks","home",0.6569,0.7002,1.37,-0.0999,"DraftKings","2026-10-25 22:32:14","L",-1
 "NBA","401909864","2026-10-25 23:00:00","Toronto Raptors @ Minnesota Timberwolves","Minnesota Timberwolves","home",0.5731,0.5996,1.602,-0.0817,"DraftKings","2026-10-25 22:32:14","W",0.602
 "NBA","401909865","2026-10-25 23:00:00","LA Clippers @ Oklahoma City Thunder","Oklahoma City Thunder","home",0.73,0.8934,1.074,-0.2159,"DraftKings","2026-10-25 22:32:14","W",0.074
-"NHL","401891807","2026-10-25 23:00:00","Montréal @ Winnipeg","Winnipeg","home",0.5466,0.4826,1.98,0.0824,"DraftKings","2026-10-25 22:32:14",NA,NA
-"NBA","401909866","2026-10-25 23:30:00","Detroit Pistons @ Philadelphia 76ers","Detroit Pistons","away",0.5698,0.5325,1.8,0.0257,"DraftKings","2026-10-25 23:02:17",NA,NA
+"NHL","401891807","2026-10-25 23:00:00","Montréal @ Winnipeg","Winnipeg","home",0.5466,0.4826,1.98,0.0824,"DraftKings","2026-10-25 22:32:14","L",-1
+"NBA","401909866","2026-10-25 23:30:00","Detroit Pistons @ Philadelphia 76ers","Detroit Pistons","away",0.5698,0.5325,1.8,0.0257,"DraftKings","2026-10-25 23:02:17","W",0.8
 "NHL","401892580","2026-10-26 00:00:00","Colorado @ Nashville","Colorado","away",0.5524,0.675,1.42,-0.2156,"DraftKings","2026-10-25 23:59:54",NA,NA
 "NBA","401909867","2026-10-26 01:00:00","Memphis Grizzlies @ Sacramento Kings","Memphis Grizzlies","away",0.5602,0.5934,1.617,-0.094,"DraftKings","2026-10-26 00:00:20",NA,NA
 "NFL","401873022","2026-10-26 00:20:00","Chiefs @ Seahawks","Chiefs","away",0.5937,0.4066,2.36,0.401,"DraftKings","2026-10-26 00:00:20",NA,NA
