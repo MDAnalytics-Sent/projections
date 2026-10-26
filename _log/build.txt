@@ -1,4 +1,4 @@
-2026-10-26 02:49:01 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-26 03:47:17 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -22,11 +22,11 @@ NHL goalie | starters league save pct 0.8930 over 9849 shots
 NHL goalie | measured -0.09 goals of margin per goal of starter edge (se 0.23) on 7667 prior-season game(s) -- NOT used: needs the right sign and two standard errors
 NBA ingest | 8 of 8 finished game(s) read from the summary feed (80 name(s)); history ends 2026-10-24
 NBA roster | 18 of 18 team(s) returned a roster (310 name(s))
-2026-10-26 02:50:20   today  54.3s
+2026-10-26 03:48:38   today  54.7s
 CFB td     | recalibrated on 10483 graded prop(s) settled before this slate: slope 1.17, shift -0.21 -- a raw 25% becomes 18%, a raw 60% becomes 57%
 NBA roster | 18 of 18 team(s) returned a roster (310 name(s))
-2026-10-26 02:50:40   nfl    15.5s  3 built, 8 to pick from
-2026-10-26 02:50:49   cfb     9.2s  3 built, 10 to pick from
+2026-10-26 03:48:58   nfl    15.8s  3 built, 8 to pick from
+2026-10-26 03:49:08   cfb     9.3s  3 built, 10 to pick from
 
 ── Slate 2026-10-25 ──
 Slate      | 0 games · none graded yet
@@ -63,11 +63,11 @@ Cache      | 578 files (5.9 MB) · 17 served from disk, 4 fetched
 ── Slate 2026-10-29 ──
 Slate      | 0 games · none graded yet
 Cache      | 578 files (5.9 MB) · 17 served from disk, 1 fetched
-2026-10-26 02:51:18   mlb    28.1s  5 built, 13 to pick from
-2026-10-26 02:51:20   nhl     2.2s  5 built, 18 to pick from
+2026-10-26 03:49:37   mlb    28.4s  5 built, 13 to pick from
+2026-10-26 03:49:39   nhl     2.2s  5 built, 18 to pick from
 NBA roster | 18 of 18 team(s) returned a roster (310 name(s))
 NBA roster | 8 of 8 team(s) returned a roster (139 name(s))
 NBA roster | 24 of 24 team(s) returned a roster (414 name(s))
 NBA roster | 6 of 6 team(s) returned a roster (102 name(s))
-2026-10-26 02:51:22   nba     1.9s  5 built, 10 to pick from
-2026-10-26 02:51:22 built 13648 KB in 142s
+2026-10-26 03:49:41   nba     1.9s  5 built, 10 to pick from
+2026-10-26 03:49:41 built 13648 KB in 144s
