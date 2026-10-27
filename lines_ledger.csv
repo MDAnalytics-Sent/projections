@@ -429,21 +429,21 @@
 "NBA","401909875","2026-10-27 01:00:00","Memphis Grizzlies @ Utah Jazz","Memphis Grizzlies","away",0.5473,0.5,1.909,0.0448,"DraftKings","2026-10-27 00:50:44","W",0.909
 "NHL","401892584","2026-10-27 01:30:00","Detroit @ Edmonton","Edmonton","home",0.627,0.6164,1.556,-0.0246,"DraftKings","2026-10-27 00:50:44","L",-1
 "NBA","401909876","2026-10-27 02:00:00","Golden State Warriors @ Denver Nuggets","Denver Nuggets","home",0.6739,0.7002,1.37,-0.0765,"DraftKings","2026-10-27 01:49:29","L",-1
-"MLB","401908045","2026-10-28 00:00:00","Milwaukee Brewers @ Tampa Bay Rays","Tampa Bay Rays","home",0.504,0.473,2.02,0.0181,"DraftKings","2026-10-27 21:15:49",NA,NA
-"NBA","401909877","2026-10-27 23:30:00","Brooklyn Nets @ Boston Celtics","Boston Celtics","home",0.7917,0.8271,1.16,-0.0816,"DraftKings","2026-10-27 21:15:49",NA,NA
-"NBA","401909878","2026-10-28 00:00:00","Detroit Pistons @ New York Knicks","Detroit Pistons","away",0.5509,0.3962,2.42,0.3333,"DraftKings","2026-10-27 21:15:49",NA,NA
-"NBA","401909879","2026-10-28 00:00:00","Sacramento Kings @ San Antonio Spurs","San Antonio Spurs","home",0.8208,0.9124,1.056,-0.1336,"DraftKings","2026-10-27 21:15:49",NA,NA
-"NBA","401909880","2026-10-28 03:00:00","Portland Trail Blazers @ Los Angeles Lakers","Los Angeles Lakers","home",0.5279,0.5325,1.8,-0.0497,"DraftKings","2026-10-27 21:15:49",NA,NA
-"NCAAF","401871071","2026-10-27 23:00:00","Delaware @ Western Kentucky","Western Kentucky","home",0.6457,0.5325,1.8,0.1623,"DraftKings","2026-10-27 21:15:49",NA,NA
-"NCAAF","401871072","2026-10-28 00:00:00","Sam Houston @ Missouri State","Missouri State","home",0.5869,0.6636,1.444,-0.1523,"DraftKings","2026-10-27 21:15:49",NA,NA
-"NHL","401892585","2026-10-27 23:00:00","Columbus @ Philadelphia","Columbus","away",0.5163,0.5217,1.833,-0.0534,"DraftKings","2026-10-27 21:15:49",NA,NA
-"NHL","401892590","2026-10-28 00:00:00","New Jersey @ Dallas","Dallas","home",0.5396,0.5108,1.87,0.0088,"DraftKings","2026-10-27 21:15:49",NA,NA
-"NHL","401892587","2026-10-28 00:00:00","Los Angeles @ Chicago","Los Angeles","away",0.5014,0.4957,1.926,-0.0344,"DraftKings","2026-10-27 21:15:49",NA,NA
-"NHL","401892586","2026-10-28 00:00:00","Boston @ Carolina","Carolina","home",0.6228,0.6309,1.521,-0.0528,"DraftKings","2026-10-27 21:15:49",NA,NA
-"NHL","401892588","2026-10-28 00:00:00","Montréal @ St. Louis","St. Louis","home",0.5252,0.4892,1.952,0.0253,"DraftKings","2026-10-27 21:15:49",NA,NA
-"NHL","401892589","2026-10-28 00:00:00","New York @ Nashville","Nashville","home",0.5231,0.5261,1.82,-0.0481,"DraftKings","2026-10-27 21:15:49",NA,NA
-"NHL","401892591","2026-10-28 00:00:00","Florida @ Winnipeg","Florida","away",0.5056,0.5427,1.769,-0.1055,"DraftKings","2026-10-27 21:15:49",NA,NA
-"NHL","401892592","2026-10-28 01:00:00","Minnesota @ Utah","Utah","home",0.5395,0.5261,1.82,-0.0184,"DraftKings","2026-10-27 21:15:49",NA,NA
-"NHL","401892593","2026-10-28 02:00:00","Ottawa @ Vegas","Vegas","home",0.5831,0.5934,1.617,-0.057,"DraftKings","2026-10-27 21:15:49",NA,NA
-"NHL","401892594","2026-10-28 02:00:00","Vancouver @ Anaheim","Anaheim","home",0.6347,0.6575,1.459,-0.0742,"DraftKings","2026-10-27 21:15:49",NA,NA
-"NHL","401892595","2026-10-28 02:30:00","Buffalo @ San Jose","San Jose","home",0.5414,0.4279,2.24,0.2128,"DraftKings","2026-10-27 21:15:49",NA,NA
+"MLB","401908045","2026-10-28 00:00:00","Milwaukee Brewers @ Tampa Bay Rays","Tampa Bay Rays","home",0.504,0.4773,2,0.008,"DraftKings","2026-10-27 21:45:19",NA,NA
+"NBA","401909877","2026-10-27 23:30:00","Brooklyn Nets @ Boston Celtics","Boston Celtics","home",0.7917,0.8271,1.16,-0.0816,"DraftKings","2026-10-27 21:45:19",NA,NA
+"NBA","401909878","2026-10-28 00:00:00","Detroit Pistons @ New York Knicks","Detroit Pistons","away",0.5509,0.3962,2.42,0.3333,"DraftKings","2026-10-27 21:45:19",NA,NA
+"NBA","401909879","2026-10-28 00:00:00","Sacramento Kings @ San Antonio Spurs","San Antonio Spurs","home",0.8208,0.9124,1.056,-0.1336,"DraftKings","2026-10-27 21:45:19",NA,NA
+"NBA","401909880","2026-10-28 03:00:00","Portland Trail Blazers @ Los Angeles Lakers","Los Angeles Lakers","home",0.5279,0.5325,1.8,-0.0497,"DraftKings","2026-10-27 21:45:19",NA,NA
+"NCAAF","401871071","2026-10-27 23:00:00","Delaware @ Western Kentucky","Western Kentucky","home",0.6457,0.5325,1.8,0.1623,"DraftKings","2026-10-27 21:45:19",NA,NA
+"NCAAF","401871072","2026-10-28 00:00:00","Sam Houston @ Missouri State","Missouri State","home",0.5869,0.6636,1.444,-0.1523,"DraftKings","2026-10-27 21:45:19",NA,NA
+"NHL","401892585","2026-10-27 23:00:00","Columbus @ Philadelphia","Columbus","away",0.5163,0.5217,1.833,-0.0534,"DraftKings","2026-10-27 21:45:19",NA,NA
+"NHL","401892590","2026-10-28 00:00:00","New Jersey @ Dallas","Dallas","home",0.5396,0.5108,1.87,0.0088,"DraftKings","2026-10-27 21:45:19",NA,NA
+"NHL","401892587","2026-10-28 00:00:00","Los Angeles @ Chicago","Los Angeles","away",0.5014,0.4957,1.926,-0.0344,"DraftKings","2026-10-27 21:45:19",NA,NA
+"NHL","401892586","2026-10-28 00:00:00","Boston @ Carolina","Carolina","home",0.6228,0.6309,1.521,-0.0528,"DraftKings","2026-10-27 21:45:19",NA,NA
+"NHL","401892588","2026-10-28 00:00:00","Montréal @ St. Louis","St. Louis","home",0.5252,0.4892,1.952,0.0253,"DraftKings","2026-10-27 21:45:19",NA,NA
+"NHL","401892589","2026-10-28 00:00:00","New York @ Nashville","Nashville","home",0.5231,0.5261,1.82,-0.0481,"DraftKings","2026-10-27 21:45:19",NA,NA
+"NHL","401892591","2026-10-28 00:00:00","Florida @ Winnipeg","Florida","away",0.5056,0.5427,1.769,-0.1055,"DraftKings","2026-10-27 21:45:19",NA,NA
+"NHL","401892592","2026-10-28 01:00:00","Minnesota @ Utah","Utah","home",0.5395,0.5261,1.82,-0.0184,"DraftKings","2026-10-27 21:45:19",NA,NA
+"NHL","401892593","2026-10-28 02:00:00","Ottawa @ Vegas","Vegas","home",0.5831,0.5934,1.617,-0.057,"DraftKings","2026-10-27 21:45:19",NA,NA
+"NHL","401892594","2026-10-28 02:00:00","Vancouver @ Anaheim","Anaheim","home",0.6347,0.6575,1.459,-0.0742,"DraftKings","2026-10-27 21:45:19",NA,NA
+"NHL","401892595","2026-10-28 02:30:00","Buffalo @ San Jose","San Jose","home",0.5414,0.4279,2.24,0.2128,"DraftKings","2026-10-27 21:45:19",NA,NA
