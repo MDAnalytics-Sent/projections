@@ -4297,6 +4297,7 @@ prop_record <- function(league, market, game_id, pid, pname, kickoff, p_raw, hit
 
 PROP_CAL_MIN <- 300L   # graded props before a correction is trusted at all
 PROP_CAL_HL  <- 60     # days of half-life, so this season's scoring environment counts most
+PROP_CAL_ZERO <- 8L    # picks in a game before "none of them hit" reads as a grading fault
 
 # The correction a board's own record says it needs.
 #
@@ -4311,6 +4312,23 @@ prop_calib <- function(league, market, asof, min_n = PROP_CAL_MIN, half_life = P
   if (!nrow(L)) return(ident)
   h <- L[L$league == league & L$market == market &
          !is.na(L$hit) & !is.na(L$p_raw) & !is.na(L$kickoff) & L$kickoff < asof, , drop = FALSE]
+  # A game where every single pick missed is a grading failure, not a result. The ledger
+  # is append-only and a pick is never re-graded, so rows written while a box score was
+  # missing or half-finished stay wrong for ever, and a correction fitted on them teaches
+  # the board that it is far more optimistic than it is. Nineteen NFL games and nine
+  # college ones are on file like that -- 560 picks whose probability of all missing at
+  # the real base rate is about 1e-34.
+  #
+  # Dropping every all-miss game also discards the occasional genuine one, a game that
+  # really did end without a touchdown. That is the right trade at these proportions: a
+  # fifth of the NFL games on file are all-miss, against the handful of games a season
+  # that truly finish without one.
+  if (nrow(h)) {
+    hs <- tapply(h$hit, h$game_id, sum)
+    ns <- tapply(h$hit, h$game_id, length)
+    bad <- names(hs)[is.finite(hs) & hs == 0 & ns >= PROP_CAL_ZERO]
+    if (length(bad)) h <- h[!(as.character(h$game_id) %in% bad), , drop = FALSE]
+  }
   if (nrow(h) < min_n) return(ident)
   z <- stats::qlogis(clamp(h$p_raw, 0.002, 0.998))
   wts <- 0.5 ^ (as.numeric(difftime(asof, h$kickoff, units = "days")) / half_life)
@@ -6277,10 +6295,17 @@ cfb_td_week <- function(d, s, g, now = now_et(), recent = 1L) {
     mlog(sprintf("CFB td     | %d graded prop(s) on file; the earliest slates have nothing before them to correct against",
                  nrow(prop_read())))
   }
-  # the result, once the game is in the box scores
+  # The result, once the game is in the box scores AND over. Being in the box score is
+  # not enough: a game in progress is there too, with the stats it has so far, and every
+  # player who had not scored yet was written to the ledger as a miss. Measured on the
+  # graded file, props settled inside two hours of kick-off hit 4.9% against a stated
+  # 24.6%, which is not a calibration problem but a clock problem. Nine college games
+  # carry 190 props recorded as nobody scoring at all.
   if (!is.null(cur)) {
+    fin <- sch$has_score & !is.na(sch$final_at) & sch$final_at <= now
+    over <- as.character(x$game_id) %in% as.character(sch$game_id[fin %in% TRUE])
     k <- match(paste(x$game_id, x$aid), paste(cur$game_id, cur$aid))
-    played <- x$game_id %in% cur$game_id
+    played <- x$game_id %in% cur$game_id & over
     x$scored <- ifelse(!played, NA, ifelse(is.na(k), 0L, cur$td[k]))
   } else x$scored <- NA
   x[order(x$game_id, -x$p), , drop = FALSE]
@@ -6508,13 +6533,30 @@ prob_bar <- function(p, hi = 0.65) {
 
 
 # ==================== NHL ====================
-NHL_VER      <- 1L
+NHL_VER      <- 2L     # v2: the rating is fitted on shots as well as goals (see nhl_panel)
 NHL_SEASONS  <- 2015:2026
-NHL_LAM      <- 30
+# A hockey game contains about six goals and about sixty shots. A rating fitted on the
+# goal margin is estimating team strength from a six-event sample per game, which is why
+# the shipped one took half a season to say anything: measured walk-forward over 4,120
+# games it correlated 0.19 with the margin overall but only 0.11 through the first ten
+# games, and the live board sits in that window every October.
+#
+# Fitted on three parts shots to one part goals -- shots converted to goal units at the
+# league rate so the two are commensurate -- the same walk-forward test gives 0.22
+# overall and 0.21 through the first ten games. Goals add nothing once shots are in
+# (p = 0.30); shots add a great deal to goals (p = 1.6e-14). Better in all four seasons
+# on file, and on held-out seasons the margin error and the win-probability Brier both
+# improve (p = 0.008 and p = 0.0002).
+#
+# Shrinkage turned out not to be the problem: the correlation moves from 0.184 to 0.194
+# across lambda from 2 to 60 on goals. With the blend a light penalty is marginally
+# better, so 5 rather than 30, but nothing rests on it.
+NHL_LAM      <- 5
+NHL_W_GOAL   <- 0.25   # weight on the goal margin; the remainder goes on shots
 NHL_PW       <- 20
 NHL_PW_G     <- 10
 NHL_RHO      <- 0.4
-NHL_END_LAM  <- 30
+NHL_END_LAM  <- 5
 NHL_GS_KP    <- 15
 NHL_GS_BASE  <- c(C = 0.1846, D = 0.0702, L = 0.1928, R = 0.2039)
 NHL_GS_RECENT <- 10L
@@ -6623,7 +6665,37 @@ nhl_sched <- function() {
   s[order(s$ko), ]
 }
 
-nhl_panel <- function(sch) {
+# Shots on goal per team per game, from the player box scores the goalie work already
+# downloads. The files before 2023 carry no game_id, so they cannot be joined to a game
+# and simply contribute nothing -- those seasons keep the goal-only rating they always
+# had, which is why the blend below falls back rather than dropping them.
+nhl_shots <- function(sch) {
+  out <- lapply(NHL_SEASONS, function(y) {
+    f <- nhl_path("pb", y); if (!file.exists(f)) return(NULL)
+    d <- try(readRDS(f), silent = TRUE); if (inherits(d, "try-error")) return(NULL)
+    d <- as.data.frame(d)
+    need <- c("game_id", "team_abbrev", "shots_on_goal")
+    if (!all(need %in% names(d))) return(NULL)
+    # a goalie's row carries shots faced, not shots taken, and would double-count
+    if ("shots_against" %in% names(d))
+      d <- d[!(is.finite(suppressWarnings(as.numeric(d$shots_against))) &
+               suppressWarnings(as.numeric(d$shots_against)) > 0), , drop = FALSE]
+    s <- suppressWarnings(as.numeric(d$shots_on_goal))
+    k <- !is.na(d$game_id) & !is.na(d$team_abbrev) & is.finite(s)
+    d <- d[k, , drop = FALSE]; s <- s[k]
+    if (!nrow(d)) return(NULL)
+    key <- paste(as.character(d$game_id), as.character(d$team_abbrev), sep = "\r")
+    v <- tapply(s, key, sum)
+    u <- strsplit(names(v), "\r", fixed = TRUE)
+    data.frame(game_id = vapply(u, `[`, "", 1L), team = vapply(u, `[`, "", 2L),
+               sf = as.numeric(v), stringsAsFactors = FALSE)
+  })
+  z <- dplyr::bind_rows(out)
+  if (!nrow(z)) return(NULL)
+  z[z$game_id %in% as.character(sch$game_id), , drop = FALSE]
+}
+
+nhl_panel <- function(sch, shots = NULL) {
   g <- sch[sch$has_score & !sch$corrupt, ]
   if (!nrow(g)) return(NULL)
   mk <- function(t, o, gf, ga, h) data.frame(
@@ -6633,7 +6705,42 @@ nhl_panel <- function(sch) {
              mk(g$away, g$home, g$away_score, g$home_score, 0L))
   p$marg <- p$gf - p$ga
   p$hfa  <- ifelse(p$home == 1L, 1, -1)
-  p[order(p$ko), ]
+  # Shots for and against, and the quantity the rating is actually fitted on. The shot
+  # differential is converted into goal units at the league's own conversion rate, so a
+  # season with shots and a season without are on one scale and the carried-over prior
+  # still means something.
+  p$sf <- NA_real_; p$sa <- NA_real_
+  if (!is.null(shots) && nrow(shots)) {
+    k  <- paste(as.character(p$game_id), as.character(p$team), sep = "\r")
+    ko <- paste(as.character(p$game_id), as.character(p$opp),  sep = "\r")
+    sk <- paste(as.character(shots$game_id), as.character(shots$team), sep = "\r")
+    p$sf <- shots$sf[match(k,  sk)]
+    p$sa <- shots$sf[match(ko, sk)]
+  }
+  ok <- is.finite(p$sf) & is.finite(p$sa)
+  conv <- if (any(ok) && sum(p$sf[ok]) > 0) sum(p$gf[ok]) / sum(p$sf[ok]) else NA_real_
+  p$tgt <- p$marg
+  if (is.finite(conv) && any(ok))
+    p$tgt[ok] <- NHL_W_GOAL * p$marg[ok] +
+                 (1 - NHL_W_GOAL) * (p$sf[ok] - p$sa[ok]) * conv
+  # Days since this team last played, and whether it is the back half of a back-to-back.
+  # The schedule gives both away for nothing and both are real: measured on 4,120 games
+  # the rest difference is worth +0.15 goals of margin per day (p = 0.0001) and the
+  # second night of a back-to-back costs 0.38 (p < 0.0001).
+  p <- p[order(p$ko), , drop = FALSE]
+  p$rest <- NA_real_
+  for (s in unique(p$season)) {
+    for (tm in unique(p$team[p$season == s])) {
+      i <- which(p$season == s & p$team == tm)
+      if (length(i) < 2L) next
+      i <- i[order(p$date[i])]
+      p$rest[i[-1]] <- as.numeric(p$date[i[-length(i)]])
+    }
+  }
+  p$rest <- pmin(pmax(as.numeric(p$date) - p$rest, 0), 5)
+  p$rest[!is.finite(p$rest)] <- 3          # first game of a season: a week's rest is wrong
+  p$b2b <- as.integer(p$rest <= 1)
+  p
 }
 
 nhl_rate <- function(g, ents, lam, prior = NULL, pw = 0) {
@@ -6642,7 +6749,9 @@ nhl_rate <- function(g, ents, lam, prior = NULL, pw = 0) {
   if (nrow(g) > 0) {
     ti <- idx[g$team]; oi <- idx[g$opp]
     ok <- !is.na(ti) & !is.na(oi)
-    ti <- ti[ok]; oi <- oi[ok]; y <- g$marg[ok]; h <- g$hfa[ok]
+    # the blended target where the panel built one, the goal margin where it could not
+    yv <- if ("tgt" %in% names(g)) ifelse(is.finite(g$tgt), g$tgt, g$marg) else g$marg
+    ti <- ti[ok]; oi <- oi[ok]; y <- yv[ok]; h <- g$hfa[ok]
     m <- length(y)
     if (m > 0) {
       X <- Matrix::sparseMatrix(i = rep(seq_len(m), 3L), j = c(ti, oi, rep(n + 1L, m)),
@@ -6707,9 +6816,13 @@ nhl_rows <- function(panel, endr, ents, upto, gf = NULL) {
       r <- nhl_rate(hist, ents, NHL_LAM, pr, NHL_PW / (1 + gp / NHL_PW_G))
       tw <- sg[sg$date == d & sg$home == 1L, ]
       if (!nrow(tw)) next
+      # the away side's rest, read off its own row of the same game
+      j <- match(paste(tw$game_id, tw$opp), paste(sg$game_id, sg$team))
       add[[length(add) + 1L]] <- data.frame(
         season = s, game_id = tw$game_id,
         rd = unname(r[tw$team]) - unname(r[tw$opp]), marg = tw$marg,
+        rdiff = unname(tw$rest - sg$rest[j]),
+        b2bd  = unname(tw$b2b  - sg$b2b[j]),
         stringsAsFactors = FALSE)
     }
   }
@@ -6752,6 +6865,25 @@ nhl_fit <- function(R, season_) {
     if (is.finite(gd_b) && is.finite(gd_se) && gd_b > 0 && gd_b > 2 * gd_se) m1 <- m2
     else use_gd <- FALSE
   }
+  # Rest, on the same terms as the goalie above: only if the training seasons carry it,
+  # only with the sign the thing itself must have -- a team with the longer rest cannot
+  # be hurt by it, and the second night of a back-to-back cannot help -- and only at two
+  # standard errors. Measured over 4,120 games both clear that comfortably, but a cached
+  # row set from an older version has neither column and must not break the model.
+  use_rest <- all(c("rdiff", "b2bd") %in% names(h)) &&
+              sum(abs(h$rdiff) > 1e-8, na.rm = TRUE) >= 500 &&
+              stats::sd(h$rdiff, na.rm = TRUE) > 1e-6
+  rest_b <- NA_real_; rest_se <- NA_real_
+  if (use_rest) {
+    m3 <- stats::lm(stats::update(stats::formula(m1), . ~ . + rdiff + b2bd), data = h)
+    cf <- tryCatch(summary(m3)$coefficients, error = function(e) NULL)
+    if (!is.null(cf) && all(c("rdiff", "b2bd") %in% rownames(cf))) {
+      rest_b <- cf["rdiff", 1]; rest_se <- cf["rdiff", 2]
+      okr <- is.finite(rest_b) && is.finite(rest_se) && rest_b > 0 &&
+             rest_b > 2 * rest_se && cf["b2bd", 1] < 0
+      if (okr) m1 <- m3 else use_rest <- FALSE
+    } else use_rest <- FALSE
+  }
   h$pred <- stats::predict(m1)
   h <- h[h$marg != 0, ]; h$win <- as.integer(h$marg > 0)
   lg <- suppressWarnings(stats::glm(win ~ pred, data = h, family = stats::binomial()))
@@ -6765,8 +6897,16 @@ nhl_fit <- function(R, season_) {
     } else {
       mlog(sprintf("NHL goalie | too little starter signal in the prior seasons to measure: team-only model, %d game(s)", nrow(h)))
     }
+    if (is.finite(rest_b))
+      mlog(sprintf("NHL rest   | measured %+.2f goals of margin per day of rest edge (se %.2f) -- %s",
+                   rest_b, rest_se,
+                   if (use_rest) "used, with the back-to-back term" else
+                   "NOT used: needs the right sign on both terms and two standard errors"))
+    else
+      mlog("NHL rest   | no rest columns in the training rows, so the model is the one it was")
   }
-  list(marg = m1, conf = lg, n = nrow(h), gd = use_gd, gd_beta = gd_b, gd_se = gd_se)
+  list(marg = m1, conf = lg, n = nrow(h), gd = use_gd, gd_beta = gd_b, gd_se = gd_se,
+       rest = use_rest, rest_beta = rest_b, rest_se = rest_se)
 }
 
 nhl_predict <- function(panel, endr, ents, m, g, cutoff, gf = NULL) {
@@ -6784,7 +6924,19 @@ nhl_predict <- function(panel, endr, ents, m, g, cutoff, gf = NULL) {
     v <- gf$gd[match(as.character(g$game_id), as.character(gf$game_id))]
     ifelse(is.na(v), 0, v)
   }
-  pred <- as.numeric(stats::predict(m$marg, newdata = data.frame(rd = rd, gd = gd)))
+  # Rest, from the schedule. unname throughout: looking up a team that has not played
+  # yet returns an NA carrying an NA name, and a single one of those becomes a row name
+  # and stops data.frame() dead -- the bug that took out a lone NBA game last week.
+  lastd <- if (nrow(hist)) tapply(as.numeric(hist$date), hist$team, max) else numeric(0)
+  rst <- function(t) {
+    v <- unname(lastd[as.character(t)])
+    ifelse(is.na(v), 3, pmin(pmax(as.numeric(g$date) - v, 0), 5))
+  }
+  rh <- rst(g$home); ra <- rst(g$away)
+  rdiff <- rh - ra
+  b2bd  <- as.integer(rh <= 1) - as.integer(ra <= 1)
+  nd <- data.frame(rd = rd, gd = gd, rdiff = rdiff, b2bd = b2bd, row.names = NULL)
+  pred <- as.numeric(stats::predict(m$marg, newdata = nd))
   conf <- as.numeric(stats::predict(m$conf, newdata = data.frame(pred = pred), type = "response"))
   data.frame(game_id = g$game_id, season = s, rd = rd, gd = gd, pred = pred,
              conf = pmax(conf, 1 - conf), stringsAsFactors = FALSE)
@@ -7147,8 +7299,17 @@ nhl_live_report <- function(sch, k) {
 nhl_load <- function() {
   nhl_api_reset()
   sch <- nhl_sched()
-  pan <- nhl_panel(sch)
+  # a shot feed that fails leaves the rating exactly as it was before: goals only
+  sho <- tryCatch(nhl_shots(sch), error = function(e) NULL)
+  pan <- nhl_panel(sch, sho)
   if (is.null(pan) || !nrow(pan)) stop("No usable NHL results could be loaded.")
+  if (!isTRUE(.nhl_sh$said)) {
+    .nhl_sh$said <- TRUE
+    n <- sum(is.finite(pan$sf) & is.finite(pan$sa))
+    mlog(sprintf("NHL rating | fitted on %.0f%% shots, %.0f%% goals; shots joined for %d of %d team-game(s) (%.0f%%), the rest fall back to the goal margin",
+                 100 * (1 - NHL_W_GOAL), 100 * NHL_W_GOAL, n, nrow(pan),
+                 100 * n / max(nrow(pan), 1L)))
+  }
   endr <- nhl_end(pan)
   ents <- sort(unique(c(pan$team, pan$opp)))
   nmv <- nhl_names(sch)
@@ -7182,8 +7343,8 @@ NHL_CORRUPT_N <- 200L
 .nhl_gk$said <- FALSE
 .cfb_td_said <- FALSE
 .cfb_td_none <- FALSE
-.nfl_td_said <- FALSE
-.nfl_td_none <- FALSE
+.nhl_sh <- new.env(hash = TRUE, parent = emptyenv())
+.nhl_sh$said <- FALSE
 
 .nhl_api <- new.env(hash = TRUE, parent = emptyenv())
 .nhl_api$fail <- 0L
@@ -9814,7 +9975,16 @@ server <- function(input, output, session) {
     x$act_td <- if (is.null(a)) NA_integer_ else a$td[match(x$key, a$key)]
     x$act_ry <- if (is.null(a)) NA_real_ else a$recyds[match(x$key, a$key)]
     fin <- g$has_score & !is.na(g$final_at) & g$final_at <= now_et()
-    x$done <- fin[match(x$game_id, g$game_id)]
+    # A game is only gradeable when the player box score actually carries it. The schedule
+    # and the box scores are different feeds with different lags, and "final" arrives on
+    # the first of them well before the second. Without this, every player in a game the
+    # schedule had finished and the box score had not yet published was given a zero and
+    # written to the ledger as a miss that could never be corrected: 19 NFL games, 370
+    # props, all recorded as nobody scoring, which at the real base rate has a probability
+    # of 1.5e-34. A player with no row in a box score that DOES cover his game genuinely
+    # did not score; a player whose game is missing entirely is simply not graded yet.
+    seen <- if (is.null(a)) character(0) else unique(as.character(a$game_id))
+    x$done <- fin[match(x$game_id, g$game_id)] & x$game_id %in% seen
     x$act_td[!x$done %in% TRUE] <- NA
     x$act_ry[!x$done %in% TRUE] <- NA
     x$act_td[x$done %in% TRUE & is.na(x$act_td)] <- 0L
@@ -9827,38 +9997,20 @@ server <- function(input, output, session) {
                  error = function(e) NULL)
     })
     x$act_ry[x$done %in% TRUE & is.na(x$act_ry)] <- 0
-    # The same correction the college board has had, which this one never got. Measured on
-    # 2,040 graded picks: it said 20.5% and 15.5% happened, a five point overprediction, and
-    # the board on the page averaged 20.3% against the same 15.5%. The college board carries
-    # a note in this file about an eight point gap of exactly this kind; only one of the two
-    # was ever wired to the fix.
+    # This board is deliberately NOT recalibrated, and the reason is worth recording so
+    # that the next person to notice the gap does not wire it up again.
     #
-    # Why it is a level problem and not a ranking one: the fitted slope is above one (1.17
-    # over 12,523 graded picks), so the order of the board is better than its own spread
-    # implies. Learned on one half of the season and applied to the other it moved 23.3% to
-    # 17.5% against an actual 17.4%, and the other way 22.7% to 16.9% against 16.9%, with
-    # Brier better both times (p = 6e-07 and 2e-06) and the slope pulled to 0.95 and 1.05.
+    # It looked badly overconfident: 20.5% said against 15.5% happened over 2,040 graded
+    # picks. Most of that was the grading fault fixed above -- 19 games, 370 picks, every
+    # one recorded as a miss because the schedule said final before the box score arrived.
+    # On the rows that survive that filter it said 20.6% and 19.0% happened, a gap of 1.6
+    # points at p = 0.09, with a fitted slope of 1.15 that is not distinguishable from 1
+    # (p = 0.11). Fitted on one half of the clean season and applied to the other, a
+    # correction moves the Brier score by -0.24% (p = 0.42) and -0.19% (p = 0.68).
     #
-    # Recorded raw above and corrected here, in that order: calibrating a number that has
-    # already been corrected would compound the correction every week. asof is this slate's
-    # own kick-off, so a past week shows what it said at the time rather than drifting as
-    # later results come in.
-    cal_td <- tryCatch(prop_calib("nfl", "anytime_td",
-                                  suppressWarnings(min(g$ko, na.rm = TRUE))),
-                       error = function(e) NULL)
-    if (isTRUE(cal_td$ok)) {
-      x$p_td <- prop_apply(x$p_td, cal_td)
-      if (!isTRUE(.nfl_td_said)) {
-        .nfl_td_said <<- TRUE
-        mlog(sprintf("NFL td     | recalibrated on %d graded prop(s) settled before this slate: slope %.2f, shift %+.2f -- a raw 20%% becomes %.0f%%, a raw 60%% becomes %.0f%%",
-                     cal_td$n, cal_td$a, cal_td$b,
-                     100 * prop_apply(0.20, cal_td), 100 * prop_apply(0.60, cal_td)))
-      }
-    } else if (!isTRUE(.nfl_td_none)) {
-      .nfl_td_none <<- TRUE
-      mlog(sprintf("NFL td     | %d graded prop(s) on file; this slate has too few settled before it to correct against",
-                   nrow(prop_read())))
-    }
+    # There is nothing there to correct. The college board is a different case and keeps
+    # its correction: its gap is 5.6 points on clean rows at p = 6e-50, and the same
+    # out-of-sample test gives -1.3% and -2.9% at p = 0.009 and below.
     x
   })
 
