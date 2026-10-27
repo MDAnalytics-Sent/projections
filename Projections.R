@@ -7182,6 +7182,8 @@ NHL_CORRUPT_N <- 200L
 .nhl_gk$said <- FALSE
 .cfb_td_said <- FALSE
 .cfb_td_none <- FALSE
+.nfl_td_said <- FALSE
+.nfl_td_none <- FALSE
 
 .nhl_api <- new.env(hash = TRUE, parent = emptyenv())
 .nhl_api$fail <- 0L
@@ -9825,6 +9827,38 @@ server <- function(input, output, session) {
                  error = function(e) NULL)
     })
     x$act_ry[x$done %in% TRUE & is.na(x$act_ry)] <- 0
+    # The same correction the college board has had, which this one never got. Measured on
+    # 2,040 graded picks: it said 20.5% and 15.5% happened, a five point overprediction, and
+    # the board on the page averaged 20.3% against the same 15.5%. The college board carries
+    # a note in this file about an eight point gap of exactly this kind; only one of the two
+    # was ever wired to the fix.
+    #
+    # Why it is a level problem and not a ranking one: the fitted slope is above one (1.17
+    # over 12,523 graded picks), so the order of the board is better than its own spread
+    # implies. Learned on one half of the season and applied to the other it moved 23.3% to
+    # 17.5% against an actual 17.4%, and the other way 22.7% to 16.9% against 16.9%, with
+    # Brier better both times (p = 6e-07 and 2e-06) and the slope pulled to 0.95 and 1.05.
+    #
+    # Recorded raw above and corrected here, in that order: calibrating a number that has
+    # already been corrected would compound the correction every week. asof is this slate's
+    # own kick-off, so a past week shows what it said at the time rather than drifting as
+    # later results come in.
+    cal_td <- tryCatch(prop_calib("nfl", "anytime_td",
+                                  suppressWarnings(min(g$ko, na.rm = TRUE))),
+                       error = function(e) NULL)
+    if (isTRUE(cal_td$ok)) {
+      x$p_td <- prop_apply(x$p_td, cal_td)
+      if (!isTRUE(.nfl_td_said)) {
+        .nfl_td_said <<- TRUE
+        mlog(sprintf("NFL td     | recalibrated on %d graded prop(s) settled before this slate: slope %.2f, shift %+.2f -- a raw 20%% becomes %.0f%%, a raw 60%% becomes %.0f%%",
+                     cal_td$n, cal_td$a, cal_td$b,
+                     100 * prop_apply(0.20, cal_td), 100 * prop_apply(0.60, cal_td)))
+      }
+    } else if (!isTRUE(.nfl_td_none)) {
+      .nfl_td_none <<- TRUE
+      mlog(sprintf("NFL td     | %d graded prop(s) on file; this slate has too few settled before it to correct against",
+                   nrow(prop_read())))
+    }
     x
   })
 
