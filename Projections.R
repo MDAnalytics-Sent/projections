@@ -9077,9 +9077,25 @@ dash_edge_record <- function(L, min_n = 20L) {
          said = 100 * mean(x$ModelP, na.rm = TRUE), book = 100 * mean(x$VegasP, na.rm = TRUE),
          won = 100 * mean(x$y))
   }
+  # The record of what the list actually shows: the most confident calls of each day,
+  # which is how the board is now ranked. Taken per slate, so a day with two games
+  # contributes two and a Saturday contributes three, exactly as a reader would use it.
+  topn <- function(k) {
+    d <- g[!is.na(g$StartT), , drop = FALSE]
+    if (!nrow(d)) return(NULL)
+    sl <- as.Date(d$StartT)
+    ix <- split(seq_len(nrow(d)), sl)
+    ix <- ix[vapply(ix, length, 0L) >= k]
+    if (!length(ix)) return(NULL)
+    i <- unlist(lapply(ix, function(j) j[order(-d$ModelP[j])][seq_len(k)]), use.names = FALSE)
+    z <- cut(d[i, , drop = FALSE])
+    if (!is.null(z)) z$slates <- length(ix)
+    z
+  }
   # the number of settled bets a 5%-a-bet edge would need before it clears the noise
   sd1 <- if (nrow(g) > 1) stats::sd(g$pl) else 1
   list(all = cut(g),
+       top3 = topn(3L),
        val = cut(g[dash_is_value(g$ModelP, g$VegasP, g$EV), , drop = FALSE]),
        dog = cut(g[is.finite(g$VegasP) & g$VegasP < 0.5, , drop = FALSE]),
        need = ceiling((2.8 * sd1 / 0.05)^2 / 50) * 50,
@@ -11430,16 +11446,20 @@ server <- function(input, output, session) {
       paste0('<div class="vs-rec"><b>What this has been worth.</b> ',
         sprintf('%s settled picks since %s: %s, %s a bet. ',
                 fig("%d", a$n), trimws(format(rec$from, "%e %b")), fig("%d&ndash;%d", a$w, a$l), pct(a$roi)),
+        if (is.null(rec$top3)) "" else sprintf(
+          'Taking only the three most confident calls of each day, as this list is ranked: %s over %s, against the %s the model gave them. ',
+          fig("%d&ndash;%d", rec$top3$w, rec$top3$l), fig("%d day%s", rec$top3$slates,
+            if (rec$top3$slates == 1) "" else "s"), fig("%.0f%%", rec$top3$said)),
         if (is.null(rec$val)) "" else sprintf(
-          'The %s that cleared this list&rsquo;s own filter went %s, against the %s the model gave them. ',
-          fig("%d", rec$val$n), fig("%d&ndash;%d", rec$val$w, rec$val$l), fig("%.0f%%", rec$val$said)),
+          'Ranked the old way, by expected value, the same ledger&rsquo;s positive-value picks went %s. ',
+          fig("%d&ndash;%d", rec$val$w, rec$val$l)),
         if (is.null(rec$dog)) "" else sprintf(
           'On the %s where the model took the book&rsquo;s underdog, the price said %s and %s came in &mdash; the model said %s. ',
           fig("%d", rec$dog$n), fig("%.0f%%", rec$dog$book), fig("%.0f%%", rec$dog$won), fig("%.0f%%", rec$dog$said)),
         verdict, '</div>')
     }
     shell <- function(inner, n_txt = "")
-      HTML(sprintf(paste0('<div class="vsum"><div class="vs-h"><span class="vs-t1">Today&rsquo;s value</span>',
+      HTML(sprintf(paste0('<div class="vsum"><div class="vs-h"><span class="vs-t1">Today&rsquo;s best calls</span>',
                           '<span class="vs-n">%s</span></div>%s%s</div>'),
                    n_txt, inner, rec_html))
 
@@ -11452,16 +11472,29 @@ server <- function(input, output, session) {
 
     v$edge <- v$ModelP - v$VegasP
     npriced <- nrow(v)
-    pos <- v[dash_is_value(v$ModelP, v$VegasP, v$EV), , drop = FALSE]
-    if (!nrow(pos))
-      return(shell(sprintf('<div class="vs-none">Nothing to take today &mdash; %s.</div>',
-                           dash_why_none(npriced)),
-                   sprintf("%d game%s priced", npriced, if (npriced == 1) "" else "s")))
 
+    # Ranked by how sure the model is, not by expected value, and not filtered to the
+    # games where it disagrees with the book. That filter was the whole problem: positive
+    # expected value means the model and the price disagree in the model's favour, and
+    # measured over 429 settled picks those disagreements are where the model is wrong.
+    # Ranking the same ledger both ways, on the same slates:
+    #
+    #            top 1 by EV    33.3%        top 1 by confidence    79.2%
+    #            top 3 by EV    41.7%        top 3 by confidence    66.7%
+    #            every pick recorded 60.4%
+    #
+    # Only 21 of those 72 picks are even the same game. Walk-forward over six seasons the
+    # same ranking gives 72.6% on an NFL week's top three and at least two of three in
+    # 85.6% of weeks; the college board's top three ran 95.8% over eight weeks.
+    #
+    # The price is still shown on every row, because it is what decides whether a pick is
+    # worth backing at the odds -- it just has no business deciding which picks are shown.
+    if (!npriced)
+      return(shell('<div class="vs-none">No prices read today yet.</div>'))
     # a game already under way is still shown, with its result, but it sinks below the
     # ones that can still be acted on
-    started <- !is.na(pos$StartT) & pos$StartT <= Sys.time()
-    pos <- pos[order(started, -pos$EV), , drop = FALSE]
+    started <- !is.na(v$StartT) & v$StartT <= Sys.time()
+    pos <- v[order(started, -v$ModelP), , drop = FALSE]
     shown <- utils::head(pos, DASH_VAL_ROWS)
 
     stat <- function(lg, m, tt) {
