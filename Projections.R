@@ -4085,7 +4085,8 @@ CACHE_DIR    <- "nfl_cache"
 CACHE_VER    <- 7
 LEDGER_DIR   <- "nfl_ledger"
 LEDGER_FILE  <- file.path(LEDGER_DIR, "predictions.rds")
-MODEL_VER    <- "epa-pd-qb-v2"      # v2: adds the starting-QB-change term (see qb_change_flags)
+MODEL_VER    <- "epa-pd-qb-v3"      # v2 added the starting-QB-change term (qb_change_flags);
+                                    # v3 lets the carry weight decay (see PRIOR_W0)
 
 LOAD_SEASONS <- 2014:2026
 PICK_SEASONS <- 2019:2026
@@ -4105,7 +4106,22 @@ TEAM_FIX <- c(STL = "LA", SD = "LAC", OAK = "LV", LAR = "LA", JAC = "JAX", WSH =
 fix_team <- function(x) { i <- !is.na(x) & x %in% names(TEAM_FIX); x[i] <- TEAM_FIX[x[i]]; x }
 
 K_SHRINK     <- 900
-PRIOR_W      <- 0.35
+# How much of last season to carry. This was a flat 0.35 all season, and it is the only
+# rating in this file whose prior weight did not decay -- college uses 40/(1+gp/3),
+# basketball 30/(1+gp/8), hockey 20/(1+gp/10). One constant cannot serve both ends of a
+# season, and measured over six seasons walk-forward it visibly did not: raising it to
+# 0.80 lifted weeks 1-3 from 0.299 to 0.325 and dropped the full season from 0.351 to
+# 0.290. In week one last season is all there is; by December it is a distraction.
+#
+# Letting it fall as games accumulate gives 0.360 against 0.351 with the parameters
+# chosen on five seasons and judged on the sixth, better in four of six held-out seasons
+# and worse in none by more than a thousandth, with the squared margin error improving at
+# p = 0.07. The folds picked 0.9 and four games three times out of six, so these are the
+# central values rather than the best of the grid -- the grid's own best was 0.363, which
+# is the number a sweep always produces and not one to bet on.
+PRIOR_W      <- 0.35   # kept for callers that want the old flat weight explicitly
+PRIOR_W0     <- 0.9    # carry weight with nothing played yet
+PRIOR_W_G    <- 4      # games after which it has fallen by half
 ADJ_PASSES   <- 1
 FORM_G       <- 3
 PD_FROM_WEEK <- 5
@@ -4878,7 +4894,7 @@ finished_by <- function(df, season_, cutoff)
           !is.na(df$final_at) & df$final_at <= cutoff)
 
 rate_teams <- function(tw, season_, cutoff, teams,
-                       k = K_SHRINK, carry = NULL, prior_w = PRIOR_W,
+                       k = K_SHRINK, carry = NULL, prior_w = NULL,
                        iters = ADJ_PASSES) {
   nt <- length(teams)
   zero <- setNames(rep(0, nt), teams)
@@ -4898,7 +4914,11 @@ rate_teams <- function(tw, season_, cutoff, teams,
   n <- wsum_by(ti, h$o_n, nt) + wsum_by(ti, h$d_n, nt)
   r <- (off - dff) * (n / (n + k))
   if (!is.null(carry)) {
-    r <- (1 - prior_w) * r + prior_w * carry
+    # last season's weight falls as this season's games accumulate; an explicit prior_w
+    # overrides it, which is how the old flat behaviour is still reachable
+    pw <- if (is.null(prior_w)) min(PRIOR_W0 / (1 + (nrow(h) / nt) / PRIOR_W_G), 1)
+          else prior_w
+    r <- (1 - pw) * r + pw * carry
     unplayed <- setdiff(teams, unique(h$team))
     if (length(unplayed)) { j <- match(unplayed, teams); r[j] <- carry[j] }
   }
