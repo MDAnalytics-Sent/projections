@@ -1,4 +1,4 @@
-2026-10-26 21:38:32 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-26 21:42:13 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -12,7 +12,7 @@ Win model  | 1 of 1 games served from locked history (picks frozen at first pitc
 NRFI model | calibration a=0.270 b=-0.054  (fit on 1832 graded 1st innings before 2026-10-26)
 Slate      | 1 games · record 1-0 (100%)
 Cache      | 578 files (5.9 MB) · 55 served from disk, 4 fetched
-CFB td     | 18826 graded prop(s) on file; the earliest slates have nothing before them to correct against
+CFB td     | 18861 graded prop(s) on file; the earliest slates have nothing before them to correct against
 NHL goalie | 16478 appearance(s), 8240 start(s), 166 goalie(s), 4 season(s) 2023-2026
 NHL goalie | starter edge on 4089 of 14856 game(s) (28%); sd 0.178, range -0.74 to +0.69 goals
 NHL        | 186 final game(s) this season, 186 with box scores, 0 missing
@@ -24,12 +24,12 @@ NHL goalie | measured -0.09 goals of margin per goal of starter edge (se 0.23) o
 NBA ingest | 9 of 9 finished game(s) read from the summary feed (90 name(s)); history ends 2026-10-25
 NBA roster | 18 of 18 team(s) returned a roster (310 name(s))
 NBA line-up| 9 of 9 game(s) within 8h of tip-off returned a five (90 name(s))
-2026-10-26 21:39:33   today  37.3s
+2026-10-26 21:43:11   today  35.9s
 CFB td     | recalibrated on 10483 graded prop(s) settled before this slate: slope 1.17, shift -0.21 -- a raw 25% becomes 18%, a raw 60% becomes 57%
 NBA roster | 18 of 18 team(s) returned a roster (310 name(s))
 NBA line-up| 9 of 9 game(s) within 8h of tip-off returned a five (90 name(s))
-2026-10-26 21:39:55   nfl    19.1s  3 built, 9 to pick from
-2026-10-26 21:40:01   cfb     6.0s  3 built, 10 to pick from
+2026-10-26 21:43:34   nfl    19.9s  3 built, 9 to pick from
+2026-10-26 21:43:40   cfb     6.1s  3 built, 10 to pick from
 
 ── Slate 2026-10-25 ──
 Slate      | 0 games · none graded yet
@@ -68,12 +68,12 @@ Cache      | 578 files (5.9 MB) · 17 served from disk, 4 fetched
 ── Slate 2026-10-29 ──
 Slate      | 0 games · none graded yet
 Cache      | 578 files (5.9 MB) · 17 served from disk, 1 fetched
-2026-10-26 21:40:21   mlb    19.6s  5 built, 13 to pick from
-2026-10-26 21:40:23   nhl     1.4s  5 built, 18 to pick from
+2026-10-26 21:43:59   mlb    19.3s  5 built, 13 to pick from
+2026-10-26 21:44:01   nhl     1.5s  5 built, 18 to pick from
 NBA roster | 18 of 18 team(s) returned a roster (310 name(s))
 NBA line-up| 9 of 9 game(s) within 8h of tip-off returned a five (90 name(s))
 NBA roster | 8 of 8 team(s) returned a roster (139 name(s))
 NBA roster | 24 of 24 team(s) returned a roster (414 name(s))
 NBA roster | 6 of 6 team(s) returned a roster (102 name(s))
-2026-10-26 21:40:24   nba     1.2s  5 built, 10 to pick from
-2026-10-26 21:40:24 built 13670 KB in 112s
+2026-10-26 21:44:02   nba     1.2s  5 built, 10 to pick from
+2026-10-26 21:44:02 built 13670 KB in 109s
