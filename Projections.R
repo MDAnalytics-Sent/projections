@@ -6816,7 +6816,9 @@ nhl_rows <- function(panel, endr, ents, upto, gf = NULL) {
       r <- nhl_rate(hist, ents, NHL_LAM, pr, NHL_PW / (1 + gp / NHL_PW_G))
       tw <- sg[sg$date == d & sg$home == 1L, ]
       if (!nrow(tw)) next
-      # the away side's rest, read off its own row of the same game
+      # the away side's rest, read off its own row of the same game. rdiff is kept even
+      # though the model no longer uses it, so that the question can be re-measured from
+      # the stored rows rather than rebuilt from scratch.
       j <- match(paste(tw$game_id, tw$opp), paste(sg$game_id, sg$team))
       add[[length(add) + 1L]] <- data.frame(
         season = s, game_id = tw$game_id,
@@ -6865,22 +6867,28 @@ nhl_fit <- function(R, season_) {
     if (is.finite(gd_b) && is.finite(gd_se) && gd_b > 0 && gd_b > 2 * gd_se) m1 <- m2
     else use_gd <- FALSE
   }
-  # Rest, on the same terms as the goalie above: only if the training seasons carry it,
-  # only with the sign the thing itself must have -- a team with the longer rest cannot
-  # be hurt by it, and the second night of a back-to-back cannot help -- and only at two
-  # standard errors. Measured over 4,120 games both clear that comfortably, but a cached
-  # row set from an older version has neither column and must not break the model.
-  use_rest <- all(c("rdiff", "b2bd") %in% names(h)) &&
-              sum(abs(h$rdiff) > 1e-8, na.rm = TRUE) >= 500 &&
-              stats::sd(h$rdiff, na.rm = TRUE) > 1e-6
+  # The back half of a back-to-back, on the same terms as the goalie above: only if the
+  # training seasons carry it, only with the sign the thing itself must have -- a second
+  # night cannot help a team -- and only at two standard errors.
+  #
+  # Days of rest is NOT here, and that is a measured decision rather than an oversight.
+  # Over the 7,851 games in the seasons this model can use, a day of rest advantage is
+  # worth +0.034 goals at t = 0.98, and its sign flips season to season (-0.76, 0.10,
+  # 0.05, 1.64, 1.68, -0.05). The second night of a back-to-back is worth -0.196 goals
+  # at t = -2.46 and is negative in every season on file. Three days' rest against two
+  # is nothing; playing last night is something, which is what anyone who watches the
+  # sport would have said. Asking for both together let the dead term veto the live one.
+  use_rest <- "b2bd" %in% names(h) &&
+              sum(abs(h$b2bd) > 1e-8, na.rm = TRUE) >= 500 &&
+              stats::sd(h$b2bd, na.rm = TRUE) > 1e-6
   rest_b <- NA_real_; rest_se <- NA_real_
   if (use_rest) {
-    m3 <- stats::lm(stats::update(stats::formula(m1), . ~ . + rdiff + b2bd), data = h)
+    m3 <- stats::lm(stats::update(stats::formula(m1), . ~ . + b2bd), data = h)
     cf <- tryCatch(summary(m3)$coefficients, error = function(e) NULL)
-    if (!is.null(cf) && all(c("rdiff", "b2bd") %in% rownames(cf))) {
-      rest_b <- cf["rdiff", 1]; rest_se <- cf["rdiff", 2]
-      okr <- is.finite(rest_b) && is.finite(rest_se) && rest_b > 0 &&
-             rest_b > 2 * rest_se && cf["b2bd", 1] < 0
+    if (!is.null(cf) && "b2bd" %in% rownames(cf)) {
+      rest_b <- cf["b2bd", 1]; rest_se <- cf["b2bd", 2]
+      okr <- is.finite(rest_b) && is.finite(rest_se) && rest_b < 0 &&
+             abs(rest_b) > 2 * rest_se
       if (okr) m1 <- m3 else use_rest <- FALSE
     } else use_rest <- FALSE
   }
@@ -6898,12 +6906,12 @@ nhl_fit <- function(R, season_) {
       mlog(sprintf("NHL goalie | too little starter signal in the prior seasons to measure: team-only model, %d game(s)", nrow(h)))
     }
     if (is.finite(rest_b))
-      mlog(sprintf("NHL rest   | measured %+.2f goals of margin per day of rest edge (se %.2f) -- %s",
-                   rest_b, rest_se,
-                   if (use_rest) "used, with the back-to-back term" else
-                   "NOT used: needs the right sign on both terms and two standard errors"))
+      mlog(sprintf("NHL b2b    | measured %+.2f goals of margin on the second night of a back-to-back (se %.2f) on %d prior-season game(s) -- %s",
+                   rest_b, rest_se, nrow(h),
+                   if (use_rest) "used" else
+                   "NOT used: needs a negative sign and two standard errors"))
     else
-      mlog("NHL rest   | no rest columns in the training rows, so the model is the one it was")
+      mlog("NHL b2b    | no back-to-back column in the training rows, so the model is the one it was")
   }
   list(marg = m1, conf = lg, n = nrow(h), gd = use_gd, gd_beta = gd_b, gd_se = gd_se,
        rest = use_rest, rest_beta = rest_b, rest_se = rest_se)
