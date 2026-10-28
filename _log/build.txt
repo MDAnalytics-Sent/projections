@@ -1,4 +1,4 @@
-2026-10-28 16:45:27 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-28 17:17:07 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -24,13 +24,13 @@ NHL goalie | measured +0.35 goals of margin per goal of starter edge (se 0.23) o
 NHL b2b    | measured -0.25 goals of margin on the second night of a back-to-back (se 0.06) on 7667 prior-season game(s) -- used
 NBA ingest | 1 of 1 finished game(s) read from the summary feed (10 name(s)); history ends 2026-10-27
 NBA roster | 24 of 24 team(s) returned a roster (415 name(s))
-NBA line-up| 0 of 12 game(s) within 8h of tip-off returned a five (0 name(s))
-2026-10-28 16:46:54   today  59.2s
+NBA line-up| 4 of 12 game(s) within 8h of tip-off returned a five (40 name(s))
+2026-10-28 17:18:34   today  59.0s
 CFB td     | recalibrated on 10293 graded prop(s) settled before this slate: slope 1.19, shift -0.17 -- a raw 25% becomes 19%, a raw 60% becomes 58%
 NBA roster | 24 of 24 team(s) returned a roster (415 name(s))
-NBA line-up| 0 of 12 game(s) within 8h of tip-off returned a five (0 name(s))
-2026-10-28 16:47:14   nfl    15.9s  3 built, 9 to pick from
-2026-10-28 16:47:23   cfb     9.0s  3 built, 10 to pick from
+NBA line-up| 4 of 12 game(s) within 8h of tip-off returned a five (40 name(s))
+2026-10-28 17:18:53   nfl    15.0s  3 built, 9 to pick from
+2026-10-28 17:19:02   cfb     9.2s  3 built, 10 to pick from
 
 ── Slate 2026-10-27 ──
 Win model  | learned weights: run model 0.966, Pythagorean gap 0.741 (fit on 2,466 graded mlb-runs-v10 games, 48% data, half-life 60 d)
@@ -71,12 +71,12 @@ Win model  | calibration a=1.158 b=-0.004  (fit on 2467 graded games before 2026
 NRFI model | calibration a=0.265 b=-0.044  (fit on 1834 graded 1st innings before 2026-10-31)
 Slate      | 1 games · none graded yet
 Cache      | 586 files (5.9 MB) · 14 served from disk, 4 fetched
-2026-10-28 16:47:55   mlb    31.0s  5 built, 13 to pick from
-2026-10-28 16:47:57   nhl     2.3s  5 built, 18 to pick from
+2026-10-28 17:19:33   mlb    30.6s  5 built, 13 to pick from
+2026-10-28 17:19:36   nhl     2.3s  5 built, 18 to pick from
 NBA roster | 24 of 24 team(s) returned a roster (415 name(s))
-NBA line-up| 0 of 12 game(s) within 8h of tip-off returned a five (0 name(s))
+NBA line-up| 4 of 12 game(s) within 8h of tip-off returned a five (40 name(s))
 NBA roster | 6 of 6 team(s) returned a roster (102 name(s))
 NBA roster | 20 of 20 team(s) returned a roster (346 name(s))
 NBA roster | 14 of 14 team(s) returned a roster (241 name(s))
-2026-10-28 16:47:59   nba     1.9s  5 built, 12 to pick from
-2026-10-28 16:47:59 built 14378 KB in 152s
+2026-10-28 17:19:38   nba     1.9s  5 built, 12 to pick from
+2026-10-28 17:19:38 built 14371 KB in 150s
