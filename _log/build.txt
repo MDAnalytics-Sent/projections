@@ -1,4 +1,4 @@
-2026-10-27 20:50:01 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-27 21:47:21 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -12,7 +12,7 @@ Win model  | 1 of 1 games served from locked history (picks frozen at first pitc
 NRFI model | calibration a=0.269 b=-0.049  (fit on 1833 graded 1st innings before 2026-10-27)
 Slate      | 1 games · none graded yet
 Cache      | 582 files (5.9 MB) · 53 served from disk, 4 fetched
-CFB td     | 18951 graded prop(s) on file; the earliest slates have nothing before them to correct against
+CFB td     | 19166 graded prop(s) on file; the earliest slates have nothing before them to correct against
 NHL rating | fitted on 75% shots, 25% goals; shots joined for 8246 of 15722 team-game(s) (52%), the rest fall back to the goal margin
 NHL goalie | 16490 appearance(s), 8246 start(s), 166 goalie(s), 4 season(s) 2023-2026
 NHL goalie | starter edge on 4092 of 14856 game(s) (28%); sd 0.178, range -0.74 to +0.69 goals
@@ -20,18 +20,18 @@ NHL        | 194 final game(s) this season, 194 with box scores, 0 missing
 NHL        | latest final: 2026-10-27 (game 2026020194) | today 2026-10-27 has 11 game(s), 7 final | feed 4 hit / 10 fetched
 NHL goalie | 776 appearance(s) across 194 game(s); 388 identifiable starter(s), 78 distinct goalie(s)
 NHL goalie | fields present -- toi 100%, shots 100%, saves 100%, goals against 100%
-NHL goalie | starters league save pct 0.8936 over 10365 shots
+NHL goalie | starters league save pct 0.8936 over 10364 shots
 NHL goalie | measured +0.35 goals of margin per goal of starter edge (se 0.23) on 7667 prior-season game(s) -- NOT used: needs the right sign and two standard errors
 NHL b2b    | measured -0.25 goals of margin on the second night of a back-to-back (se 0.06) on 7667 prior-season game(s) -- used
-NBA ingest | 3 of 3 finished game(s) read from the summary feed (30 name(s)); history ends 2026-10-26
+NBA ingest | 4 of 4 finished game(s) read from the summary feed (40 name(s)); history ends 2026-10-26
 NBA roster | 8 of 8 team(s) returned a roster (139 name(s))
-NBA line-up| 3 of 4 game(s) within 8h of tip-off returned a five (30 name(s))
-2026-10-27 20:51:03   today  41.0s
+NBA line-up| 4 of 4 game(s) within 8h of tip-off returned a five (40 name(s))
+2026-10-27 21:48:31   today  48.2s
 CFB td     | recalibrated on 10293 graded prop(s) settled before this slate: slope 1.19, shift -0.17 -- a raw 25% becomes 19%, a raw 60% becomes 58%
 NBA roster | 8 of 8 team(s) returned a roster (139 name(s))
-NBA line-up| 3 of 4 game(s) within 8h of tip-off returned a five (30 name(s))
-2026-10-27 20:51:16   nfl    10.0s  3 built, 9 to pick from
-2026-10-27 20:51:22   cfb     5.6s  3 built, 10 to pick from
+NBA line-up| 4 of 4 game(s) within 8h of tip-off returned a five (40 name(s))
+2026-10-27 21:48:46   nfl    12.0s  3 built, 9 to pick from
+2026-10-27 21:48:53   cfb     6.6s  3 built, 10 to pick from
 
 ── Slate 2026-10-26 ──
 Win model  | learned weights: run model 0.960, Pythagorean gap 0.749 (fit on 2,465 graded mlb-runs-v10 games, 48% data, half-life 60 d)
@@ -74,12 +74,12 @@ Win model  | calibration a=1.161 b=-0.006  (fit on 2466 graded games before 2026
 NRFI model | calibration a=0.265 b=-0.044  (fit on 1834 graded 1st innings before 2026-10-30)
 Slate      | 1 games · none graded yet
 Cache      | 582 files (5.9 MB) · 15 served from disk, 4 fetched
-2026-10-27 20:51:42   mlb    19.8s  5 built, 13 to pick from
-2026-10-27 20:51:43   nhl     1.4s  5 built, 18 to pick from
+2026-10-27 21:49:16   mlb    22.6s  5 built, 13 to pick from
+2026-10-27 21:49:18   nhl     1.8s  5 built, 18 to pick from
 NBA roster | 8 of 8 team(s) returned a roster (139 name(s))
-NBA line-up| 3 of 4 game(s) within 8h of tip-off returned a five (30 name(s))
+NBA line-up| 4 of 4 game(s) within 8h of tip-off returned a five (40 name(s))
 NBA roster | 24 of 24 team(s) returned a roster (414 name(s))
 NBA roster | 6 of 6 team(s) returned a roster (102 name(s))
 NBA roster | 20 of 20 team(s) returned a roster (345 name(s))
-2026-10-27 20:51:44   nba     1.1s  5 built, 11 to pick from
-2026-10-27 20:51:44 built 14449 KB in 103s
+2026-10-27 21:49:19   nba     1.4s  5 built, 11 to pick from
+2026-10-27 21:49:19 built 14450 KB in 119s

@@ -433,9 +433,9 @@
 "NHL","401892585","2026-10-27 23:00:00","Columbus @ Philadelphia","Columbus","away",0.5163,0.5217,1.833,-0.0534,"DraftKings","2026-10-27 22:19:50","W",0.833
 "NBA","401909877","2026-10-27 23:30:00","Brooklyn Nets @ Boston Celtics","Boston Celtics","home",0.7917,0.8271,1.16,-0.0816,"DraftKings","2026-10-27 23:12:50","W",0.16
 "MLB","401908045","2026-10-28 00:00:00","Milwaukee Brewers @ Tampa Bay Rays","Tampa Bay Rays","home",0.504,0.4728,2.06,0.0382,"DraftKings","2026-10-27 23:40:17",NA,NA
-"NBA","401909878","2026-10-28 00:00:00","Detroit Pistons @ New York Knicks","Detroit Pistons","away",0.5509,0.3908,2.45,0.3498,"DraftKings","2026-10-27 23:40:17",NA,NA
+"NBA","401909878","2026-10-28 00:00:00","Detroit Pistons @ New York Knicks","Detroit Pistons","away",0.5509,0.3908,2.45,0.3498,"DraftKings","2026-10-27 23:40:17","L",-1
 "NBA","401909879","2026-10-28 00:00:00","Sacramento Kings @ San Antonio Spurs","San Antonio Spurs","home",0.8208,0.9124,1.056,-0.1336,"DraftKings","2026-10-27 23:40:17","W",0.056
-"NCAAF","401871072","2026-10-28 00:00:00","Sam Houston @ Missouri State","Missouri State","home",0.5869,0.6447,1.488,-0.1269,"DraftKings","2026-10-27 23:40:17",NA,NA
+"NCAAF","401871072","2026-10-28 00:00:00","Sam Houston @ Missouri State","Missouri State","home",0.5869,0.6447,1.488,-0.1269,"DraftKings","2026-10-27 23:40:17","W",0.488
 "NHL","401892590","2026-10-28 00:00:00","New Jersey @ Dallas","Dallas","home",0.5396,0.5174,1.847,-0.0031,"DraftKings","2026-10-27 23:40:17","L",-1
 "NHL","401892587","2026-10-28 00:00:00","Los Angeles @ Chicago","Los Angeles","away",0.5014,0.4957,1.926,-0.0344,"DraftKings","2026-10-27 23:40:17","L",-1
 "NHL","401892586","2026-10-28 00:00:00","Boston @ Carolina","Carolina","home",0.6228,0.6309,1.521,-0.0528,"DraftKings","2026-10-27 23:40:17","W",0.521
