@@ -1,4 +1,4 @@
-2026-10-29 02:04:21 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-29 02:57:08 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -23,11 +23,11 @@ NBA star   | leading man identified for 30 team(s) from the last 15 game(s); e.g
 NBA ingest | 13 of 13 finished game(s) read from the summary feed (130 name(s)); history ends 2026-10-27
 NBA star   | a side missing its leading man measured -3.32 points of margin (se 0.39) on 12000 prior-season game(s) -- used
 NBA roster | 6 of 6 team(s) returned a roster (102 name(s))
-2026-10-29 02:05:25   today  37.7s
+2026-10-29 02:58:14   today  37.8s
 CFB td     | recalibrated on 10293 graded prop(s) settled before this slate: slope 1.19, shift -0.17 -- a raw 25% becomes 19%, a raw 60% becomes 58%
 NBA roster | 6 of 6 team(s) returned a roster (102 name(s))
-2026-10-29 02:05:45   nfl    15.5s  3 built, 9 to pick from
-2026-10-29 02:05:55   cfb     9.7s  3 built, 10 to pick from
+2026-10-29 02:58:34   nfl    15.3s  3 built, 9 to pick from
+2026-10-29 02:58:44   cfb     9.6s  3 built, 10 to pick from
 
 ── Slate 2026-10-28 ──
 Win model  | learned weights: run model 0.971, Pythagorean gap 0.544 (fit on 2,467 graded mlb-runs-v10 games, 22% data, half-life 25 d)
@@ -56,11 +56,11 @@ Cache      | 587 files (5.9 MB) · 11 served from disk, 1 fetched
 ── Slate 2026-11-01 ──
 Slate      | 0 games · none graded yet
 Cache      | 587 files (5.9 MB) · 9 served from disk, 3 fetched
-2026-10-29 02:06:23   mlb    27.7s  5 built, 11 to pick from
-2026-10-29 02:06:26   nhl     2.2s  5 built, 18 to pick from
+2026-10-29 02:59:12   mlb    27.2s  5 built, 11 to pick from
+2026-10-29 02:59:14   nhl     2.2s  5 built, 18 to pick from
 NBA roster | 6 of 6 team(s) returned a roster (102 name(s))
 NBA roster | 20 of 20 team(s) returned a roster (347 name(s))
 NBA roster | 14 of 14 team(s) returned a roster (240 name(s))
 NBA roster | 8 of 8 team(s) returned a roster (140 name(s))
-2026-10-29 02:06:29   nba     3.8s  5 built, 13 to pick from
-2026-10-29 02:06:29 built 14420 KB in 128s
+2026-10-29 02:59:17   nba     3.6s  5 built, 13 to pick from
+2026-10-29 02:59:18 built 14420 KB in 130s
