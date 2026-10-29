@@ -7373,6 +7373,9 @@ NHL_CORRUPT_N <- 200L
 .cfb_td_none <- FALSE
 .nhl_sh <- new.env(hash = TRUE, parent = emptyenv())
 .nhl_sh$said <- FALSE
+.nba_star <- new.env(hash = TRUE, parent = emptyenv())
+.nba_star$said <- FALSE
+.nba_star$led  <- FALSE
 
 .nhl_api <- new.env(hash = TRUE, parent = emptyenv())
 .nhl_api$fail <- 0L
@@ -7655,7 +7658,7 @@ nhl_live_box <- function(sch, cap = NHL_BOX_CAP) {
 }
 
 # ==================== NBA ====================
-NBA_VER      <- 1L
+NBA_VER      <- 2L   # v2: the rating is unchanged, but the rows now carry the leading-man term
 NBA_SEASONS  <- 2017:2027
 NBA_LAM      <- 10
 NBA_PW       <- 30
@@ -7702,6 +7705,10 @@ nba_sync <- function(force = FALSE) {
       gf <- nba_path("gr", y)
       if (force || (y >= cur - 1L && age_min(gf) > SDV_REFRESH_MIN)) unlink(gf)
       sdv_fetch("espn_nba_game_rosters", sprintf("game_rosters_%d.rds", y), gf)
+      # minutes, which is how a team's leading man is identified (see nba_leaders)
+      pf <- nba_path("pb", y)
+      if (force || (y >= cur - 1L && age_min(pf) > SDV_REFRESH_MIN)) unlink(pf)
+      sdv_fetch("espn_nba_player_boxscores", sprintf("player_box_%d.rds", y), pf)
     }
   }
   f <- vapply(NBA_SEASONS, function(y) nba_path("sch", y), "")
@@ -7833,7 +7840,65 @@ nba_end <- function(panel) {
   e
 }
 
-nba_rows <- function(panel, endr, ents, upto) {
+# Minutes played, per man per game. The only thing this is for is working out which
+# player a team cannot afford to lose, which the rating has no way to express.
+nba_minutes <- function(sch) {
+  mm <- function(v) {
+    v <- as.character(v)
+    o <- suppressWarnings(as.numeric(v))
+    i <- grepl(":", v, fixed = TRUE)
+    if (any(i)) {
+      p <- strsplit(v[i], ":")
+      o[i] <- vapply(p, function(x) suppressWarnings(as.numeric(x[1])) * 60 +
+                       suppressWarnings(as.numeric(x[2])), 0) / 60
+    }
+    o
+  }
+  out <- lapply(NBA_SEASONS, function(y) {
+    f <- nba_path("pb", y); if (!file.exists(f)) return(NULL)
+    d <- try(as.data.frame(readRDS(f)), silent = TRUE)
+    if (inherits(d, "try-error")) return(NULL)
+    need <- c("game_id", "athlete_id", "team_id", "minutes", "athlete_display_name")
+    if (!all(need %in% names(d))) return(NULL)
+    data.frame(season = y, game_id = as.character(d$game_id),
+               pid = as.character(d$athlete_id), team = as.character(d$team_id),
+               pname = as.character(d$athlete_display_name),
+               min = mm(d$minutes), stringsAsFactors = FALSE)
+  })
+  z <- dplyr::bind_rows(out)
+  if (!nrow(z)) return(NULL)
+  j <- match(z$game_id, as.character(sch$game_id))
+  z$date <- sch$date[j]; z$ko <- sch$ko[j]
+  z[!is.na(z$date), , drop = FALSE]
+}
+
+# Each team's leading man as at a cut-off, and whether he was on the floor in a given
+# game. "Leading" is simply the most minutes a game over the team's recent run -- no
+# cleverness, because the measurement below does not need any: a side missing whoever
+# that is loses about six points of margin whatever the name.
+NBA_LEAD_N   <- 15L   # games of recent form the leader is read from
+NBA_LEAD_MIN <- 5L    # games he must have played before he counts as established
+nba_leaders <- function(mins, upto = NULL) {
+  if (is.null(mins) || !nrow(mins)) return(NULL)
+  z <- if (is.null(upto)) mins else mins[mins$date < upto, , drop = FALSE]
+  if (!nrow(z)) return(NULL)
+  z <- z[order(z$team, z$date), , drop = FALSE]
+  sp <- split(seq_len(nrow(z)), z$team)
+  do.call(rbind, lapply(sp, function(i) {
+    w <- z[i, , drop = FALSE]
+    keep <- utils::tail(sort(unique(w$date)), NBA_LEAD_N)
+    w <- w[w$date %in% keep & is.finite(w$min) & w$min > 0, , drop = FALSE]
+    if (!nrow(w)) return(NULL)
+    a <- stats::aggregate(min ~ pid + pname + team, data = w, FUN = mean)
+    n <- stats::aggregate(min ~ pid, data = w, FUN = length); names(n)[2] <- "gp"
+    a <- merge(a, n, by = "pid")
+    a <- a[a$gp >= NBA_LEAD_MIN, , drop = FALSE]
+    if (!nrow(a)) return(NULL)
+    a[which.max(a$min), c("team", "pid", "pname", "min", "gp"), drop = FALSE]
+  }))
+}
+
+nba_rows <- function(panel, endr, ents, upto, mins = NULL) {
   f <- nba_path("rows")
   R <- if (file.exists(f)) try(readRDS(f), silent = TRUE) else NULL
   if (inherits(R, "try-error") || !is.data.frame(R)) R <- NULL
@@ -7849,6 +7914,7 @@ nba_rows <- function(panel, endr, ents, upto) {
     pr <- if (is.null(pv)) NULL else pv * NBA_RHO
     away <- sg[sg$home == 0L, c("game_id", "rest")]
     names(away)[2] <- "arest"
+    ms <- if (is.null(mins)) NULL else mins[mins$season == s, , drop = FALSE]
     for (d in sort(unique(sg$date))) {
       hist <- sg[sg$date < d, ]
       gp <- if (nrow(hist)) nrow(hist) / max(1L, length(unique(hist$team))) else 0
@@ -7856,10 +7922,26 @@ nba_rows <- function(panel, endr, ents, upto) {
       tw <- sg[sg$date == d & sg$home == 1L, ]
       if (!nrow(tw)) next
       a <- away$arest[match(tw$game_id, away$game_id)]
+      # was each side's leading man on the floor? Read from the box scores, so this is
+      # what actually happened; the live board reads the same question off the injury
+      # feed instead, which is the only source that knows before a game is played.
+      sout <- rep(0, nrow(tw))
+      if (!is.null(ms) && nrow(ms)) {
+        ld <- nba_leaders(ms, d)
+        if (!is.null(ld) && nrow(ld)) {
+          today <- ms[ms$date == d & is.finite(ms$min) & ms$min > 0, , drop = FALSE]
+          on <- paste(today$game_id, today$pid)
+          miss <- function(tm) {
+            k <- match(as.character(tm), as.character(ld$team))
+            ifelse(is.na(k), 0, as.integer(!(paste(tw$game_id, ld$pid[k]) %in% on)))
+          }
+          sout <- unname(miss(tw$team) - miss(tw$opp))
+        }
+      }
       add[[length(add) + 1L]] <- data.frame(
         season = s, game_id = tw$game_id,
         rd = unname(r[tw$team]) - unname(r[tw$opp]), hfa = tw$hfa,
-        rdiff = tw$rest - ifelse(is.na(a), 2, a), marg = tw$marg,
+        rdiff = tw$rest - ifelse(is.na(a), 2, a), sout = sout, marg = tw$marg,
         stringsAsFactors = FALSE)
     }
   }
@@ -7873,13 +7955,51 @@ nba_fit <- function(R, season_) {
   h <- R[R$season < season_, ]
   if (nrow(h) < 2000) return(NULL)
   m1 <- stats::lm(marg ~ rd + hfa + rdiff, data = h)
+  # A side missing its leading man, on the same terms as the hockey goalie and
+  # back-to-back terms: only if the training seasons carry the column, only with the
+  # sign the thing must have, and only at two standard errors.
+  #
+  # Measured outside this file first, on 4,965 games with team and opponent fixed
+  # effects absorbing strength: a side without its leading man loses 5.98 points of
+  # margin (se 0.77, p = 1.5e-14), and symmetrically -- home missing him -6.40, away
+  # missing him +5.58. Negative in every season, and the same in October (-6.60) as in
+  # March (-6.19), so it is not rest days or a tanked spring. It is live on 38.9% of
+  # slates. Nothing in the rating can express it: the model saw the rating difference,
+  # home court and rest, and nothing else, which is how a team missing its best player
+  # came to be the most confident pick on a night's board.
+  #
+  # It does not fade with how long he has been out -- 4 or 5 of the last 5 games played
+  # gives -5.37, 0 or 1 gives -6.54 -- because the rating leans hard enough on its prior
+  # that it never absorbs the absence either. So no recency condition: one flat term.
+  use_s <- "sout" %in% names(h) && sum(abs(h$sout) > 1e-8, na.rm = TRUE) >= 200 &&
+           stats::sd(h$sout, na.rm = TRUE) > 1e-6
+  s_b <- NA_real_; s_se <- NA_real_
+  if (use_s) {
+    m2 <- stats::lm(marg ~ rd + hfa + rdiff + sout, data = h)
+    cf <- tryCatch(summary(m2)$coefficients, error = function(e) NULL)
+    if (!is.null(cf) && "sout" %in% rownames(cf)) {
+      s_b <- cf["sout", 1]; s_se <- cf["sout", 2]
+      if (is.finite(s_b) && is.finite(s_se) && s_b < 0 && abs(s_b) > 2 * s_se) m1 <- m2
+      else use_s <- FALSE
+    } else use_s <- FALSE
+  }
+  if (!isTRUE(.nba_star$said)) {
+    .nba_star$said <- TRUE
+    if (is.finite(s_b))
+      mlog(sprintf("NBA star   | a side missing its leading man measured %+.2f points of margin (se %.2f) on %d prior-season game(s) -- %s",
+                   s_b, s_se, nrow(h),
+                   if (use_s) "used" else "NOT used: needs a negative sign and two standard errors"))
+    else
+      mlog("NBA star   | no leading-man column in the training rows, so the model is the one it was")
+  }
   h$pred <- stats::predict(m1)
   h <- h[h$marg != 0, ]; h$win <- as.integer(h$marg > 0)
   lg <- suppressWarnings(stats::glm(win ~ pred, data = h, family = stats::binomial()))
-  list(marg = m1, conf = lg, n = nrow(h))
+  list(marg = m1, conf = lg, n = nrow(h), star = use_s, star_beta = s_b, star_se = s_se)
 }
 
-nba_predict <- function(panel, endr, ents, m, g, cutoff) {
+nba_predict <- function(panel, endr, ents, m, g, cutoff,
+                        lead = NULL, inj = NULL, tkey = NULL) {
   if (is.null(m) || !nrow(g)) return(NULL)
   s <- g$season[1]
   # v2: earlier dates only, matching the walk-forward training rows.
@@ -7898,12 +8018,32 @@ nba_predict <- function(panel, endr, ents, m, g, cutoff) {
     ifelse(is.na(v), 2, pmin(pmax(as.numeric(g$date) - v, 0), 3))
   }
   rd <- unname(r[g$home]) - unname(r[g$away]); rd[is.na(rd)] <- 0
+  # Is either side missing its leading man? The training rows read this off the box
+  # score, which only exists afterwards; before a game the injury feed is the only
+  # source, and only its hard "out" statuses count -- a man listed day-to-day usually
+  # plays, and guessing he will not is how a correction starts inventing games.
+  sout <- rep(0, nrow(g))
+  if (!is.null(lead) && nrow(lead) && !is.null(inj) && nrow(inj) && length(tkey)) {
+    iv <- inj
+    iv$tid <- unname(tkey[iv$tkey])
+    iv <- iv[!is.na(iv$tid) & iv$out %in% TRUE, , drop = FALSE]
+    if (nrow(iv)) {
+      gone <- paste(iv$tid, iv$pkey)
+      miss <- function(tm) {
+        k <- match(as.character(tm), as.character(lead$team))
+        ifelse(is.na(k), 0,
+               as.integer(paste(as.character(tm), nhl_norm(lead$pname[k])) %in% gone))
+      }
+      sout <- unname(miss(g$home) - miss(g$away))
+      sout[is.na(sout)] <- 0
+    }
+  }
   nd <- data.frame(rd = rd, hfa = ifelse(g$neutral, 0, 1),
-                   rdiff = rst(g$home) - rst(g$away), row.names = NULL)
+                   rdiff = rst(g$home) - rst(g$away), sout = sout, row.names = NULL)
   nd$rdiff[is.na(nd$rdiff)] <- 0
   pred <- as.numeric(stats::predict(m$marg, newdata = nd))
   conf <- as.numeric(stats::predict(m$conf, newdata = data.frame(pred = pred), type = "response"))
-  data.frame(game_id = g$game_id, season = s, rd = rd, pred = pred,
+  data.frame(game_id = g$game_id, season = s, rd = rd, sout = sout, pred = pred,
              conf = pmax(conf, 1 - conf), stringsAsFactors = FALSE)
 }
 
@@ -8290,7 +8430,20 @@ nba_load <- function() {
   nm <- c(stats::setNames(sch$home_name, sch$home), stats::setNames(sch$away_name, sch$away))
   lg <- c(stats::setNames(sch$home_logo, sch$home), stats::setNames(sch$away_logo, sch$away))
   game_grade_history(NBA_LEDGER, sch)
-  list(sch = sch, pan = pan, endr = endr, ents = ents,
+  # minutes, and from them each team's leading man. A feed that fails leaves both NULL
+  # and the model is exactly the one it was before any of this.
+  mins <- tryCatch(nba_minutes(sch), error = function(e) NULL)
+  lead <- tryCatch(nba_leaders(mins), error = function(e) NULL)
+  if (!isTRUE(.nba_star$led)) {
+    .nba_star$led <- TRUE
+    if (is.null(lead) || !nrow(lead))
+      mlog("NBA star   | no minutes on file, so no leading man is identified and the model is unchanged")
+    else
+      mlog(sprintf("NBA star   | leading man identified for %d team(s) from the last %d game(s); e.g. %s",
+                   nrow(lead), NBA_LEAD_N,
+                   paste(utils::head(sprintf("%s %.0f min", lead$pname, lead$min), 3), collapse = ", ")))
+  }
+  list(sch = sch, pan = pan, endr = endr, ents = ents, mins = mins, lead = lead,
        # the season files first, then this season's finished games from ESPN, which the
        # season files will not carry until long after they have been played
        fbh = tryCatch(nba_live_fbh(nba_fb_hist(sch), sch),
@@ -8389,7 +8542,7 @@ warm_build <- function() {
     d <- nba_load()
     s <- d$sch$season[match(TRUE, d$sch$date >= Sys.Date())]
     if (is.na(s)) s <- max(d$sch$season, na.rm = TRUE)
-    invisible(nba_rows(d$pan, d$endr, d$ents, s))
+    invisible(nba_rows(d$pan, d$endr, d$ents, s, d$mins))
   })
 
   if (isTRUE(warm_env$mlb)) {
@@ -10951,7 +11104,7 @@ server <- function(input, output, session) {
     s <- d$sch$season[match(TRUE, d$sch$date >= as.Date(input$bdate))]
     if (is.na(s)) s <- max(d$sch$season)
     withProgress(message = "Rating NBA teams", value = 0.6, {
-      R <- nba_rows(d$pan, d$endr, d$ents, s)
+      R <- nba_rows(d$pan, d$endr, d$ents, s, d$mins)
       if (is.null(R)) NULL else nba_fit(R, s)
     })
   })
@@ -10961,8 +11114,17 @@ server <- function(input, output, session) {
     if (!nrow(g)) return(NULL)
     now <- now_et()
     cut <- as.POSIXct(pmin(as.numeric(g$ko), as.numeric(now)), origin = "1970-01-01", tz = TZ_ET)
+    # Who each side cannot afford to lose, as at this slate rather than as at today, and
+    # who the feed says is out. The feed reports the present, so it is only asked about a
+    # slate still to come: reading today's injuries onto a game played last week would
+    # rewrite history, and the ledger froze that prediction at its own kick-off anyway.
+    live <- isTRUE(as.Date(input$bdate) >= today_et())
+    blead <- tryCatch(nba_leaders(d$mins, min(g$date)), error = function(e) NULL)
+    binj  <- if (live) tryCatch(nba_inj(), error = function(e) NULL) else NULL
+    btk   <- if (live) tryCatch(espn_team_key(d$sch), error = function(e) NULL) else NULL
     st <- game_settle(NBA_LEDGER, NBA_MODEL,
-                      function(gi, cutoff) nba_predict(d$pan, d$endr, d$ents, m, gi, cutoff),
+                      function(gi, cutoff) nba_predict(d$pan, d$endr, d$ents, m, gi, cutoff,
+                                                       blead, binj, btk),
                       g, now)
     if (is.null(st) || !nrow(st)) return(NULL)
     done <- g$has_score & g$final_at <= now
@@ -11320,7 +11482,7 @@ server <- function(input, output, session) {
     d <- bdat(); req(d)
     s <- d$sch$season[match(TRUE, d$sch$date >= td)]; if (is.na(s)) s <- max(d$sch$season)
     sb <- if (!is.null(input$bdate)) d$sch$season[match(TRUE, d$sch$date >= as.Date(input$bdate))] else NA
-    m <- if (identical(sb, s)) bmodel() else { R <- nba_rows(d$pan, d$endr, d$ents, s); if (is.null(R)) NULL else nba_fit(R, s) }
+    m <- if (identical(sb, s)) bmodel() else { R <- nba_rows(d$pan, d$endr, d$ents, s, d$mins); if (is.null(R)) NULL else nba_fit(R, s) }
     nmv <- function(id) ifelse(is.na(unname(d$nm[id])), id, unname(d$nm[id]))
     dash_hoops_ice("NBA", d, m, nba_predict, nmv, espn_ids = TRUE)
   })
