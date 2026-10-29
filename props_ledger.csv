@@ -307,14 +307,14 @@
 "2026-10-27",849803,"HR",666018,"Jonathan Aranda","Tampa Bay Rays",NA,"Milwaukee Brewers @ Tampa Bay Rays",NA,"HR",0.104,FALSE,TRUE,0,FALSE
 "2026-10-27",849803,"K",643377,"Griffin Jax",NA,"home","Milwaukee Brewers @ Tampa Bay Rays",4.5,"Under",0.56,FALSE,TRUE,6,FALSE
 "2026-10-27",849803,"K",669160,"Dustin May",NA,"away","Milwaukee Brewers @ Tampa Bay Rays",3.5,"Over",0.53,FALSE,TRUE,3,FALSE
-"2026-10-28",849799,"HR",691406,"Junior Caminero","Tampa Bay Rays",NA,"Milwaukee Brewers @ Tampa Bay Rays",NA,"HR",0.138,FALSE,FALSE,NA,NA
-"2026-10-28",849799,"HR",641343,"Jake Bauers","Milwaukee Brewers",NA,"Milwaukee Brewers @ Tampa Bay Rays",NA,"HR",0.131,FALSE,FALSE,NA,NA
-"2026-10-28",849799,"HR",694192,"Jackson Chourio","Milwaukee Brewers",NA,"Milwaukee Brewers @ Tampa Bay Rays",NA,"HR",0.119,FALSE,FALSE,NA,NA
-"2026-10-28",849799,"HR",668930,"Brice Turang","Milwaukee Brewers",NA,"Milwaukee Brewers @ Tampa Bay Rays",NA,"HR",0.11,FALSE,FALSE,NA,NA
-"2026-10-28",849799,"HR",668723,"Ryan Vilade","Tampa Bay Rays",NA,"Milwaukee Brewers @ Tampa Bay Rays",NA,"HR",0.107,FALSE,FALSE,NA,NA
-"2026-10-28",849799,"HR",666018,"Jonathan Aranda","Tampa Bay Rays",NA,"Milwaukee Brewers @ Tampa Bay Rays",NA,"HR",0.104,FALSE,FALSE,NA,NA
-"2026-10-28",849799,"K",694819,"Jacob Misiorowski",NA,"away","Milwaukee Brewers @ Tampa Bay Rays",6.5,"Under",0.5,FALSE,FALSE,NA,NA
-"2026-10-28",849799,"K",656876,"Drew Rasmussen",NA,"home","Milwaukee Brewers @ Tampa Bay Rays",5.5,"Under",0.54,FALSE,FALSE,NA,NA
+"2026-10-28",849799,"HR",691406,"Junior Caminero","Tampa Bay Rays",NA,"Milwaukee Brewers @ Tampa Bay Rays",NA,"HR",0.138,FALSE,TRUE,0,FALSE
+"2026-10-28",849799,"HR",641343,"Jake Bauers","Milwaukee Brewers",NA,"Milwaukee Brewers @ Tampa Bay Rays",NA,"HR",0.131,FALSE,TRUE,0,FALSE
+"2026-10-28",849799,"HR",694192,"Jackson Chourio","Milwaukee Brewers",NA,"Milwaukee Brewers @ Tampa Bay Rays",NA,"HR",0.119,FALSE,TRUE,0,FALSE
+"2026-10-28",849799,"HR",668930,"Brice Turang","Milwaukee Brewers",NA,"Milwaukee Brewers @ Tampa Bay Rays",NA,"HR",0.11,FALSE,TRUE,0,FALSE
+"2026-10-28",849799,"HR",668723,"Ryan Vilade","Tampa Bay Rays",NA,"Milwaukee Brewers @ Tampa Bay Rays",NA,"HR",0.107,FALSE,TRUE,0,FALSE
+"2026-10-28",849799,"HR",666018,"Jonathan Aranda","Tampa Bay Rays",NA,"Milwaukee Brewers @ Tampa Bay Rays",NA,"HR",0.104,FALSE,TRUE,0,FALSE
+"2026-10-28",849799,"K",694819,"Jacob Misiorowski",NA,"away","Milwaukee Brewers @ Tampa Bay Rays",6.5,"Under",0.5,FALSE,TRUE,2,TRUE
+"2026-10-28",849799,"K",656876,"Drew Rasmussen",NA,"home","Milwaukee Brewers @ Tampa Bay Rays",5.5,"Under",0.54,FALSE,TRUE,4,TRUE
 "2026-10-30",849801,"HR",683748,"Victor Mesa Jr.","Tampa Bay Rays",NA,"Tampa Bay Rays @ Milwaukee Brewers",NA,"HR",0.144,FALSE,FALSE,NA,NA
 "2026-10-30",849801,"HR",691406,"Junior Caminero","Tampa Bay Rays",NA,"Tampa Bay Rays @ Milwaukee Brewers",NA,"HR",0.144,FALSE,FALSE,NA,NA
 "2026-10-30",849801,"HR",641343,"Jake Bauers","Milwaukee Brewers",NA,"Tampa Bay Rays @ Milwaukee Brewers",NA,"HR",0.138,FALSE,FALSE,NA,NA

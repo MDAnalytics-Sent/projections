@@ -1,17 +1,13 @@
-2026-10-28 23:48:24 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-29 00:57:07 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
 To publish the web page, run:  source("publish_site.R")   (Shiny version: source("deploy_projections.R"))
 
 
-── Slate 2026-10-28 ──
-Win model  | learned weights: run model 0.971, Pythagorean gap 0.544 (fit on 2,467 graded mlb-runs-v10 games, 22% data, half-life 25 d)
-Win model  | calibration a=1.161 b=-0.004  (fit on 2467 graded games before 2026-10-28)
-Win model  | 1 of 1 games served from locked history (picks frozen at first pitch)
-NRFI model | calibration a=0.265 b=-0.044  (fit on 1834 graded 1st innings before 2026-10-28)
-Slate      | 1 games · record 1-0 (100%)
-Cache      | 586 files (5.9 MB) · 52 served from disk, 4 fetched
+── Slate 2026-10-29 ──
+Slate      | 0 games · none graded yet
+Cache      | 586 files (5.9 MB) · 13 served from disk, 3 fetched
 CFB td     | 19497 graded prop(s) on file; the earliest slates have nothing before them to correct against
 NHL rating | fitted on 75% shots, 25% goals; shots joined for 8268 of 15738 team-game(s) (53%), the rest fall back to the goal margin
 NHL goalie | 16534 appearance(s), 8268 start(s), 167 goalie(s), 4 season(s) 2023-2026
@@ -26,19 +22,12 @@ NHL b2b    | measured -0.25 goals of margin on the second night of a back-to-bac
 NBA star   | leading man identified for 30 team(s) from the last 15 game(s); e.g. Jalen Johnson 34 min, Amen Thompson 38 min, Andrew Nembhard 33 min
 NBA ingest | 13 of 13 finished game(s) read from the summary feed (130 name(s)); history ends 2026-10-27
 NBA star   | a side missing its leading man measured -3.32 points of margin (se 0.39) on 12000 prior-season game(s) -- used
-2026-10-28 23:51:23   today 151.4s
+NBA roster | 6 of 6 team(s) returned a roster (102 name(s))
+2026-10-29 00:59:59   today 145.6s
 CFB td     | recalibrated on 10293 graded prop(s) settled before this slate: slope 1.19, shift -0.17 -- a raw 25% becomes 19%, a raw 60% becomes 58%
 NBA roster | 6 of 6 team(s) returned a roster (102 name(s))
-2026-10-28 23:51:44   nfl    15.9s  3 built, 9 to pick from
-2026-10-28 23:51:54   cfb    10.0s  3 built, 10 to pick from
-
-── Slate 2026-10-24 ──
-Win model  | learned weights: run model 0.929, Pythagorean gap 0.653 (fit on 2,464 graded mlb-runs-v10 games, 75% data, every game weighted equally)
-Win model  | calibration a=1.157 b=-0.005  (fit on 2464 graded games before 2026-10-24)
-Win model  | 1 of 1 games served from locked history (picks frozen at first pitch)
-NRFI model | calibration a=0.287 b=-0.050  (fit on 1831 graded 1st innings before 2026-10-24)
-Slate      | 1 games · record 1-0 (100%)
-Cache      | 587 files (5.9 MB) · 13 served from disk, 28 fetched
+2026-10-29 01:00:18   nfl    14.5s  3 built, 9 to pick from
+2026-10-29 01:00:27   cfb     9.1s  3 built, 10 to pick from
 
 ── Slate 2026-10-28 ──
 Win model  | learned weights: run model 0.971, Pythagorean gap 0.544 (fit on 2,467 graded mlb-runs-v10 games, 22% data, half-life 25 d)
@@ -46,51 +35,32 @@ Win model  | calibration a=1.161 b=-0.004  (fit on 2467 graded games before 2026
 Win model  | 1 of 1 games served from locked history (picks frozen at first pitch)
 NRFI model | calibration a=0.265 b=-0.044  (fit on 1834 graded 1st innings before 2026-10-28)
 Slate      | 1 games · record 1-0 (100%)
-Cache      | 587 files (5.9 MB) · 17 served from disk, 3 fetched
-
-── Slate 2026-10-25 ──
-Slate      | 0 games · none graded yet
-Cache      | 587 files (5.9 MB) · 14 served from disk, 0 fetched
-
-── Slate 2026-10-26 ──
-Win model  | learned weights: run model 0.960, Pythagorean gap 0.749 (fit on 2,465 graded mlb-runs-v10 games, 48% data, half-life 60 d)
-Win model  | calibration a=1.159 b=-0.004  (fit on 2465 graded games before 2026-10-26)
-Win model  | 1 of 1 games served from locked history (picks frozen at first pitch)
-NRFI model | calibration a=0.270 b=-0.054  (fit on 1832 graded 1st innings before 2026-10-26)
-Slate      | 1 games · record 1-0 (100%)
-Cache      | 587 files (5.9 MB) · 18 served from disk, 4 fetched
-
-── Slate 2026-10-27 ──
-Win model  | learned weights: run model 0.966, Pythagorean gap 0.741 (fit on 2,466 graded mlb-runs-v10 games, 48% data, half-life 60 d)
-Win model  | calibration a=1.164 b=-0.006  (fit on 2466 graded games before 2026-10-27)
-Win model  | 1 of 1 games served from locked history (picks frozen at first pitch)
-NRFI model | calibration a=0.269 b=-0.049  (fit on 1833 graded 1st innings before 2026-10-27)
-Slate      | 1 games · record 1-0 (100%)
-Cache      | 587 files (5.9 MB) · 20 served from disk, 2 fetched
-
-── Slate 2026-10-28 ──
-Win model  | learned weights: run model 0.971, Pythagorean gap 0.544 (fit on 2,467 graded mlb-runs-v10 games, 22% data, half-life 25 d)
-Win model  | calibration a=1.161 b=-0.004  (fit on 2467 graded games before 2026-10-28)
-Win model  | 1 of 1 games served from locked history (picks frozen at first pitch)
-NRFI model | calibration a=0.265 b=-0.044  (fit on 1834 graded 1st innings before 2026-10-28)
-Slate      | 1 games · record 1-0 (100%)
-Cache      | 587 files (5.9 MB) · 20 served from disk, 0 fetched
+Cache      | 586 files (5.9 MB) · 15 served from disk, 34 fetched
 
 ── Slate 2026-10-29 ──
 Slate      | 0 games · none graded yet
-Cache      | 587 files (5.9 MB) · 14 served from disk, 1 fetched
+Cache      | 586 files (5.9 MB) · 11 served from disk, 1 fetched
+
+── Slate 2026-10-29 ──
+Slate      | 0 games · none graded yet
+Cache      | 586 files (5.9 MB) · 12 served from disk, 0 fetched
 
 ── Slate 2026-10-30 ──
 Slate      | 0 games · none graded yet
-Cache      | 587 files (5.9 MB) · 14 served from disk, 1 fetched
+Cache      | 586 files (5.9 MB) · 11 served from disk, 1 fetched
 
 ── Slate 2026-10-31 ──
 Slate      | 0 games · none graded yet
-Cache      | 587 files (5.9 MB) · 14 served from disk, 1 fetched
-2026-10-28 23:52:42   mlb    47.2s  8 built, 11 to pick from
-2026-10-28 23:52:46   nhl     3.9s  8 built, 18 to pick from
+Cache      | 586 files (5.9 MB) · 11 served from disk, 1 fetched
+
+── Slate 2026-11-01 ──
+Slate      | 0 games · none graded yet
+Cache      | 587 files (5.9 MB) · 11 served from disk, 1 fetched
+2026-10-29 01:00:54   mlb    26.6s  5 built, 11 to pick from
+2026-10-29 01:00:57   nhl     2.6s  5 built, 18 to pick from
 NBA roster | 6 of 6 team(s) returned a roster (102 name(s))
 NBA roster | 20 of 20 team(s) returned a roster (347 name(s))
 NBA roster | 14 of 14 team(s) returned a roster (240 name(s))
-2026-10-28 23:52:51   nba     5.4s  5 built, 12 to pick from
-2026-10-28 23:52:52 built 14369 KB in 267s
+NBA roster | 8 of 8 team(s) returned a roster (140 name(s))
+2026-10-29 01:01:03   nba     6.1s  5 built, 13 to pick from
+2026-10-29 01:01:03 built 14420 KB in 236s
