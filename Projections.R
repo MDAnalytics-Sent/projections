@@ -5528,6 +5528,94 @@ cfb_path <- function(k, y = NULL, ext = "rds")
   file.path(cfb_dir, if (is.null(y)) sprintf("%s_v%d.%s", k, CFB_VER, ext)
             else sprintf("%s_v%d_%d.%s", k, CFB_VER, y, ext))
 
+# Who is under centre, and is he out.
+#
+# College football publishes no injury report, which is why nothing in this path has ever
+# consulted one. ESPN does carry a college injuries feed, so it is asked; if it answers
+# with nothing, nothing changes anywhere.
+#
+# No margin adjustment is made from this, and that is a measured decision rather than
+# laziness. On 1,728 games with each team's identity held per season -- the specification
+# that matters, since a pooled one shares one coefficient across seasons and misreads the
+# effect -- a side without its starting quarterback came to +0.60 points (se 1.09,
+# p = 0.58). Pooled it looked like -2.08 at p = 0.018, which is the artefact. By season
+# the sign flips: +1.44, +0.57, -3.68. The basketball equivalent survives the same test
+# at -4.41 (t = -5.83), so the test is not simply killing everything.
+#
+# Most likely because a backup at a programme like Ohio State is better than half the
+# starters in the division, so the absence means something different at every school, and
+# a three-point effect needs far more than 1,728 games of twenty-point variance to find.
+#
+# So the board states the fact and leaves the judgement where it belongs. Showing it is
+# worth doing on its own: a reader who can see that a favourite is without its
+# quarterback can act on that, and the alternative -- saying nothing -- is what made a
+# heavily favoured side with no starting quarterback look like any other favourite.
+CFB_INJ_URL <- "https://site.api.espn.com/apis/site/v2/sports/football/college-football/injuries"
+CFB_INJ_TTL <- 60
+CFB_INJ_OUT <- c("out", "doubtful", "injured reserve", "suspension", "suspended",
+                 "out for season", "season-ending injury")
+CFB_QB_N    <- 5L    # recent games the starting passer is read from
+CFB_QB_ATT  <- 20L   # attempts over them before he counts as the starter
+
+cfb_inj <- function() espn_inj(CFB_INJ_URL, cfb_path("inj"), CFB_INJ_TTL, CFB_INJ_OUT)
+
+# Each team's starting passer, by attempts over its recent games. The box files keep
+# passing attempts as "completions/attempts" text, so the figure is taken after the slash.
+cfb_qb <- function(upto = NULL) {
+  out <- lapply(CFB_SEASONS, function(y) {
+    f <- cfb_path("box", y); if (!file.exists(f)) return(NULL)
+    b <- tryCatch(readRDS(f), error = function(e) NULL)
+    if (is.null(b) || !NROW(b)) return(NULL)
+    keep <- intersect(c("category", "game_id", "team_id", "athlete_id", "athlete_name",
+                        "completions/passingAttempts", "passingAttempts"), names(b))
+    if (!all(c("category", "game_id", "team_id", "athlete_id") %in% keep)) return(NULL)
+    # check.names = FALSE, or as.data.frame rewrites "completions/passingAttempts" to
+    # "completions.passingAttempts" and the lookup below silently finds nothing -- which
+    # reads as an empty feed rather than a bug, and would never have been noticed
+    b <- as.data.frame(.subset(b, keep), stringsAsFactors = FALSE, check.names = FALSE)
+    b <- b[b$category %in% "passing", , drop = FALSE]
+    if (!nrow(b)) return(NULL)
+    att <- if ("passingAttempts" %in% names(b))
+             suppressWarnings(as.numeric(as.character(b$passingAttempts)))
+           else suppressWarnings(as.numeric(sub("^.*/", "",
+                  as.character(b[["completions/passingAttempts"]]))))
+    data.frame(season = y, game_id = as.character(b$game_id),
+               team = as.character(b$team_id), pid = as.character(b$athlete_id),
+               pname = as.character(b$athlete_name %||% ""),
+               att = ifelse(is.finite(att), att, 0), stringsAsFactors = FALSE)
+  })
+  z <- dplyr::bind_rows(out)
+  if (is.null(z) || !nrow(z)) return(NULL)
+  sch <- tryCatch(cfb_sched(), error = function(e) NULL)
+  if (is.null(sch)) return(NULL)
+  j <- match(z$game_id, as.character(sch$game_id))
+  z$ko <- sch$ko[j]
+  z <- z[!is.na(z$ko) & z$att > 0, , drop = FALSE]
+  if (!is.null(upto)) z <- z[z$ko < upto, , drop = FALSE]
+  if (!nrow(z)) return(NULL)
+  do.call(rbind, lapply(split(seq_len(nrow(z)), z$team), function(i) {
+    w <- z[i, , drop = FALSE]
+    keep <- utils::tail(sort(unique(w$ko)), CFB_QB_N)
+    w <- w[w$ko %in% keep, , drop = FALSE]
+    a <- stats::aggregate(att ~ pid + pname + team, data = w, FUN = sum)
+    a <- a[a$att >= CFB_QB_ATT, , drop = FALSE]
+    if (!nrow(a)) return(NULL)
+    a[which.max(a$att), , drop = FALSE]
+  }))
+}
+
+# Which of these teams is without the man who has been throwing the ball.
+cfb_qb_out <- function(qb, inj, tkey) {
+  if (is.null(qb) || !nrow(qb) || is.null(inj) || !nrow(inj) || !length(tkey))
+    return(character(0))
+  iv <- inj
+  iv$tid <- unname(tkey[iv$tkey])
+  iv <- iv[!is.na(iv$tid) & iv$out %in% TRUE, , drop = FALSE]
+  if (!nrow(iv)) return(character(0))
+  hit <- paste(as.character(qb$team), nhl_norm(qb$pname)) %in% paste(iv$tid, iv$pkey)
+  as.character(qb$team[hit])
+}
+
 cfb_fetch <- function(tag, file, dest) {
   if (file.exists(dest) && file.size(dest) > 512) return(TRUE)
   ms <- paste0(dest, ".miss")
@@ -7376,6 +7464,7 @@ NHL_CORRUPT_N <- 200L
 .nba_star <- new.env(hash = TRUE, parent = emptyenv())
 .nba_star$said <- FALSE
 .nba_star$led  <- FALSE
+.cfb_qb_said <- FALSE
 
 .nhl_api <- new.env(hash = TRUE, parent = emptyenv())
 .nhl_api$fail <- 0L
@@ -8764,6 +8853,11 @@ PROJ_CSS_EXTRA <- "      .shell{display:flex;min-height:calc(100vh - 92px)}
       .ok{background:rgba(16,185,129,.15);color:#6ee7b7}
       .no{background:rgba(239,68,68,.15);color:#f87171}
       .nt{color:#334155}
+      /* a side without its starting quarterback. Amber, not red: it is a fact worth
+         seeing, not a verdict -- the projection beside it is deliberately unadjusted. */
+      .qbout{display:inline-block;margin-left:5px;padding:1px 6px;border-radius:9px;
+        border:1px solid #d9a441;background:#fdf4e3;color:#8a5a08;font-weight:600;
+        font-size:10px;letter-spacing:.02em;white-space:nowrap;vertical-align:1px;cursor:help}
       .mg{font-family:'IBM Plex Mono',monospace;font-weight:600;color:#e2e8f0}
       .qt{display:inline-block;margin-left:7px;padding:1px 6px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;
         letter-spacing:.4px;vertical-align:middle;background:rgba(245,158,11,.14);color:#fcd34d;border:1px solid rgba(245,158,11,.3)}
@@ -10406,8 +10500,22 @@ server <- function(input, output, session) {
     game_grade_slate(CFB_LEDGER, g, done)
     tie  <- done & g$home_score == g$away_score
     ok   <- done & !tie & ((pred > 0) == (g$home_score > g$away_score))
+    # Teams on this week's board without the man who has been throwing the ball. Asked
+    # only of a week still to come: the feed reports today, and reading it onto a game
+    # played a month ago would be inventing history.
+    live <- isTRUE(any(!done))
+    qbout <- if (!live) character(0) else tryCatch({
+      qb <- cfb_qb(suppressWarnings(min(g$ko, na.rm = TRUE)))
+      cfb_qb_out(qb, cfb_inj(), espn_team_key(d$sch))
+    }, error = function(e) character(0))
+    if (!isTRUE(.cfb_qb_said)) {
+      .cfb_qb_said <<- TRUE
+      mlog(sprintf("CFB qb     | %d side(s) on this board are without their starting passer%s",
+                   length(qbout),
+                   if (!length(qbout)) " (or the college injury feed returned nothing)" else ""))
+    }
     list(g = g, st = st, pred = pred, conf = conf, pick = pick,
-         done = done, tie = tie, ok = ok)
+         done = done, tie = tie, ok = ok, qbout = qbout)
   })
 
   output$crecord <- renderUI({
@@ -10433,10 +10541,16 @@ server <- function(input, output, session) {
     b <- cboard(); req(b)
     d <- cdat(); g <- b$g
     cn <- function(i) cfb_name(d, i)
+    # A side without its starting quarterback is marked, and the projection beside it is
+    # NOT adjusted -- see cfb_qb for why nothing measurable justifies an adjustment. The
+    # mark is the honest half: the reader can see it and decide.
+    qbo <- b$qbout %||% character(0)
+    qbm <- function(i) if (as.character(i) %in% qbo)
+      '<span class="qbout" title="Starting quarterback listed out; the projection is not adjusted for it">no QB</span>' else ""
     matchup <- vapply(seq_len(nrow(g)), function(i) sprintf(
-      '%s<span class="tm">%s</span><span class="at">@</span>%s<span class="tm">%s</span>',
-      cfb_badge(d, g$away_id[i]), cn(g$away_id[i]),
-      cfb_badge(d, g$home_id[i]), cn(g$home_id[i])), "")
+      '%s<span class="tm">%s</span>%s<span class="at">@</span>%s<span class="tm">%s</span>%s',
+      cfb_badge(d, g$away_id[i]), cn(g$away_id[i]), qbm(g$away_id[i]),
+      cfb_badge(d, g$home_id[i]), cn(g$home_id[i]), qbm(g$home_id[i])), "")
     chip <- vapply(seq_len(nrow(g)), function(i) {
       c0 <- unname(d$col[b$pick[i]]); if (is.na(c0)) c0 <- "#444444"
       sprintf('<span class="chip" style="background:%s;border-color:%s">%s%s</span>',
