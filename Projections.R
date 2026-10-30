@@ -5556,6 +5556,7 @@ CFB_INJ_OUT <- c("out", "doubtful", "injured reserve", "suspension", "suspended"
                  "out for season", "season-ending injury")
 CFB_QB_N    <- 5L    # recent games the starting passer is read from
 CFB_QB_ATT  <- 20L   # attempts over them before he counts as the starter
+CFB_QB_STALE <- 14   # days after which a team's box data is too old to read anything from
 
 cfb_inj <- function() espn_inj(CFB_INJ_URL, cfb_path("inj"), CFB_INJ_TTL, CFB_INJ_OUT)
 
@@ -5593,6 +5594,7 @@ cfb_qb <- function(upto = NULL) {
   z <- z[!is.na(z$ko) & z$att > 0, , drop = FALSE]
   if (!is.null(upto)) z <- z[z$ko < upto, , drop = FALSE]
   if (!nrow(z)) return(NULL)
+  ref <- if (!is.null(upto)) upto else max(z$ko)
   do.call(rbind, lapply(split(seq_len(nrow(z)), z$team), function(i) {
     w <- z[i, , drop = FALSE]
     keep <- utils::tail(sort(unique(w$ko)), CFB_QB_N)
@@ -5607,8 +5609,18 @@ cfb_qb <- function(upto = NULL) {
     # scores will, one week late: measured over 3,947 team-weeks, a starter who did not
     # throw last week is still absent 67.6% of the time, against 8.0% for one who did
     # and a 12.8% base rate. It catches 42% of all the weeks a starter is missing.
+    # Only when this team's box data is actually current. The box release covers FBS
+    # against FBS almost completely -- 448 of 452 games, 99% -- but only 6% of the 2,094
+    # games against lower divisions, so most of the teams in this file last appear weeks
+    # ago. For them "did he throw in his last game" reads off a game in September and
+    # means nothing about Saturday: flagging on it marked 31% of teams, against a 12.8%
+    # base rate, and almost none of them were on the board at all.
     last <- max(w$ko)
-    r$missed_last <- as.integer(!any(w$ko == last & w$pid == r$pid[1]))
+    stale <- as.numeric(difftime(ref, last, units = "days")) > CFB_QB_STALE
+    r$missed_last <- if (stale) NA_integer_
+                     else as.integer(!any(abs(as.numeric(w$ko) - as.numeric(last)) < 1 &
+                                          w$pid == r$pid[1]))
+    r$last_ko <- last
     r
   }))
 }
@@ -5626,6 +5638,8 @@ cfb_qb_out <- function(qb, inj, tkey) {
     if (nrow(iv))
       listed <- paste(as.character(qb$team), nhl_norm(qb$pname)) %in% paste(iv$tid, iv$pkey)
   }
+  # %in% 1L, so an NA -- a team whose box data is too stale to read -- is not a flag.
+  # Absence of a mark means "not known to be out", never "known to be fine".
   missed <- if ("missed_last" %in% names(qb)) qb$missed_last %in% 1L else rep(FALSE, nrow(qb))
   k <- listed | missed
   if (!any(k)) return(character(0))
@@ -10537,10 +10551,15 @@ server <- function(input, output, session) {
         ni <- if (is.null(iv)) NA_integer_ else nrow(iv)
         no <- if (is.null(iv) || !nrow(iv)) 0L else sum(iv$out %in% TRUE)
         nmiss <- if (is.null(qb) || !("missed_last" %in% names(qb))) 0L else sum(qb$missed_last %in% 1L)
-        mlog(sprintf("CFB qb     | starting passer found for %d team(s); %d did not throw in their last game; injury feed %s with %d listed out; %d side(s) on this board flagged",
-                     nq, nmiss,
-                     if (is.na(ni)) "UNREACHABLE or empty" else sprintf("returned %d row(s)", ni),
-                     no, length(qbout)))
+        onbd <- sum(unique(c(as.character(g$home_id), as.character(g$away_id))) %in% names(qbout))
+        chkable <- if (is.null(qb) || !("missed_last" %in% names(qb))) 0L else
+          sum(unique(c(as.character(g$home_id), as.character(g$away_id))) %in%
+              as.character(qb$team[!is.na(qb$missed_last)]))
+        mlog(sprintf("CFB qb     | passer found for %d team(s), %d flagged in all; of the %d side(s) on THIS board, %d could be checked and %d are flagged; injury feed %s with %d listed out",
+                     nq, length(qbout),
+                     length(unique(c(as.character(g$home_id), as.character(g$away_id)))),
+                     chkable, onbd,
+                     if (is.na(ni)) "UNREACHABLE or empty" else sprintf("returned %d row(s)", ni), no))
         if (nq == 0L)
           mlog("CFB qb     | no passer identified anywhere -- check the box files carry a passing category")
         if (is.na(ni))
