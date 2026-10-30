@@ -4761,62 +4761,59 @@ build_pd_long <- function(sch) {
 # week, the expected starter). A team whose QB differs from its previous game's
 # starter is flagged. Walk-forward over 2017-2025 this was the single most useful
 # addition to the EPA model: about 2.9 points of margin, Brier 0.2227 -> 0.2213.
-# Two ways to say a team is not starting its quarterback, and only one of them works.
+# Is this team starting its quarterback? The rule is the simplest one that survived
+# measurement: the man who opened the season is the team's quarterback, and anybody else
+# starting is a markdown, for as long as it lasts.
 #
-# The CHANGE flag -- this game's starter differs from last game's -- is what this model
-# used for two versions. It fires once, on the backup's first start, and then goes quiet,
-# because the week after that the same backup starts and nothing has "changed". The
-# damage does not go quiet with it.
+# Two worse rules came first. The one this model shipped since v2 was a CHANGE flag --
+# this game's starter differs from last game's. It fires once, on the backup's first
+# start, then goes quiet, because the week after the same backup starts and nothing has
+# "changed". The damage does not go quiet with it. The second attempt counted starts and
+# flagged whoever was not the most-used man, which fixed that but broke two other things:
+# it marked a team down for having its OWN quarterback back (Seattle, week 8 of 2026 --
+# Sam Darnold opened the season, missed five games, returned, and Drew Lock led him five
+# starts to one), and it went quiet mid-absence once the backup overtook the starter on
+# count.
 #
-# Measured on 4,471 games from 2010, against ratings fitted only on games where both
-# sides had their established man, so the yardstick never sees the games being judged:
+# Measured on 4,283 games from 2010. The yardstick is deliberately independent of every
+# candidate rule -- ridge ratings fitted only on the 2,734 games where BOTH sides started
+# their opener -- or the comparison would be rigged by whichever rule defined it.
 #
-#   backup starting, any game        -4.01 (se 0.39, p 9e-25, n 1148)
-#     his first start                -4.06      his second      -4.41
-#     third or later                 -3.76      -- no fade whatsoever
-#   the change flag alone            -3.74 (se 0.51, n 668)
-#   backup starting, change quiet    -3.65 (se 0.51, p 5e-13, n 659)
+#   not the season's opening man                -4.61 (se 0.36, p 8e-37, n 1334)
+#     where the count rule agreed               -4.74 (se 0.42, n 986)
+#     where the count rule had gone quiet       -4.22 (se 0.73, p 7e-09, n 348)
 #
-# That last line is the cost of the old flag: 659 team-games, half of all the games a
-# backup started, projected as though the team were whole. With both terms in one model
-# the persistent flag takes it all (t = -8.41) and the change flag adds nothing beside it
-# (-0.92, t = -1.67, p = 0.095), which does not clear the two standard errors this file
-# asks of a fitted term anywhere else. So the change flag is gone and the persistent one
-# replaces it.
+# That third line is the whole argument. I had assumed the count rule was right to stop,
+# on the reasoning that by then the rating is built mostly on the backup's games and
+# marking down again double-counts. It is not: those 348 sides still fall 4.22 points
+# short, the same as the rest. With both rules in one model the opener rule takes all of
+# it (-4.06, t = -6.54) and the count rule adds nothing beside it (-0.74, t = -1.06,
+# p = 0.29); adding the opener rule on top of the count rule is worth p = 7e-11, the
+# reverse p = 0.29.
 #
-# The same mistake in reverse to the college one: there I measured a real effect away
-# with a contaminated control, here the effect was found but attached to a flag that
-# stops firing. Both left a team short of its quarterback looking like any other side.
+# And the returning opener, which the count rule marked down, is worth -0.78 (se 1.52,
+# p = 0.61) -- nothing. Face value was right about that one and my arithmetic was wrong.
 #
-# Honesty about how strong this is. The college version of this change passed the gate
+# How strong is this, honestly. The college version of the same change passed the gate
 # that matters outright: where it changed the pick it landed on the winner 64% of the
-# time at p = 0.018. This one does not. Walking forward 2010-2026 with the rating
-# refitted every week and the term fitted on the other seasons:
+# time, p = 0.018. This one does not. Walking forward 2010-2026 with the rating refitted
+# every week and the term fitted on the other seasons:
 #
-#   side called right, all games       none 63.37% | change 63.58% | persistent 63.78%
-#   side called right, flagged games   none 64.81% | change 65.09% | persistent 66.23%
-#   mean margin error, flagged games        10.66  |       10.52   |       10.39
-#   where the swap changes the pick    101 right, 94 wrong -- 51.8%, p = 0.67
+#   side called right, all games       none 63.37% | change 63.58% | opener 63.87%
+#   side called right, flagged games   none 66.99% | change 67.63% | opener 68.28%
+#   mean margin error, flagged games        10.70  |       10.54   |      10.39
+#   where the swap changes the pick    150 right, 140 wrong -- 51.7%, p = 0.60
 #
-# Every aggregate measure favours the persistent flag and the by-season flip record is
-# scattered (29% to 71%), which is what an underpowered test on 195 games looks like.
-# The change is made anyway, because it is not a speculative feature: the old flag
-# provably cannot see 574 team-games that are worth -3.65 points each at p = 5e-13, and
-# it was shipped on the assumption they did not exist. Replacing a flag that is wrong
-# about reality does not need the flip test's permission. But the gain here is small and
-# not established, unlike the college one, and that should not be overstated later.
+# Every aggregate measure favours it and the by-season flip record runs 27% to 69%, which
+# is what an underpowered test on 290 games looks like. The change is made anyway, because
+# it is not a speculative feature: the old flag provably cannot see 633 team-games worth
+# about four points each, and it was shipped on the assumption they did not exist.
+# Replacing a flag that is wrong about reality does not need the flip test's permission.
+# But the gain is small and not established, unlike the college one, and that should not
+# be overstated later.
 #
-# Measured and deliberately NOT built in: the flag has two grades. A man who has never
-# started for this team this season costs -5.34 (se 0.70, n 363); one who has started
-# before but less than the top man costs -3.38 (se 0.49, n 709). They differ at about
-# t = 2.3. Grading the flag would be a second change on top of this one, so it waits
-# until this one has a record. Splitting out the ambiguous cases changes nothing either
-# way: fill-ins alone read -4.04 against -4.01 for the flag as it stands.
-#
-# h_qbbk is 1 when the man named to start is not the one with the most starts for that
-# team so far this season. Nothing is flagged in week one, when there is no "so far", and
-# a game with no starter named yet -- most of the schedule beyond the coming week -- is
-# left alone rather than guessed at.
+# h_qbchg is kept because it costs nothing and records what the old flag saw, but no
+# model reads it any more.
 qb_change_flags <- function(sch) {
   sch$h_qbchg <- 0L; sch$a_qbchg <- 0L
   sch$h_qbbk  <- 0L; sch$a_qbbk  <- 0L
@@ -4833,26 +4830,17 @@ qb_change_flags <- function(sch) {
   L$prev <- stats::ave(L$qb, paste(L$season, L$team),
                        FUN = function(v) c(NA_character_, utils::head(v, -1)))
   L$chg  <- as.integer(L$qb != "" & !is.na(L$prev) & L$prev != "" & L$qb != L$prev)
-  # the established man, from that team's EARLIER games in the same season only
+  # Whoever started the team's first game of the season, per season, so last year's man
+  # never leaks into this one. A game with no starter named -- most of the schedule past
+  # the coming week -- is left alone rather than guessed at, and the opener's own game is
+  # never flagged because he is the opener.
   L$bk <- 0L
   g <- paste(L$season, L$team)
   for (k in unique(g)) {
     ix <- which(g == k); q <- L$qb[ix]
-    for (j in seq_along(ix)) {
-      if (j == 1L || q[j] == "") next
-      before <- q[seq_len(j - 1L)]; before <- before[before != ""]
-      if (!length(before)) next
-      tb <- table(before)
-      top <- names(tb)[tb == max(tb)]
-      # A tie on starts has to be broken by something, and which.max would break it by
-      # whichever player id sorts first, which is arbitrary -- a man could be the
-      # established starter or the fill-in depending on his ESPN number. Break it toward
-      # whoever held the job first, which is the man the rating was built on earliest.
-      # It matters: 90 sides land on a tie, and they are worth -3.48 points (p = 0.04),
-      # so getting it wrong unflags real absences.
-      if (length(top) > 1L) top <- top[which.min(match(top, before))]
-      L$bk[ix[j]] <- as.integer(q[j] != top)
-    }
+    op <- q[q != ""][1]
+    if (is.na(op)) next
+    L$bk[ix] <- as.integer(q != "" & q != op)
   }
   h <- L[L$side == "h", ]; a <- L[L$side == "a", ]
   sch$h_qbchg[h$i] <- h$chg; sch$a_qbchg[a$i] <- a$chg
