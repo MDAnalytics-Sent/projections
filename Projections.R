@@ -5557,6 +5557,8 @@ CFB_INJ_OUT <- c("out", "doubtful", "injured reserve", "suspension", "suspended"
 CFB_QB_N    <- 5L    # recent games the starting passer is read from
 CFB_QB_ATT  <- 20L   # attempts over them before he counts as the starter
 CFB_QB_STALE <- 14   # days after which a team's box data is too old to read anything from
+CFB_QB_K     <- 60   # attempts of shrinkage toward the league rate when rating a passer
+CFB_QB_LGYPA <- 7.28 # league yards an attempt, over 10,896 passer-games since 2023
 
 cfb_inj <- function() espn_inj(CFB_INJ_URL, cfb_path("inj"), CFB_INJ_TTL, CFB_INJ_OUT)
 
@@ -5567,8 +5569,12 @@ cfb_qb <- function(upto = NULL) {
     f <- cfb_path("box", y); if (!file.exists(f)) return(NULL)
     b <- tryCatch(readRDS(f), error = function(e) NULL)
     if (is.null(b) || !NROW(b)) return(NULL)
+    # passingYards belongs here: without it the yards column below is all NA, every
+    # passer's total comes to zero, and the shrinkage turns that into a plausible-looking
+    # one yard a throw rather than an obvious fault
     keep <- intersect(c("category", "game_id", "team_id", "athlete_id", "athlete_name",
-                        "completions/passingAttempts", "passingAttempts"), names(b))
+                        "completions/passingAttempts", "passingAttempts",
+                        "passingYards"), names(b))
     if (!all(c("category", "game_id", "team_id", "athlete_id") %in% keep)) return(NULL)
     # check.names = FALSE, or as.data.frame rewrites "completions/passingAttempts" to
     # "completions.passingAttempts" and the lookup below silently finds nothing -- which
@@ -5580,10 +5586,13 @@ cfb_qb <- function(upto = NULL) {
              suppressWarnings(as.numeric(as.character(b$passingAttempts)))
            else suppressWarnings(as.numeric(sub("^.*/", "",
                   as.character(b[["completions/passingAttempts"]]))))
+    yds <- if ("passingYards" %in% names(b))
+             suppressWarnings(as.numeric(as.character(b$passingYards))) else rep(NA_real_, nrow(b))
+    nmv <- as.character(b$athlete_name %||% "")
     data.frame(season = y, game_id = as.character(b$game_id),
                team = as.character(b$team_id), pid = as.character(b$athlete_id),
-               pname = as.character(b$athlete_name %||% ""),
-               att = ifelse(is.finite(att), att, 0), stringsAsFactors = FALSE)
+               pname = nmv, att = ifelse(is.finite(att), att, 0),
+               yds = ifelse(is.finite(yds), yds, 0), stringsAsFactors = FALSE)
   })
   z <- dplyr::bind_rows(out)
   if (is.null(z) || !nrow(z)) return(NULL)
@@ -5591,7 +5600,7 @@ cfb_qb <- function(upto = NULL) {
   if (is.null(sch)) return(NULL)
   j <- match(z$game_id, as.character(sch$game_id))
   z$ko <- sch$ko[j]
-  z <- z[!is.na(z$ko) & z$att > 0, , drop = FALSE]
+  z <- z[!is.na(z$ko) & z$att > 0 & !is.na(z$pname) & z$pname != "Team", , drop = FALSE]
   if (!is.null(upto)) z <- z[z$ko < upto, , drop = FALSE]
   if (!nrow(z)) return(NULL)
   ref <- if (!is.null(upto)) upto else max(z$ko)
@@ -5617,10 +5626,29 @@ cfb_qb <- function(upto = NULL) {
     # base rate, and almost none of them were on the board at all.
     last <- max(w$ko)
     stale <- as.numeric(difftime(ref, last, units = "days")) > CFB_QB_STALE
+    inlast <- abs(as.numeric(w$ko) - as.numeric(last)) < 1
     r$missed_last <- if (stale) NA_integer_
-                     else as.integer(!any(abs(as.numeric(w$ko) - as.numeric(last)) < 1 &
-                                          w$pid == r$pid[1]))
+                     else as.integer(!any(inlast & w$pid == r$pid[1]))
     r$last_ko <- last
+    # Who took over, and what he is worth. A replacement is not an unknown: across
+    # 812 absences the man who steps in has a median of 48 prior attempts and only 5%
+    # have none at all. He is also barely worse -- a median of 7.12 shrunk yards an
+    # attempt against the 7.19 of the starter he replaces, a gap of 0.08 -- which is why
+    # no margin adjustment can be justified from this and why the flat flag measures
+    # nothing. The figure is shown anyway, because "Tommy Carr, 41 attempts, 6.8 a throw"
+    # is information and "QB2" on its own is a shrug.
+    lw <- w[inlast, , drop = FALSE]
+    if (nrow(lw)) {
+      j <- which.max(lw$att)
+      r$rep_pid <- lw$pid[j]; r$rep_name <- lw$pname[j]
+      hist <- z[z$pid == lw$pid[j] & z$ko <= last, , drop = FALSE]
+      ra <- sum(hist$att); ry <- sum(hist$yds)
+      r$rep_att <- ra
+      r$rep_ypa <- (ry + CFB_QB_K * CFB_QB_LGYPA) / (ra + CFB_QB_K)
+    } else {
+      r$rep_pid <- NA_character_; r$rep_name <- NA_character_
+      r$rep_att <- NA_real_; r$rep_ypa <- NA_real_
+    }
     r
   }))
 }
@@ -5643,8 +5671,24 @@ cfb_qb_out <- function(qb, inj, tkey) {
   missed <- if ("missed_last" %in% names(qb)) qb$missed_last %in% 1L else rep(FALSE, nrow(qb))
   k <- listed | missed
   if (!any(k)) return(character(0))
-  stats::setNames(ifelse(listed[k], "listed out", "did not play last week"),
-                  as.character(qb$team[k]))
+  why <- ifelse(listed[k], "listed out", "did not play last week")
+  # The man who has been taking the snaps, and what he has done -- but ONLY where the
+  # starter actually missed the last game, because then somebody else demonstrably threw
+  # it. When the flag comes from the feed instead, the starter did play last week and the
+  # man who threw most in it IS him, so naming him as his own replacement would be
+  # nonsense. There, who steps in is simply not known yet.
+  know <- missed[k] & all(c("rep_pid", "rep_name", "rep_att", "rep_ypa") %in% names(qb))
+  rep <- rep("", sum(k))
+  if (any(know)) {
+    nmv <- qb$rep_name[k]; at <- qb$rep_att[k]; yp <- qb$rep_ypa[k]
+    # belt and braces: the starter is never his own replacement, whatever the flag says
+    own <- !is.na(qb$rep_pid[k]) & as.character(qb$rep_pid[k]) == as.character(qb$pid[k])
+    good <- know & !own & !is.na(nmv) & nmv != "" & is.finite(at) & is.finite(yp)
+    rep[good] <- sprintf("; %s has taken over (%.0f career attempt%s, %.1f yards a throw against a league %.1f)",
+                         nmv[good], at[good], ifelse(at[good] == 1, "", "s"),
+                         yp[good], CFB_QB_LGYPA)
+  }
+  stats::setNames(sprintf("%s%s", why, rep), as.character(qb$team[k]))
 }
 
 cfb_fetch <- function(tag, file, dest) {
@@ -10604,7 +10648,7 @@ server <- function(input, output, session) {
       # "QB2", not "no QB". The side has a quarterback -- Michigan threw 32 attempts last
       # week -- just not the man its rating was built on. Saying "no QB" overstates it,
       # and a mark a reader can see is wrong is worse than none.
-      sprintf('<span class="qbout" title="Not the quarterback this team&apos;s rating was built on: the usual starter %s. Sides marked this way are still without him about two thirds of the time. The projection is NOT adjusted for it -- over 1,728 games the effect could not be measured (+0.6 points, p = 0.58).">QB2</span>',
+      sprintf('<span class="qbout" title="Not the quarterback this team&apos;s rating was built on: the usual starter %s. Sides marked this way are still without him about two thirds of the time. The projection is NOT adjusted: across 812 absences the replacement averaged 7.1 yards a throw against the 7.2 of the man he replaced, and neither the absence nor the drop-off predicted the margin (p = 0.09 and p = 0.36).">QB2</span>',
               dash_esc(why))
     }
     matchup <- vapply(seq_len(nrow(g)), function(i) sprintf(
