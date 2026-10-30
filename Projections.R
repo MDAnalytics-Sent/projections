@@ -10601,7 +10601,10 @@ server <- function(input, output, session) {
       k <- as.character(i)
       if (!(k %in% names(qbo))) return("")
       why <- unname(qbo[k])
-      sprintf('<span class="qbout" title="Usual starting quarterback %s. Sides flagged this way are still without him about two thirds of the time. The projection is NOT adjusted for it: on 1,728 games the effect could not be measured (+0.6 points, p = 0.58).">no QB</span>',
+      # "QB2", not "no QB". The side has a quarterback -- Michigan threw 32 attempts last
+      # week -- just not the man its rating was built on. Saying "no QB" overstates it,
+      # and a mark a reader can see is wrong is worse than none.
+      sprintf('<span class="qbout" title="Not the quarterback this team&apos;s rating was built on: the usual starter %s. Sides marked this way are still without him about two thirds of the time. The projection is NOT adjusted for it -- over 1,728 games the effect could not be measured (+0.6 points, p = 0.58).">QB2</span>',
               dash_esc(why))
     }
     matchup <- vapply(seq_len(nrow(g)), function(i) sprintf(
