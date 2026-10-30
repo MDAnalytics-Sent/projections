@@ -1,4 +1,4 @@
-2026-10-29 22:14:10 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-29 22:23:48 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -20,14 +20,14 @@ NHL goalie | starters league save pct 0.8932 over 11205 shots
 NHL goalie | measured +0.35 goals of margin per goal of starter edge (se 0.23) on 7667 prior-season game(s) -- NOT used: needs the right sign and two standard errors
 NHL b2b    | measured -0.25 goals of margin on the second night of a back-to-back (se 0.06) on 7667 prior-season game(s) -- used
 NBA star   | leading man identified for 30 team(s) from the last 15 game(s); e.g. Jalen Johnson 34 min, Amen Thompson 37 min, Andrew Nembhard 33 min
-NBA ingest | 3 of 3 finished game(s) read from the summary feed (30 name(s)); history ends 2026-10-28
+NBA ingest | 4 of 4 finished game(s) read from the summary feed (40 name(s)); history ends 2026-10-28
 NBA star   | a side missing its leading man measured -3.32 points of margin (se 0.39) on 12000 prior-season game(s) -- used
-2026-10-29 22:15:25   today  51.0s
+2026-10-29 22:24:56   today  42.3s
 CFB td     | recalibrated on 10293 graded prop(s) settled before this slate: slope 1.19, shift -0.17 -- a raw 25% becomes 19%, a raw 60% becomes 58%
-CFB qb     | starting passer found for 248 team(s); injury feed returned 3 row(s); 1 of those listed out; 0 side(s) on this board flagged
+CFB qb     | starting passer found for 248 team(s); 87 did not throw in their last game; injury feed returned 3 row(s) with 1 listed out; 87 side(s) on this board flagged
 NBA roster | 20 of 20 team(s) returned a roster (347 name(s))
-2026-10-29 22:17:05   nfl    89.6s  9 built, 9 to pick from
-2026-10-29 22:17:40   cfb    35.3s  10 built, 10 to pick from
+2026-10-29 22:26:18   nfl    74.3s  9 built, 9 to pick from
+2026-10-29 22:26:47   cfb    29.0s  10 built, 10 to pick from
 
 ── Slate 2026-10-15 ──
 Win model  | learned weights: run model 0.934, Pythagorean gap 0.827 (fit on 2,459 graded mlb-runs-v10 games, 44% data, half-life 45 d)
@@ -122,10 +122,10 @@ Cache      | 588 files (5.9 MB) · 11 served from disk, 1 fetched
 ── Slate 2026-11-01 ──
 Slate      | 0 games · none graded yet
 Cache      | 588 files (5.9 MB) · 11 served from disk, 1 fetched
-2026-10-29 22:18:56   mlb    75.6s  15 built, 11 to pick from
-2026-10-29 22:19:03   nhl     6.9s  15 built, 18 to pick from
+2026-10-29 22:28:01   mlb    74.5s  15 built, 11 to pick from
+2026-10-29 22:28:07   nhl     5.8s  15 built, 18 to pick from
 NBA roster | 20 of 20 team(s) returned a roster (347 name(s))
 NBA roster | 14 of 14 team(s) returned a roster (241 name(s))
 NBA roster | 8 of 8 team(s) returned a roster (140 name(s))
-2026-10-29 22:19:12   nba     8.8s  13 built, 13 to pick from
-2026-10-29 22:19:12 built 14337 KB in 302s
+2026-10-29 22:28:15   nba     7.3s  13 built, 13 to pick from
+2026-10-29 22:28:15 built 14350 KB in 267s
