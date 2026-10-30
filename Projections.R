@@ -10504,15 +10504,30 @@ server <- function(input, output, session) {
     # only of a week still to come: the feed reports today, and reading it onto a game
     # played a month ago would be inventing history.
     live <- isTRUE(any(!done))
-    qbout <- if (!live) character(0) else tryCatch({
-      qb <- cfb_qb(suppressWarnings(min(g$ko, na.rm = TRUE)))
-      cfb_qb_out(qb, cfb_inj(), espn_team_key(d$sch))
-    }, error = function(e) character(0))
-    if (!isTRUE(.cfb_qb_said)) {
-      .cfb_qb_said <<- TRUE
-      mlog(sprintf("CFB qb     | %d side(s) on this board are without their starting passer%s",
-                   length(qbout),
-                   if (!length(qbout)) " (or the college injury feed returned nothing)" else ""))
+    qbout <- character(0)
+    if (live) {
+      # Reported in pieces, because "nobody is flagged" has three completely different
+      # causes -- no passers identified, no feed, or a feed that simply has nobody out on
+      # this board -- and one line saying "0 sides" cannot tell them apart. A silent
+      # failure that reads like a clean pass is worse than no feature.
+      qb <- tryCatch(cfb_qb(suppressWarnings(min(g$ko, na.rm = TRUE))), error = function(e) NULL)
+      iv <- tryCatch(cfb_inj(), error = function(e) NULL)
+      tk <- tryCatch(espn_team_key(d$sch), error = function(e) NULL)
+      qbout <- tryCatch(cfb_qb_out(qb, iv, tk), error = function(e) character(0))
+      if (!isTRUE(.cfb_qb_said)) {
+        .cfb_qb_said <<- TRUE
+        nq <- if (is.null(qb)) 0L else nrow(qb)
+        ni <- if (is.null(iv)) NA_integer_ else nrow(iv)
+        no <- if (is.null(iv) || !nrow(iv)) 0L else sum(iv$out %in% TRUE)
+        mlog(sprintf("CFB qb     | starting passer found for %d team(s); injury feed %s; %d of those listed out; %d side(s) on this board flagged",
+                     nq,
+                     if (is.na(ni)) "UNREACHABLE or empty" else sprintf("returned %d row(s)", ni),
+                     no, length(qbout)))
+        if (nq == 0L)
+          mlog("CFB qb     | no passer identified anywhere -- check the box files carry a passing category")
+        if (is.na(ni))
+          mlog(sprintf("CFB qb     | the college injuries endpoint gave nothing: %s", CFB_INJ_URL))
+      }
     }
     list(g = g, st = st, pred = pred, conf = conf, pick = pick,
          done = done, tie = tie, ok = ok, qbout = qbout)
