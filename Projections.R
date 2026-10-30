@@ -5510,7 +5510,7 @@ project_players <- function(d, m, s, g, cutoff) {
 CFB_VER      <- 1
 CFB_SEASONS  <- 2014:2026
 CFB_PICK     <- 2016:2026
-CFB_MODEL    <- "cfb-epa-prior-v2"
+CFB_MODEL    <- "cfb-epa-prior-qb-v3"
 CFB_LEDGER   <- file.path(LEDGER_DIR, "cfb_predictions.rds")
 CFB_LAM      <- 5
 CFB_PW       <- 40
@@ -5534,22 +5534,33 @@ cfb_path <- function(k, y = NULL, ext = "rds")
 # consulted one. ESPN does carry a college injuries feed, so it is asked; if it answers
 # with nothing, nothing changes anywhere.
 #
-# No margin adjustment is made from this, and that is a measured decision rather than
-# laziness. On 1,728 games with each team's identity held per season -- the specification
-# that matters, since a pooled one shares one coefficient across seasons and misreads the
-# effect -- a side without its starting quarterback came to +0.60 points (se 1.09,
-# p = 0.58). Pooled it looked like -2.08 at p = 0.018, which is the artefact. By season
-# the sign flips: +1.44, +0.57, -3.68. The basketball equivalent survives the same test
-# at -4.41 (t = -5.83), so the test is not simply killing everything.
+# The margin IS adjusted from this, by CFB_QB_PTS, and that constant carries the
+# measurement. What belongs here is the record of how I got it wrong twice first, because
+# the mistake is subtle and easy to repeat.
 #
-# Most likely because a backup at a programme like Ohio State is better than half the
-# starters in the division, so the absence means something different at every school, and
-# a three-point effect needs far more than 1,728 games of twenty-point variance to find.
+# I reported +0.60 points (se 1.09, p = 0.58) and called it settled, and before that
+# -2.08 pooled which I correctly dismissed as an artefact. Both came from holding each
+# team's identity per season, which I had argued was "the specification that matters".
+# It is the specification that destroys this particular effect. A team-by-season term is
+# estimated from that team's twelve games, and the absences are among them: a starter out
+# for six of twelve drags his own team's term down by half the effect, so his absences
+# then look ordinary measured against it. The treatment contaminates the control. I even
+# saw the sign flip by season (+1.44, +0.57, -3.68) and read that as noise rather than as
+# the warning it was.
 #
-# So the board states the fact and leaves the judgement where it belongs. Showing it is
-# worth doing on its own: a reader who can see that a favourite is without its
-# quarterback can act on that, and the alternative -- saying nothing -- is what made a
-# heavily favoured side with no starting quarterback look like any other favourite.
+# The honest design never lets the yardstick see the games being judged: rate every team
+# on the games its starter PLAYED, then ask how far short it falls in the ones he missed.
+# That gives -5.04 points (se 0.96, p = 1.4e-07), steady at -5.03 for home sides and
+# +5.05 for away ones, and no fade with time out (-5.04 first game against -5.20 later,
+# differing at p = 0.91). The basketball equivalent reads -4.41 by either design, which
+# is why that one survived a test this one failed.
+#
+# The backup-quality argument I offered -- that a backup at a programme like Ohio State is
+# better than half the division's starters, so the absence means something different
+# everywhere -- is real but much weaker than I made it. It widens the spread of the
+# effect; it does not move its centre to zero. And the replacement's own record still
+# does not predict the size of the drop (p = 0.36 on his yards a throw), so the man who
+# steps in is named on the board for the reader and not used in the arithmetic.
 CFB_INJ_URL <- "https://site.api.espn.com/apis/site/v2/sports/football/college-football/injuries"
 CFB_INJ_TTL <- 60
 CFB_INJ_OUT <- c("out", "doubtful", "injured reserve", "suspension", "suspended",
@@ -5557,6 +5568,34 @@ CFB_INJ_OUT <- c("out", "doubtful", "injured reserve", "suspension", "suspended"
 CFB_QB_N    <- 5L    # recent games the starting passer is read from
 CFB_QB_ATT  <- 20L   # attempts over them before he counts as the starter
 CFB_QB_STALE <- 14   # days after which a team's box data is too old to read anything from
+# Points taken off a side whose established passer did not throw in its last game.
+#
+# I twice reported that this was not worth adjusting for, and twice I was measuring it
+# wrong. Both nulls (-1.34 at p = 0.09; a first-game effect of -2.57 against +0.13 later)
+# came from models carrying team-by-season effects, and those are contaminated by the
+# treatment itself: a starter out for six of twelve games drags his own team's effect
+# down until his absences stop looking bad relative to it. A one-week absence cannot drag
+# it. That alone manufactures a null, and a fake "only the first game matters" on top.
+#
+# Measured against a yardstick that never saw the absent games -- ridge ratings fitted
+# only on games where both starters played -- a missing passer is worth -5.04 points
+# (se 0.96, p = 1.4e-07, n = 319), and it does NOT fade: -5.04 in his first game out
+# against -5.20 later, which differ at p = 0.91. The home and away halves come to -5.03
+# and +5.05, so the figure is not a baseline artefact.
+#
+# This constant is smaller than that because it hangs off the flag production can
+# actually compute before kick-off -- he did not throw LAST week -- and he comes back 60%
+# of the time. On that flag, walk-forward over four seasons with the rating refitted each
+# week exactly as production does: -3.54 (se 0.76, p = 3.1e-06, n = 534), and negative in
+# every season (-4.42, -2.77, -2.99, -4.47).
+#
+# It earns its place on picks, not on margin error. Fitted on the other seasons and
+# applied to the season held out, the side called right goes from 59.74% to 63.86% on the
+# games where a side is flagged. It changes the pick in 80 of them and lands on the
+# winner in 51 against 29, which is 64% of the flips at p = 0.018, positive in all four
+# seasons. Mean margin error barely moves (-0.14 points, p = 0.35) because margins carry
+# an 18-point spread; that is the wrong gate for a board whose job is to pick a side.
+CFB_QB_PTS <- 3.5
 CFB_QB_K     <- 60   # attempts of shrinkage toward the league rate when rating a passer
 CFB_QB_LGYPA <- 7.28 # league yards an attempt, over 10,896 passer-games since 2023
 
@@ -5671,7 +5710,11 @@ cfb_qb_out <- function(qb, inj, tkey) {
   missed <- if ("missed_last" %in% names(qb)) qb$missed_last %in% 1L else rep(FALSE, nrow(qb))
   k <- listed | missed
   if (!any(k)) return(character(0))
-  why <- ifelse(listed[k], "listed out", "did not play last week")
+  # Name him. The tooltip used to read "the usual starter listed out", because the reason
+  # was substituted where a name belonged and the man himself was never shown at all.
+  who <- as.character(qb$pname[k]); who[is.na(who) | who == ""] <- "The usual starter"
+  why <- sprintf("%s %s", who,
+                 ifelse(listed[k], "is listed out", "did not play last week"))
   # The man who has been taking the snaps, and what he has done -- but ONLY where the
   # starter actually missed the last game, because then somebody else demonstrably threw
   # it. When the flag comes from the feed instead, the starter did play last week and the
@@ -6076,7 +6119,7 @@ cfb_fit <- function(R, season_) {
   list(marg = lm1, conf = lg, n = nrow(h))
 }
 
-cfb_predict <- function(panel, F, endr, ents, m, g, cutoff) {
+cfb_predict <- function(panel, F, endr, ents, m, g, cutoff, qbout = NULL) {
   if (is.null(m) || !nrow(g)) return(NULL)
   s <- g$season[1]
   hist <- panel[panel$season == s & panel$ko < cutoff, ]
@@ -6090,10 +6133,21 @@ cfb_predict <- function(panel, F, endr, ents, m, g, cutoff) {
   hfa <- ifelse(g$neutral, 0, 1)
   nd <- cfb_phase(g$week, rd); nd$hfa <- hfa
   pred <- as.numeric(stats::predict(m$marg, newdata = nd))
+  # A side without the passer its rating was built on. This goes in BEFORE the win
+  # probability is derived from the margin, so the number shown and the confidence behind
+  # it move together -- a flag that moved only the spread would leave the board calling a
+  # side at 70% while projecting it to lose.
+  qa <- rep(0, nrow(g))
+  if (!is.null(qbout) && length(qbout)) {
+    hf <- as.character(g$home_id) %in% names(qbout)
+    af <- as.character(g$away_id) %in% names(qbout)
+    qa <- CFB_QB_PTS * (as.integer(af) - as.integer(hf))
+  }
+  pred <- pred + qa
   conf <- as.numeric(stats::predict(m$conf, newdata = data.frame(pred = pred), type = "response"))
   conf <- pmin(pmax(conf, 0.03), 0.97)   # no college game is a 99% lock (walk-forward log loss)
   data.frame(game_id = g$game_id, season = s, week = g$week, rd = rd,
-             pred = pred, conf = pmax(conf, 1 - conf),
+             pred = pred, conf = pmax(conf, 1 - conf), qbadj = qa,
              stringsAsFactors = FALSE)
 }
 
@@ -6120,7 +6174,7 @@ cfb_append_ledger <- function(new) {
   invisible(L)
 }
 
-cfb_settle <- function(panel, F, endr, ents, m, g, now) {
+cfb_settle <- function(panel, F, endr, ents, m, g, now, qbout = NULL) {
   if (!nrow(g)) return(NULL)
   L <- cfb_read_ledger()
   Lg <- L[L$game_id %in% g$game_id, , drop = FALSE]
@@ -6133,7 +6187,7 @@ cfb_settle <- function(panel, F, endr, ents, m, g, now) {
     for (u in unique(as.numeric(cut))) {
       gi <- todo[as.numeric(cut) == u, , drop = FALSE]
       c1 <- as.POSIXct(u, origin = "1970-01-01", tz = TZ_ET)
-      x <- cfb_predict(panel, F, endr, ents, m, gi, c1)
+      x <- cfb_predict(panel, F, endr, ents, m, gi, c1, qbout)
       if (is.null(x) || !nrow(x)) next
       x$kickoff <- gi$ko[match(x$game_id, gi$game_id)]
       x$model_ver <- CFB_MODEL; x$locked_at <- now
@@ -10562,19 +10616,7 @@ server <- function(input, output, session) {
     g <- cgames()
     if (!nrow(g)) return(NULL)
     now <- now_et()
-    st <- withProgress(message = "Projecting matchups", value = 0.7,
-                       cfb_settle(d$pan, d$F, d$endr, d$ents, m, g, now))
-    req(st)
-    nxt <- g$ko[!st$locked %in% TRUE & !is.na(g$ko) & g$ko > now]
-    if (length(nxt))
-      invalidateLater(min(POLL_MIN * 60 * 1000,
-        max(1000, as.numeric(difftime(min(nxt), now, units = "secs")) * 1000 + 5000)))
-    pred <- st$pred; conf <- st$conf
-    pick <- ifelse(pred > 0, g$home_id, g$away_id)
     done <- g$has_score & !is.na(g$final_at) & g$final_at <= now
-    game_grade_slate(CFB_LEDGER, g, done)
-    tie  <- done & g$home_score == g$away_score
-    ok   <- done & !tie & ((pred > 0) == (g$home_score > g$away_score))
     # Teams on this week's board without the man who has been throwing the ball. Asked
     # only of a week still to come: the feed reports today, and reading it onto a game
     # played a month ago would be inventing history.
@@ -10610,6 +10652,22 @@ server <- function(input, output, session) {
           mlog(sprintf("CFB qb     | the college injuries endpoint gave nothing: %s", CFB_INJ_URL))
       }
     }
+    # The flag is settled BEFORE the projection, because the projection now uses it: a
+    # side without its passer is marked down CFB_QB_PTS points. Computing it afterwards
+    # would have left the mark on the board and the number beside it unchanged, which is
+    # what it did for a day.
+    st <- withProgress(message = "Projecting matchups", value = 0.7,
+                       cfb_settle(d$pan, d$F, d$endr, d$ents, m, g, now, qbout))
+    req(st)
+    nxt <- g$ko[!st$locked %in% TRUE & !is.na(g$ko) & g$ko > now]
+    if (length(nxt))
+      invalidateLater(min(POLL_MIN * 60 * 1000,
+        max(1000, as.numeric(difftime(min(nxt), now, units = "secs")) * 1000 + 5000)))
+    pred <- st$pred; conf <- st$conf
+    pick <- ifelse(pred > 0, g$home_id, g$away_id)
+    game_grade_slate(CFB_LEDGER, g, done)
+    tie  <- done & g$home_score == g$away_score
+    ok   <- done & !tie & ((pred > 0) == (g$home_score > g$away_score))
     list(g = g, st = st, pred = pred, conf = conf, pick = pick,
          done = done, tie = tie, ok = ok, qbout = qbout)
   })
@@ -10637,9 +10695,9 @@ server <- function(input, output, session) {
     b <- cboard(); req(b)
     d <- cdat(); g <- b$g
     cn <- function(i) cfb_name(d, i)
-    # A side without its starting quarterback is marked, and the projection beside it is
-    # NOT adjusted -- see cfb_qb for why nothing measurable justifies an adjustment. The
-    # mark is the honest half: the reader can see it and decide.
+    # A side without its starting quarterback is marked, AND the projection beside it is
+    # marked down CFB_QB_PTS points -- see that constant for the measurement, and for the
+    # two ways I got this wrong before believing it.
     qbo <- b$qbout %||% character(0)
     qbm <- function(i) {
       k <- as.character(i)
@@ -10648,8 +10706,8 @@ server <- function(input, output, session) {
       # "QB2", not "no QB". The side has a quarterback -- Michigan threw 32 attempts last
       # week -- just not the man its rating was built on. Saying "no QB" overstates it,
       # and a mark a reader can see is wrong is worse than none.
-      sprintf('<span class="qbout" title="Not the quarterback this team&apos;s rating was built on: the usual starter %s. Sides marked this way are still without him about two thirds of the time. The projection is NOT adjusted: across 812 absences the replacement averaged 7.1 yards a throw against the 7.2 of the man he replaced, and neither the absence nor the drop-off predicted the margin (p = 0.09 and p = 0.36).">QB2</span>',
-              dash_esc(why))
+      sprintf('<span class="qbout" title="Not the quarterback this team&apos;s rating was built on. %s. The projection below is marked down %.1f points for it. Measured against ratings fitted only on games where both starters played, a missing passer costs 5.0 points (p = 1e-07); on the flag that can be known before kick-off, where he returns 60%%%% of the time, it is 3.5 (p = 3e-06, four seasons, all negative). Fitted on other seasons and applied to the one held out, it calls the side right 63.9%%%% of the time against 59.7%%%% without it.">QB2</span>',
+              dash_esc(why), CFB_QB_PTS)
     }
     matchup <- vapply(seq_len(nrow(g)), function(i) sprintf(
       '%s<span class="tm">%s</span>%s<span class="at">@</span>%s<span class="tm">%s</span>%s',
