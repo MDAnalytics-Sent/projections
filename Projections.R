@@ -5600,20 +5600,37 @@ cfb_qb <- function(upto = NULL) {
     a <- stats::aggregate(att ~ pid + pname + team, data = w, FUN = sum)
     a <- a[a$att >= CFB_QB_ATT, , drop = FALSE]
     if (!nrow(a)) return(NULL)
-    a[which.max(a$att), , drop = FALSE]
+    r <- a[which.max(a$att), , drop = FALSE]
+    # and did he throw in the team's most recent game? This is the signal that actually
+    # works. ESPN's college injuries endpoint answers with three rows for the whole
+    # sport, so it will never tell anyone a favourite is without its starter. The box
+    # scores will, one week late: measured over 3,947 team-weeks, a starter who did not
+    # throw last week is still absent 67.6% of the time, against 8.0% for one who did
+    # and a 12.8% base rate. It catches 42% of all the weeks a starter is missing.
+    last <- max(w$ko)
+    r$missed_last <- as.integer(!any(w$ko == last & w$pid == r$pid[1]))
+    r
   }))
 }
 
-# Which of these teams is without the man who has been throwing the ball.
+# Which of these teams is without the man who has been throwing the ball, and on what
+# evidence. Two sources, because they fail in opposite directions: a feed knows about
+# this week but barely exists for college, and the box score is certain but a week stale.
 cfb_qb_out <- function(qb, inj, tkey) {
-  if (is.null(qb) || !nrow(qb) || is.null(inj) || !nrow(inj) || !length(tkey))
-    return(character(0))
-  iv <- inj
-  iv$tid <- unname(tkey[iv$tkey])
-  iv <- iv[!is.na(iv$tid) & iv$out %in% TRUE, , drop = FALSE]
-  if (!nrow(iv)) return(character(0))
-  hit <- paste(as.character(qb$team), nhl_norm(qb$pname)) %in% paste(iv$tid, iv$pkey)
-  as.character(qb$team[hit])
+  if (is.null(qb) || !nrow(qb)) return(character(0))
+  listed <- rep(FALSE, nrow(qb))
+  if (!is.null(inj) && nrow(inj) && length(tkey)) {
+    iv <- inj
+    iv$tid <- unname(tkey[iv$tkey])
+    iv <- iv[!is.na(iv$tid) & iv$out %in% TRUE, , drop = FALSE]
+    if (nrow(iv))
+      listed <- paste(as.character(qb$team), nhl_norm(qb$pname)) %in% paste(iv$tid, iv$pkey)
+  }
+  missed <- if ("missed_last" %in% names(qb)) qb$missed_last %in% 1L else rep(FALSE, nrow(qb))
+  k <- listed | missed
+  if (!any(k)) return(character(0))
+  stats::setNames(ifelse(listed[k], "listed out", "did not play last week"),
+                  as.character(qb$team[k]))
 }
 
 cfb_fetch <- function(tag, file, dest) {
@@ -10519,8 +10536,9 @@ server <- function(input, output, session) {
         nq <- if (is.null(qb)) 0L else nrow(qb)
         ni <- if (is.null(iv)) NA_integer_ else nrow(iv)
         no <- if (is.null(iv) || !nrow(iv)) 0L else sum(iv$out %in% TRUE)
-        mlog(sprintf("CFB qb     | starting passer found for %d team(s); injury feed %s; %d of those listed out; %d side(s) on this board flagged",
-                     nq,
+        nmiss <- if (is.null(qb) || !("missed_last" %in% names(qb))) 0L else sum(qb$missed_last %in% 1L)
+        mlog(sprintf("CFB qb     | starting passer found for %d team(s); %d did not throw in their last game; injury feed %s with %d listed out; %d side(s) on this board flagged",
+                     nq, nmiss,
                      if (is.na(ni)) "UNREACHABLE or empty" else sprintf("returned %d row(s)", ni),
                      no, length(qbout)))
         if (nq == 0L)
@@ -10560,8 +10578,13 @@ server <- function(input, output, session) {
     # NOT adjusted -- see cfb_qb for why nothing measurable justifies an adjustment. The
     # mark is the honest half: the reader can see it and decide.
     qbo <- b$qbout %||% character(0)
-    qbm <- function(i) if (as.character(i) %in% qbo)
-      '<span class="qbout" title="Starting quarterback listed out; the projection is not adjusted for it">no QB</span>' else ""
+    qbm <- function(i) {
+      k <- as.character(i)
+      if (!(k %in% names(qbo))) return("")
+      why <- unname(qbo[k])
+      sprintf('<span class="qbout" title="Usual starting quarterback %s. Sides flagged this way are still without him about two thirds of the time. The projection is NOT adjusted for it: on 1,728 games the effect could not be measured (+0.6 points, p = 0.58).">no QB</span>',
+              dash_esc(why))
+    }
     matchup <- vapply(seq_len(nrow(g)), function(i) sprintf(
       '%s<span class="tm">%s</span>%s<span class="at">@</span>%s<span class="tm">%s</span>%s',
       cfb_badge(d, g$away_id[i]), cn(g$away_id[i]), qbm(g$away_id[i]),
