@@ -466,8 +466,8 @@
 "NHL","401892598","2026-10-29 01:00:00","New Jersey @ Colorado","Colorado","home",0.5492,0.5721,1.676,-0.0798,"DraftKings","2026-10-29 00:59:46","W",0.676
 "NHL","401892599","2026-10-29 02:00:00","Toronto @ Seattle","Seattle","home",0.5241,0.4573,2.1,0.1006,"DraftKings","2026-10-29 01:59:57","W",1.1
 "NBA","401909892","2026-10-29 02:30:00","Los Angeles Lakers @ LA Clippers","LA Clippers","home",0.6148,0.5043,1.893,0.1636,"DraftKings","2026-10-29 02:01:01","L",-1
-"NCAAF","401862812","2026-10-29 23:30:00","Florida Atlantic @ North Texas","North Texas","home",0.9096,0.8119,1.182,0.075,"DraftKings","2026-10-29 22:47:36",NA,NA
-"NCAAF","401869963","2026-10-29 23:30:00","Troy @ James Madison","James Madison","home",0.8684,0.887,1.083,-0.0592,"DraftKings","2026-10-29 22:47:36",NA,NA
+"NCAAF","401862812","2026-10-29 23:30:00","Florida Atlantic @ North Texas","North Texas","home",0.9096,0.8119,1.182,0.075,"DraftKings","2026-10-29 22:47:36","W",0.182
+"NCAAF","401869963","2026-10-29 23:30:00","Troy @ James Madison","James Madison","home",0.8684,0.887,1.083,-0.0592,"DraftKings","2026-10-29 22:47:36","L",-1
 "NHL","401892601","2026-10-29 23:00:00","Winnipeg @ Tampa Bay","Tampa Bay","home",0.6174,0.6575,1.459,-0.0994,"DraftKings","2026-10-29 22:47:36","W",0.459
 "NHL","401892602","2026-10-29 23:00:00","Utah @ Pittsburgh","Utah","away",0.5117,0.5514,1.741,-0.1093,"DraftKings","2026-10-29 22:47:36","W",0.741
 "NHL","401892603","2026-10-29 23:00:00","Columbus @ Carolina","Carolina","home",0.6806,0.6908,1.388,-0.0555,"DraftKings","2026-10-29 22:47:36","W",0.388
@@ -475,10 +475,10 @@
 "NBA","401909893","2026-10-30 00:00:00","Cleveland Cavaliers @ Atlanta Hawks","Atlanta Hawks","home",0.6028,0.5174,1.847,0.1136,"DraftKings","2026-10-29 23:43:57","W",0.847
 "NBA","401909894","2026-10-30 00:00:00","Sacramento Kings @ New Orleans Pelicans","New Orleans Pelicans","home",0.6393,0.675,1.42,-0.092,"DraftKings","2026-10-29 23:43:57","W",0.42
 "NHL","401892606","2026-10-30 00:00:00","Montréal @ Dallas","Dallas","home",0.5877,0.6092,1.571,-0.0765,"DraftKings","2026-10-29 23:43:57","L",-1
-"NHL","401892605","2026-10-30 00:00:00","Washington @ Nashville","Nashville","home",0.5493,0.5043,1.893,0.0398,"DraftKings","2026-10-29 23:43:57",NA,NA
+"NHL","401892605","2026-10-30 00:00:00","Washington @ Nashville","Nashville","home",0.5493,0.5043,1.893,0.0398,"DraftKings","2026-10-29 23:43:57","L",-1
 "NHL","401892607","2026-10-30 00:00:00","New York @ Minnesota","Minnesota","home",0.6183,0.6309,1.521,-0.0596,"DraftKings","2026-10-29 23:43:57","L",-1
 "NHL","401892604","2026-10-30 00:00:00","Boston @ St. Louis","St. Louis","home",0.5239,0.5108,1.87,-0.0205,"DraftKings","2026-10-29 23:43:57","W",0.87
-"NFL","401873023","2026-10-30 00:15:00","Panthers @ Packers","Packers","home",0.6352,0.6225,1.541,-0.0214,"DraftKings","2026-10-30 00:14:46",NA,NA
+"NFL","401873023","2026-10-30 00:15:00","Panthers @ Packers","Packers","home",0.6352,0.6225,1.541,-0.0214,"DraftKings","2026-10-30 00:14:46","W",0.541
 "NBA","401909895","2026-10-30 02:00:00","Memphis Grizzlies @ Portland Trail Blazers","Portland Trail Blazers","home",0.6287,0.7136,1.345,-0.1545,"DraftKings","2026-10-30 01:04:30",NA,NA
 "NHL","401892608","2026-10-30 02:00:00","Buffalo @ Anaheim","Anaheim","home",0.5028,0.4365,2.2,0.1061,"DraftKings","2026-10-30 01:04:30",NA,NA
 "NHL","401892610","2026-10-30 02:00:00","Vancouver @ San Jose","San Jose","home",0.6162,0.6092,1.571,-0.0317,"DraftKings","2026-10-30 01:04:30",NA,NA
