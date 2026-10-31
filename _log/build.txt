@@ -1,4 +1,4 @@
-2026-10-31 04:14:47 building the page from /home/runner/work/projections/projections/Projections.R
+2026-10-31 05:12:26 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -23,12 +23,14 @@ NBA star   | leading man identified for 30 team(s) from the last 15 game(s); e.g
 NBA ingest | 11 of 11 finished game(s) read from the summary feed (110 name(s)); history ends 2026-10-29
 NBA star   | a side missing its leading man measured -3.32 points of margin (se 0.39) on 12000 prior-season game(s) -- used
 NBA roster | 14 of 14 team(s) returned a roster (242 name(s))
-2026-10-31 04:16:03   today  50.1s
+NBA line-up| 0 of 1 game(s) within 8h of tip-off returned a five (0 name(s))
+2026-10-31 05:13:41   today  49.7s
 CFB td     | recalibrated on 10293 graded prop(s) settled before this slate: slope 1.19, shift -0.17 -- a raw 25% becomes 19%, a raw 60% becomes 58%
 CFB qb     | passer found for 248 team(s), 22 flagged in all; of the 112 side(s) on THIS board, 112 could be checked and 16 are flagged; injury feed returned 3 row(s) with 1 listed out
 NBA roster | 14 of 14 team(s) returned a roster (242 name(s))
-2026-10-31 04:16:27   nfl    15.0s  3 built, 9 to pick from
-2026-10-31 04:16:45   cfb    17.5s  3 built, 10 to pick from
+NBA line-up| 0 of 1 game(s) within 8h of tip-off returned a five (0 name(s))
+2026-10-31 05:14:06   nfl    15.4s  3 built, 9 to pick from
+2026-10-31 05:14:25   cfb    18.4s  3 built, 10 to pick from
 
 ── Slate 2026-10-30 ──
 Slate      | 0 games · none graded yet
@@ -53,10 +55,11 @@ Cache      | 589 files (5.9 MB) · 11 served from disk, 1 fetched
 ── Slate 2026-11-03 ──
 Slate      | 0 games · none graded yet
 Cache      | 589 files (5.9 MB) · 11 served from disk, 1 fetched
-2026-10-31 04:17:06   mlb    20.8s  5 built, 9 to pick from
-2026-10-31 04:17:08   nhl     2.4s  5 built, 18 to pick from
+2026-10-31 05:14:49   mlb    23.9s  5 built, 9 to pick from
+2026-10-31 05:14:51   nhl     2.3s  5 built, 18 to pick from
 NBA roster | 14 of 14 team(s) returned a roster (242 name(s))
+NBA line-up| 0 of 1 game(s) within 8h of tip-off returned a five (0 name(s))
 NBA roster | 8 of 8 team(s) returned a roster (141 name(s))
 NBA roster | 30 of 30 team(s) returned a roster (522 name(s))
-2026-10-31 04:17:11   nba     3.0s  4 built, 14 to pick from
-2026-10-31 04:17:12 built 14490 KB in 145s
+2026-10-31 05:14:54   nba     3.0s  4 built, 14 to pick from
+2026-10-31 05:14:55 built 14490 KB in 148s
