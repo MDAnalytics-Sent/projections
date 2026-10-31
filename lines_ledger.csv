@@ -484,9 +484,9 @@
 "NHL","401892610","2026-10-30 02:00:00","Vancouver @ San Jose","San Jose","home",0.6162,0.6092,1.571,-0.0317,"DraftKings","2026-10-30 01:04:30","W",0.571
 "NHL","401892609","2026-10-30 02:00:00","Ottawa @ Los Angeles","Los Angeles","home",0.5334,0.4739,2.02,0.0774,"DraftKings","2026-10-30 01:04:30","W",1.02
 "NHL","401892611","2026-10-30 22:00:00","New Jersey @ Vegas","Vegas","home",0.5252,0.5108,1.87,-0.0181,"DraftKings","2026-10-30 21:17:36","L",-1
-"NBA","401909277","2026-10-30 23:00:00","Charlotte Hornets @ Washington Wizards","Charlotte Hornets","away",0.5323,0.5108,1.87,-0.0049,"DraftKings","2026-10-30 22:18:36",NA,NA
+"NBA","401909277","2026-10-30 23:00:00","Charlotte Hornets @ Washington Wizards","Charlotte Hornets","away",0.5323,0.5108,1.87,-0.0049,"DraftKings","2026-10-30 22:18:36","L",-1
 "NCAAF","401862813","2026-10-30 23:00:00","Tulane @ Charlotte","Tulane","away",0.7176,0.7441,1.29,-0.0744,"DraftKings","2026-10-30 22:18:36",NA,NA
-"NHL","401892612","2026-10-30 23:00:00","Winnipeg @ Florida","Florida","home",0.6482,0.6575,1.459,-0.0544,"DraftKings","2026-10-30 22:18:36",NA,NA
+"NHL","401892612","2026-10-30 23:00:00","Winnipeg @ Florida","Florida","home",0.6482,0.6575,1.459,-0.0544,"DraftKings","2026-10-30 22:18:36","W",0.459
 "NBA","401909278","2026-10-30 23:30:00","Chicago Bulls @ Boston Celtics","Boston Celtics","home",0.8353,0.8579,1.118,-0.0665,"DraftKings","2026-10-30 23:15:32",NA,NA
 "NBA","401909279","2026-10-30 23:30:00","Detroit Pistons @ Brooklyn Nets","Detroit Pistons","away",0.6723,0.7258,1.323,-0.1108,"DraftKings","2026-10-30 23:15:32",NA,NA
 "NBA","401909280","2026-10-30 23:30:00","New York Knicks @ Philadelphia 76ers","Philadelphia 76ers","home",0.5369,0.417,2.3,0.2349,"DraftKings","2026-10-30 23:15:32",NA,NA
@@ -498,4 +498,4 @@
 "NHL","401892613","2026-10-31 00:00:00","Seattle @ Calgary","Calgary","home",0.5262,0.4892,1.952,0.0274,"DraftKings","2026-10-30 23:45:20",NA,NA
 "NBA","401909285","2026-10-31 02:00:00","Los Angeles Lakers @ Golden State Warriors","Los Angeles Lakers","away",0.5282,0.583,1.645,-0.131,"DraftKings","2026-10-31 01:08:01",NA,NA
 "NBA","401909286","2026-10-31 02:00:00","Denver Nuggets @ Phoenix Suns","Phoenix Suns","home",0.5323,0.3908,2.45,0.3042,"DraftKings","2026-10-31 01:08:01",NA,NA
-"NCAAF","401866451","2026-10-31 02:30:00","Kent State @ Sacramento State","Kent State","away",0.5203,0.705,1.36,-0.2926,"DraftKings","2026-10-31 01:08:01",NA,NA
+"NCAAF","401866451","2026-10-31 02:30:00","Kent State @ Sacramento State","Kent State","away",0.5203,0.705,1.36,-0.2926,"DraftKings","2026-10-31 02:01:40",NA,NA
