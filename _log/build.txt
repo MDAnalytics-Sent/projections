@@ -1,4 +1,4 @@
-2026-11-01 08:41:39 building the page from /home/runner/work/projections/projections/Projections.R
+2026-11-01 09:14:59 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -24,25 +24,25 @@ NBA ingest | 1 of 1 finished game(s) read from the summary feed (10 name(s)); hi
 NBA star   | a side missing its leading man measured -3.32 points of margin (se 0.39) on 12000 prior-season game(s) -- used
 NBA roster | 8 of 8 team(s) returned a roster (141 name(s))
 NBA line-up| 0 of 2 game(s) within 8h of tip-off returned a five (0 name(s))
-2026-11-01 08:42:56   today  50.4s
+2026-11-01 09:16:28   today  59.0s
 CFB td     | recalibrated on 11340 graded prop(s) settled before this slate: slope 1.18, shift -0.23 -- a raw 25% becomes 18%, a raw 60% becomes 56%
 CFB qb     | passer found for 247 team(s), 18 flagged in all; of the 124 side(s) on THIS board, 123 could be checked and 18 are flagged; injury feed returned 3 row(s) with 1 listed out
 NBA roster | 8 of 8 team(s) returned a roster (141 name(s))
 NBA line-up| 0 of 2 game(s) within 8h of tip-off returned a five (0 name(s))
-2026-11-01 08:43:16   nfl    12.6s  3 built, 9 to pick from
-2026-11-01 08:43:31   cfb    15.0s  3 built, 11 to pick from
+2026-11-01 09:16:54   nfl    15.6s  3 built, 9 to pick from
+2026-11-01 09:17:14   cfb    19.4s  3 built, 11 to pick from
 
 ── Slate 2026-10-31 ──
 Slate      | 0 games · none graded yet
-Cache      | 590 files (5.9 MB) · 14 served from disk, 0 fetched
+Cache      | 590 files (5.9 MB) · 10 served from disk, 4 fetched
+
+── Slate 2026-11-01 ──
+Slate      | 0 games · none graded yet
+Cache      | 590 files (5.9 MB) · 13 served from disk, 1 fetched
 
 ── Slate 2026-11-01 ──
 Slate      | 0 games · none graded yet
 Cache      | 590 files (5.9 MB) · 14 served from disk, 0 fetched
-
-── Slate 2026-11-01 ──
-Slate      | 0 games · none graded yet
-Cache      | 590 files (5.9 MB) · 9 served from disk, 5 fetched
 
 ── Slate 2026-11-02 ──
 Slate      | 0 games · none graded yet
@@ -55,11 +55,11 @@ Cache      | 590 files (5.9 MB) · 13 served from disk, 1 fetched
 ── Slate 2026-11-04 ──
 Slate      | 0 games · none graded yet
 Cache      | 590 files (5.9 MB) · 13 served from disk, 1 fetched
-2026-11-01 08:43:50   mlb    19.4s  5 built, 8 to pick from
-2026-11-01 08:43:52   nhl     1.8s  5 built, 18 to pick from
+2026-11-01 09:17:38   mlb    23.9s  5 built, 8 to pick from
+2026-11-01 09:17:40   nhl     2.4s  5 built, 18 to pick from
 NBA roster | 8 of 8 team(s) returned a roster (141 name(s))
 NBA line-up| 0 of 2 game(s) within 8h of tip-off returned a five (0 name(s))
 NBA roster | 30 of 30 team(s) returned a roster (521 name(s))
 NBA roster | 28 of 28 team(s) returned a roster (486 name(s))
-2026-11-01 08:43:54   nba     2.2s  4 built, 15 to pick from
-2026-11-01 08:43:55 built 14709 KB in 135s
+2026-11-01 09:17:43   nba     2.9s  4 built, 15 to pick from
+2026-11-01 09:17:43 built 14709 KB in 165s
