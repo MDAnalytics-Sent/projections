@@ -604,16 +604,16 @@
 "NHL","401892629","2026-11-03 00:00:00","Vegas @ Boston","Boston","home",0.5185,0.4826,1.98,0.0269,"DraftKings","2026-11-02 23:15:25","W",0.98
 "NHL","401892631","2026-11-03 01:00:00","Colorado @ Chicago","Colorado","away",0.6016,0.669,1.435,-0.1368,"DraftKings","2026-11-02 23:15:25","W",0.435
 "NHL","401892632","2026-11-03 02:00:00","Calgary @ San Jose","San Jose","home",0.53,0.5325,1.8,-0.046,"DraftKings","2026-11-02 23:15:25","L",-1
-"NCAAF","401866453","2026-11-04 00:00:00","Ohio @ Akron","Ohio","away",0.7256,0.8173,1.174,-0.1482,"DraftKings","2026-11-03 11:55:19",NA,NA
-"NCAAF","401866454","2026-11-04 01:00:00","Buffalo @ Miami (OH)","Miami (OH)","home",0.7725,0.675,1.42,0.0971,"DraftKings","2026-11-03 11:55:19",NA,NA
-"NHL","401892639","2026-11-04 00:00:00","Vegas @ Pittsburgh","Pittsburgh","home",0.5643,0.4957,1.926,0.0868,"DraftKings","2026-11-03 11:55:19",NA,NA
-"NHL","401892634","2026-11-04 00:00:00","Winnipeg @ Montréal","Montréal","home",0.5884,0.6309,1.521,-0.1052,"DraftKings","2026-11-03 11:55:19",NA,NA
-"NHL","401892638","2026-11-04 00:00:00","Minnesota @ Philadelphia","Minnesota","away",0.5979,0.6092,1.571,-0.0605,"DraftKings","2026-11-03 11:55:19",NA,NA
-"NHL","401892640","2026-11-04 00:00:00","Dallas @ Washington","Washington","home",0.519,0.5043,1.893,-0.0176,"DraftKings","2026-11-03 11:55:19",NA,NA
-"NHL","401892635","2026-11-04 00:00:00","Detroit @ Tampa Bay","Tampa Bay","home",0.618,0.6958,1.377,-0.1489,"DraftKings","2026-11-03 11:55:19",NA,NA
-"NHL","401892641","2026-11-04 00:00:00","Colorado @ Columbus","Columbus","home",0.5158,0.4573,2.1,0.0831,"DraftKings","2026-11-03 11:55:19",NA,NA
-"NHL","401892637","2026-11-04 00:00:00","St. Louis @ New York","New York","home",0.5357,0.5325,1.8,-0.0357,"DraftKings","2026-11-03 11:55:19",NA,NA
-"NHL","401892633","2026-11-04 00:00:00","Utah @ Toronto","Utah","away",0.5237,0.5427,1.769,-0.0735,"DraftKings","2026-11-03 11:55:19",NA,NA
-"NHL","401892636","2026-11-04 00:30:00","Edmonton @ New Jersey","New Jersey","home",0.589,0.583,1.645,-0.031,"DraftKings","2026-11-03 11:55:19",NA,NA
-"NHL","401892642","2026-11-04 01:00:00","Carolina @ Nashville","Carolina","away",0.6039,0.6309,1.521,-0.0816,"DraftKings","2026-11-03 11:55:19",NA,NA
-"NHL","401892643","2026-11-04 02:00:00","Anaheim @ Vancouver","Anaheim","away",0.5327,0.583,1.645,-0.1236,"DraftKings","2026-11-03 11:55:19",NA,NA
+"NCAAF","401866453","2026-11-04 00:00:00","Ohio @ Akron","Ohio","away",0.7256,0.8119,1.182,-0.1425,"DraftKings","2026-11-03 19:31:03",NA,NA
+"NCAAF","401866454","2026-11-04 01:00:00","Buffalo @ Miami (OH)","Miami (OH)","home",0.7725,0.669,1.435,0.1084,"DraftKings","2026-11-03 19:31:03",NA,NA
+"NHL","401892639","2026-11-04 00:00:00","Vegas @ Pittsburgh","Pittsburgh","home",0.5643,0.5108,1.87,0.055,"DraftKings","2026-11-03 19:31:03",NA,NA
+"NHL","401892634","2026-11-04 00:00:00","Winnipeg @ Montréal","Montréal","home",0.5884,0.6092,1.571,-0.0754,"DraftKings","2026-11-03 19:31:03",NA,NA
+"NHL","401892638","2026-11-04 00:00:00","Minnesota @ Philadelphia","Minnesota","away",0.5979,0.6225,1.541,-0.0789,"DraftKings","2026-11-03 19:31:03",NA,NA
+"NHL","401892640","2026-11-04 00:00:00","Dallas @ Washington","Washington","home",0.519,0.5043,1.893,-0.0176,"DraftKings","2026-11-03 19:31:03",NA,NA
+"NHL","401892635","2026-11-04 00:00:00","Detroit @ Tampa Bay","Tampa Bay","home",0.618,0.6958,1.377,-0.1489,"DraftKings","2026-11-03 19:31:03",NA,NA
+"NHL","401892641","2026-11-04 00:00:00","Colorado @ Columbus","Columbus","home",0.5158,0.4675,2.05,0.0573,"DraftKings","2026-11-03 19:31:03",NA,NA
+"NHL","401892637","2026-11-04 00:00:00","St. Louis @ New York","New York","home",0.5357,0.5217,1.833,-0.0178,"DraftKings","2026-11-03 19:31:03",NA,NA
+"NHL","401892633","2026-11-04 00:00:00","Utah @ Toronto","Utah","away",0.5237,0.5635,1.704,-0.1076,"DraftKings","2026-11-03 19:31:03",NA,NA
+"NHL","401892636","2026-11-04 00:30:00","Edmonton @ New Jersey","New Jersey","home",0.589,0.5934,1.617,-0.0474,"DraftKings","2026-11-03 19:31:03",NA,NA
+"NHL","401892642","2026-11-04 01:00:00","Carolina @ Nashville","Carolina","away",0.6039,0.6369,1.505,-0.0911,"DraftKings","2026-11-03 19:31:03",NA,NA
+"NHL","401892643","2026-11-04 02:00:00","Anaheim @ Vancouver","Anaheim","away",0.5327,0.583,1.645,-0.1236,"DraftKings","2026-11-03 19:31:03",NA,NA
