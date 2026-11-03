@@ -1,65 +1,61 @@
-2026-11-02 21:56:19 building the page from /home/runner/work/projections/projections/Projections.R
+2026-11-03 05:52:36 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
 To publish the web page, run:  source("publish_site.R")   (Shiny version: source("deploy_projections.R"))
 
 
-── Slate 2026-11-02 ──
+── Slate 2026-11-03 ──
 Slate      | 0 games · none graded yet
-Cache      | 591 files (5.9 MB) · 18 served from disk, 1 fetched
-CFB td     | 21941 graded prop(s) on file; the earliest slates have nothing before them to correct against
-NHL rating | fitted on 75% shots, 25% goals; shots joined for 8334 of 15802 team-game(s) (53%), the rest fall back to the goal margin
-NHL goalie | 16666 appearance(s), 8334 start(s), 167 goalie(s), 4 season(s) 2023-2026
-NHL goalie | starter edge on 4136 of 14856 game(s) (28%); sd 0.179, range -0.74 to +0.69 goals
-NHL        | 234 final game(s) this season, 234 with box scores, 0 missing
-NHL        | latest final: 2026-11-02 (game 2026020234) | today 2026-11-02 has 4 game(s), 3 final | feed 4 hit / 10 fetched
-NHL goalie | 936 appearance(s) across 234 game(s); 468 identifiable starter(s), 81 distinct goalie(s)
+Cache      | 591 files (5.9 MB) · 17 served from disk, 3 fetched
+CFB td     | 22046 graded prop(s) on file; the earliest slates have nothing before them to correct against
+NHL rating | fitted on 75% shots, 25% goals; shots joined for 8342 of 15804 team-game(s) (53%), the rest fall back to the goal margin
+NHL goalie | 16682 appearance(s), 8342 start(s), 167 goalie(s), 4 season(s) 2023-2026
+NHL goalie | starter edge on 4140 of 14856 game(s) (28%); sd 0.179, range -0.74 to +0.69 goals
+NHL        | 235 final game(s) this season, 235 with box scores, 0 missing
+NHL        | latest final: 2026-11-02 (game 2026020235) | today 2026-11-03 has 11 game(s), 0 final | feed 5 hit / 10 fetched
+NHL goalie | 940 appearance(s) across 235 game(s); 470 identifiable starter(s), 81 distinct goalie(s)
 NHL goalie | fields present -- toi 100%, shots 100%, saves 100%, goals against 100%
-NHL goalie | starters league save pct 0.8918 over 12458 shots
+NHL goalie | starters league save pct 0.8920 over 12507 shots
 NHL goalie | measured +0.35 goals of margin per goal of starter edge (se 0.23) on 7667 prior-season game(s) -- NOT used: needs the right sign and two standard errors
 NHL b2b    | measured -0.25 goals of margin on the second night of a back-to-back (se 0.06) on 7667 prior-season game(s) -- used
 NBA star   | leading man identified for 30 team(s) from the last 15 game(s); e.g. Jalen Johnson 33 min, Amen Thompson 36 min, Andrew Nembhard 33 min
-NBA ingest | 10 of 10 finished game(s) read from the summary feed (100 name(s)); history ends 2026-11-01
+NBA ingest | 16 of 16 finished game(s) read from the summary feed (160 name(s)); history ends 2026-11-01
 NBA star   | a side missing its leading man measured -3.32 points of margin (se 0.39) on 12000 prior-season game(s) -- used
-NBA roster | 30 of 30 team(s) returned a roster (521 name(s))
-NBA line-up| 15 of 15 game(s) within 8h of tip-off returned a five (150 name(s))
-2026-11-02 21:57:15   today  35.8s
+2026-11-03 05:54:03   today  61.1s
 CFB td     | recalibrated on 11340 graded prop(s) settled before this slate: slope 1.18, shift -0.23 -- a raw 25% becomes 18%, a raw 60% becomes 56%
 CFB qb     | passer found for 247 team(s), 18 flagged in all; of the 124 side(s) on THIS board, 123 could be checked and 18 are flagged; injury feed returned 3 row(s) with 1 listed out
-NBA roster | 30 of 30 team(s) returned a roster (521 name(s))
-NBA line-up| 15 of 15 game(s) within 8h of tip-off returned a five (150 name(s))
-2026-11-02 21:57:42   nfl    21.2s  3 built, 10 to pick from
-2026-11-02 21:57:53   cfb    10.5s  3 built, 11 to pick from
-
-── Slate 2026-11-01 ──
-Slate      | 0 games · none graded yet
-Cache      | 591 files (5.9 MB) · 14 served from disk, 0 fetched
+NBA roster | 28 of 28 team(s) returned a roster (486 name(s))
+2026-11-03 05:54:29   nfl    15.5s  3 built, 10 to pick from
+2026-11-03 05:54:48   cfb    18.9s  3 built, 11 to pick from
 
 ── Slate 2026-11-02 ──
 Slate      | 0 games · none graded yet
-Cache      | 591 files (5.9 MB) · 15 served from disk, 0 fetched
-
-── Slate 2026-11-02 ──
-Slate      | 0 games · none graded yet
-Cache      | 591 files (5.9 MB) · 15 served from disk, 0 fetched
+Cache      | 591 files (5.9 MB) · 11 served from disk, 4 fetched
 
 ── Slate 2026-11-03 ──
 Slate      | 0 games · none graded yet
-Cache      | 591 files (5.9 MB) · 14 served from disk, 1 fetched
+Cache      | 591 files (5.9 MB) · 15 served from disk, 1 fetched
+
+── Slate 2026-11-03 ──
+Slate      | 0 games · none graded yet
+Cache      | 591 files (5.9 MB) · 16 served from disk, 0 fetched
 
 ── Slate 2026-11-04 ──
 Slate      | 0 games · none graded yet
-Cache      | 591 files (5.9 MB) · 14 served from disk, 1 fetched
+Cache      | 591 files (5.9 MB) · 15 served from disk, 1 fetched
 
 ── Slate 2026-11-05 ──
 Slate      | 0 games · none graded yet
-Cache      | 591 files (5.9 MB) · 14 served from disk, 1 fetched
-2026-11-02 21:58:08   mlb    15.1s  5 built, 7 to pick from
-2026-11-02 21:58:09   nhl     1.3s  5 built, 18 to pick from
-NBA roster | 30 of 30 team(s) returned a roster (521 name(s))
-NBA line-up| 15 of 15 game(s) within 8h of tip-off returned a five (150 name(s))
+Cache      | 591 files (5.9 MB) · 15 served from disk, 1 fetched
+
+── Slate 2026-11-06 ──
+Slate      | 0 games · none graded yet
+Cache      | 592 files (5.9 MB) · 15 served from disk, 1 fetched
+2026-11-03 05:55:14   mlb    25.7s  5 built, 6 to pick from
+2026-11-03 05:55:16   nhl     2.3s  5 built, 18 to pick from
 NBA roster | 28 of 28 team(s) returned a roster (486 name(s))
 NBA roster | 4 of 4 team(s) returned a roster (69 name(s))
-2026-11-02 21:58:11   nba     1.6s  4 built, 16 to pick from
-2026-11-02 21:58:11 built 15021 KB in 112s
+NBA roster | 18 of 18 team(s) returned a roster (312 name(s))
+2026-11-03 05:55:19   nba     3.1s  4 built, 17 to pick from
+2026-11-03 05:55:20 built 15326 KB in 164s
