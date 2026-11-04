@@ -1,9 +1,29 @@
 name: Publish projections
 
-# Builds the page on GitHub's machines every half hour, with nothing running on anybody's
-# laptop, and commits the finished page straight back to this branch -- which is the branch
-# GitHub Pages serves. The page has to live next to the code rather than on a branch of its
-# own, because a scheduled workflow only ever runs from the repository's default branch.
+# Builds the page on GitHub's machines, with nothing running on anybody's laptop, and
+# commits the finished page straight back to this branch -- which is the branch GitHub
+# Pages serves.
+#
+# One run builds the page many times over several hours, rather than once, and the reason
+# is worth recording. From 2 November 2026 GitHub stopped delivering most of this cron:
+# through 1 November it fired 21 to 35 times a day against the 48 asked for, and from the
+# 2nd it fired 4, then 3, then 1 -- every one of them succeeding, so nothing here was
+# broken and nothing showed up as a failure. The page simply went five to eight hours
+# between refreshes. The schedule event is best-effort by GitHub's own documentation and
+# can be dropped under load, and other repositories reported the same collapse over the
+# same days.
+#
+# The usual fix is an outside scheduler calling workflow_dispatch, which needs a token
+# with Actions write access. This repository does not do that: no personal access token,
+# no secret, nothing credential-shaped changing hands. So instead of asking GitHub for
+# more firings, each firing it does deliver now does the work of many -- it builds, waits
+# half an hour, and builds again, for as long as a hosted runner is allowed to live. Four
+# firings a day of that covers the day; and if GitHub ever goes back to delivering the
+# schedule properly, a fresh firing cancels the loop and takes over, so this costs
+# nothing when it is not needed.
+#
+# The page has to live next to the code rather than on a branch of its own, because a
+# scheduled workflow only ever runs from the repository's default branch.
 #
 # The ledgers are the models' memory: every pick they have ever made, frozen at kickoff.
 # They are committed back too, so the next run picks up where this one left off.
@@ -27,14 +47,21 @@ on:
 permissions:
   contents: write
 
+# cancel-in-progress matters now that a run lives for hours. With it false a new firing
+# would queue behind the loop, and GitHub keeps only one pending run per group, so any
+# firing after that would be thrown away -- the opposite of what is wanted when firings
+# are the scarce thing. True means the newest firing wins: it cancels the loop and starts
+# a fresh build. At worst one build's work is lost, because the loop commits after every
+# build rather than at the end.
 concurrency:
   group: publish
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    # A GitHub-hosted job may live six hours; this stops just short of it.
+    timeout-minutes: 350
 
     steps:
       - uses: actions/checkout@v4
@@ -94,53 +121,29 @@ jobs:
           key: ${{ steps.ck.outputs.key }}
           restore-keys: projdata-
 
-      # Hand last run's page to the builder. Days that are settled and already built are
-      # kept as they are, so each run only recomputes what actually moved.
-      - name: Seed the previous page
-        run: |
-          mkdir -p _site
-          for p in index.html .nojekyll d lib; do
-            if [ -e "$p" ]; then cp -R "$p" _site/; fi
-          done
-          echo "seeded $(find _site -type f | wc -l) file(s) from the last run"
-
-      # The build keeps its own log, committed with the page, so what a run did -- and what
-      # it could not reach -- can be read afterwards from the repository itself.
-      - name: Build the page
+      # One build, then another every half hour until the runner's time is nearly up.
+      # Everything a single build used to do as four separate steps happens here per pass,
+      # because steps cannot repeat: seed the previous page, build, move it into place if
+      # the build worked, and commit.
+      - name: Build and publish, every half hour until the runner's time is up
         env:
           SITE_BUILD_ONLY: "1"
           TZ: America/Edmonton
+          LOOP_MINUTES: "320"     # stop starting new builds after this long
+          EVERY_MINUTES: "30"     # how far apart builds start
         run: |
-          set -o pipefail
-          mkdir -p _log
-          Rscript -e 'options(site.app_dir = getwd(), site.home = file.path(getwd(), "_site")); source("publish_site.R")' 2>&1 | tee _log/build.txt
+          set -u
+          # Seconds internally, so the loop can be exercised in a test without waiting
+          # half an hour a pass. Nothing sets these two in the workflow.
+          INTERVAL=${INTERVAL_SECONDS:-$(( EVERY_MINUTES * 60 ))}
+          DEADLINE=${DEADLINE_SECONDS:-$(( LOOP_MINUTES * 60 ))}
+          started=$SECONDS
+          pass=0
+          ok_count=0
+          fail_count=0
 
-      - name: Save the data caches
-        if: always()
-        uses: actions/cache/save@v4
-        with:
-          path: |
-            nfl_cache
-            proj_cache
-          key: ${{ steps.ck.outputs.key }}
-
-      # Only on a good build: a failed one must not take the live page down with it.
-      - name: Move the page into place
-        run: |
-          rm -rf d lib index.html .nojekyll
-          cp -R _site/. .
-          rm -rf _site
-          touch .nojekyll
-          echo "page is $(find d lib index.html -type f 2>/dev/null | wc -l) file(s)"
-
-      # Runs even after a failed build, so whatever the models did learn is not thrown away.
-      - name: Commit the page and the ledgers
-        if: always()
-        run: |
-          set -e
           git config user.name  "projections-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          MSG="page $(TZ=America/Edmonton date '+%Y-%m-%d %H:%M %Z')"
 
           # Only the page, the ledgers and the log -- never anything the runner left behind.
           # git add fails outright on a path that does not exist, and after a build that died
@@ -155,20 +158,93 @@ jobs:
             if [ ${#p[@]} -gt 0 ]; then git add -A -- "${p[@]}"; fi
           }
 
-          stage
-          if git diff --cached --quiet; then echo "nothing changed"; exit 0; fi
-          git commit -q -m "$MSG"
-          if git push; then exit 0; fi
+          publish() {
+            MSG="page $(TZ=America/Edmonton date '+%Y-%m-%d %H:%M %Z')"
+            stage
+            if git diff --cached --quiet; then echo "nothing changed"; return 0; fi
+            git commit -q -m "$MSG"
+            if git push 2>/dev/null; then echo "published: $MSG"; return 0; fi
 
-          # Something else published while this run was building. The page is regenerated
-          # whole every time, so rebasing it would only conflict with itself: instead put
-          # this run's page and ledgers on top of the new tip and let the newer build win,
-          # while keeping any code change that landed in the meantime.
-          echo "push rejected -- replaying this run's page on top of the new tip"
-          git fetch -q origin "$GITHUB_REF_NAME"
-          git reset -q --soft "origin/$GITHUB_REF_NAME"
-          git reset -q
-          stage
-          if git diff --cached --quiet; then echo "nothing left to commit"; exit 0; fi
-          git commit -q -m "$MSG"
-          git push
+            # Something else published while this build was running. The page is
+            # regenerated whole every time, so rebasing it would only conflict with
+            # itself: instead put this build's page and ledgers on top of the new tip and
+            # let the newer build win, while keeping any code change that landed meanwhile.
+            echo "push rejected -- replaying this build's page on top of the new tip"
+            git fetch -q origin "$GITHUB_REF_NAME"
+            git reset -q --soft "origin/$GITHUB_REF_NAME"
+            git reset -q
+            stage
+            if git diff --cached --quiet; then echo "nothing left to commit"; return 0; fi
+            git commit -q -m "$MSG"
+            git push
+          }
+
+          while : ; do
+            pass=$((pass + 1))
+            echo "::group::build $pass -- $(date -u '+%F %T') UTC, $(( (SECONDS - started) / 60 ))m in"
+
+            # Start each pass from whatever is now on the branch. The ledgers are the
+            # models' memory, so building from a stale copy would quietly throw away the
+            # last pass's grading.
+            git fetch -q origin "$GITHUB_REF_NAME"
+            git reset -q --hard "origin/$GITHUB_REF_NAME"
+
+            # Hand the last page to the builder. Days that are settled and already built
+            # are kept as they are, so each pass only recomputes what actually moved.
+            rm -rf _site
+            mkdir -p _site _log
+            for f in index.html .nojekyll d lib; do
+              if [ -e "$f" ]; then cp -R "$f" _site/; fi
+            done
+
+            built=0
+            if ( set -o pipefail
+                 Rscript -e 'options(site.app_dir = getwd(), site.home = file.path(getwd(), "_site")); source("publish_site.R")' 2>&1 \
+                   | tee _log/build.txt ); then
+              built=1
+            fi
+
+            if [ "$built" = 1 ]; then
+              # Only on a good build: a failed one must not take the live page down with it.
+              rm -rf d lib index.html .nojekyll
+              cp -R _site/. .
+              touch .nojekyll
+              ok_count=$((ok_count + 1))
+              echo "page is $(find d lib index.html -type f 2>/dev/null | wc -l) file(s)"
+            else
+              fail_count=$((fail_count + 1))
+              echo "build $pass FAILED -- the live page is left as it is"
+            fi
+            rm -rf _site
+
+            # Committed even after a failed build, so whatever the models did learn --
+            # and the log saying what went wrong -- is not thrown away.
+            publish || echo "could not publish build $pass"
+            echo "::endgroup::"
+
+            if [ $(( SECONDS - started )) -ge "$DEADLINE" ]; then
+              echo "$(( (SECONDS - started) / 60 ))m in -- stopping. $pass build(s): $ok_count ok, $fail_count failed."
+              break
+            fi
+
+            # Start builds on a fixed cadence rather than back to back, so the gap between
+            # pages is even however long a build took. A build that overran its slot waits
+            # for the next one rather than firing immediately.
+            wait_for=$(( INTERVAL - (SECONDS - started) % INTERVAL ))
+            echo "next build in $(( wait_for / 60 ))m $(( wait_for % 60 ))s"
+            sleep "$wait_for"
+          done
+
+      # Saved once, at the end, rather than after every build: several hundred megabytes of
+      # league data and API responses. A cache failure must not mark a run failed when the
+      # pages it published are already live, and a key written earlier in the same six-hour
+      # bucket makes a save a no-op complaint.
+      - name: Save the data caches
+        if: always()
+        continue-on-error: true
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            nfl_cache
+            proj_cache
+          key: ${{ steps.ck.outputs.key }}
