@@ -617,24 +617,24 @@
 "NHL","401892636","2026-11-04 00:30:00","Edmonton @ New Jersey","New Jersey","home",0.589,0.5934,1.617,-0.0474,"DraftKings","2026-11-04 00:15:04","W",0.617
 "NHL","401892642","2026-11-04 01:00:00","Carolina @ Nashville","Carolina","away",0.6039,0.6369,1.505,-0.0911,"DraftKings","2026-11-04 00:15:04","L",-1
 "NHL","401892643","2026-11-04 02:00:00","Anaheim @ Vancouver","Anaheim","away",0.5327,0.6309,1.521,-0.1898,"DraftKings","2026-11-04 00:15:04","W",0.521
-"NBA","401909922","2026-11-05 00:00:00","Philadelphia 76ers @ Detroit Pistons","Detroit Pistons","home",0.6919,0.5635,1.704,0.1792,"DraftKings","2026-11-04 14:28:46",NA,NA
-"NBA","401909923","2026-11-05 00:00:00","Atlanta Hawks @ Washington Wizards","Atlanta Hawks","away",0.5575,0.584,1.645,-0.0828,"DraftKings","2026-11-04 14:28:46",NA,NA
-"NBA","401909924","2026-11-05 00:30:00","Milwaukee Bucks @ Boston Celtics","Boston Celtics","home",0.8159,0.8167,1.176,-0.0402,"DraftKings","2026-11-04 14:28:46",NA,NA
-"NBA","401909925","2026-11-05 00:30:00","Charlotte Hornets @ Brooklyn Nets","Brooklyn Nets","home",0.5166,0.4066,2.36,0.2191,"DraftKings","2026-11-04 14:28:46",NA,NA
-"NBA","401909926","2026-11-05 00:30:00","Chicago Bulls @ New York Knicks","New York Knicks","home",0.7929,0.823,1.168,-0.0743,"DraftKings","2026-11-04 14:28:46",NA,NA
-"NBA","401909927","2026-11-05 01:00:00","Indiana Pacers @ Memphis Grizzlies","Memphis Grizzlies","home",0.7501,0.6903,1.391,0.0432,"DraftKings","2026-11-04 14:28:46",NA,NA
-"NBA","401909928","2026-11-05 01:00:00","Utah Jazz @ New Orleans Pelicans","New Orleans Pelicans","home",0.6987,0.6677,1.439,0.0052,"DraftKings","2026-11-04 14:28:46",NA,NA
-"NBA","401909929","2026-11-05 01:00:00","Cleveland Cavaliers @ Oklahoma City Thunder","Oklahoma City Thunder","home",0.6036,0.584,1.645,-0.007,"DraftKings","2026-11-04 14:28:46",NA,NA
-"NBA","401909930","2026-11-05 01:30:00","Minnesota Timberwolves @ Houston Rockets","Houston Rockets","home",0.6075,0.7132,1.347,-0.1815,"DraftKings","2026-11-04 14:28:46",NA,NA
-"NBA","401909931","2026-11-05 02:00:00","Toronto Raptors @ Denver Nuggets","Toronto Raptors","away",0.5133,0.3691,2.6,0.3347,"DraftKings","2026-11-04 14:28:46",NA,NA
-"NBA","401909932","2026-11-05 02:00:00","Portland Trail Blazers @ Phoenix Suns","Portland Trail Blazers","away",0.6003,0.583,1.645,-0.0124,"DraftKings","2026-11-04 14:28:46",NA,NA
-"NBA","401909933","2026-11-05 02:30:00","Dallas Mavericks @ San Antonio Spurs","San Antonio Spurs","home",0.73,0.8167,1.176,-0.1412,"DraftKings","2026-11-04 14:28:46",NA,NA
-"NBA","401909934","2026-11-05 03:00:00","Los Angeles Lakers @ Sacramento Kings","Los Angeles Lakers","away",0.7248,0.8176,1.175,-0.148,"DraftKings","2026-11-04 14:28:46",NA,NA
-"NBA","401909935","2026-11-05 03:30:00","Miami Heat @ LA Clippers","LA Clippers","home",0.5534,0.3635,2.64,0.4609,"DraftKings","2026-11-04 14:28:46",NA,NA
-"NCAAF","401866455","2026-11-05 00:00:00","Ball State @ Massachusetts","Massachusetts","home",0.714,0.583,1.645,0.1747,"DraftKings","2026-11-04 14:28:46",NA,NA
-"NCAAF","401866457","2026-11-05 00:00:00","Toledo @ Sacramento State","Toledo","away",0.8528,0.9311,1.036,-0.1168,"DraftKings","2026-11-04 14:28:46",NA,NA
-"NCAAF","401866456","2026-11-05 00:30:00","Central Michigan @ Eastern Michigan","Central Michigan","away",0.6423,0.4826,1.98,0.2719,"DraftKings","2026-11-04 14:28:46",NA,NA
-"NHL","401892644","2026-11-05 00:30:00","Ottawa @ Buffalo","Buffalo","home",0.5507,0.5427,1.769,-0.0256,"DraftKings","2026-11-04 14:28:46",NA,NA
-"NHL","401892645","2026-11-05 00:30:00","Chicago @ Florida","Florida","home",0.6682,0.6908,1.388,-0.0728,"DraftKings","2026-11-04 14:28:46",NA,NA
-"NHL","401892646","2026-11-05 03:00:00","San Jose @ Los Angeles","Los Angeles","home",0.5857,0.583,1.645,-0.0365,"DraftKings","2026-11-04 14:28:46",NA,NA
-"NHL","401892647","2026-11-05 03:00:00","Calgary @ Seattle","Seattle","home",0.5437,0.5514,1.741,-0.0535,"DraftKings","2026-11-04 14:28:46",NA,NA
+"NBA","401909922","2026-11-05 00:00:00","Philadelphia 76ers @ Detroit Pistons","Detroit Pistons","home",0.6919,0.5534,1.735,0.2007,"DraftKings","2026-11-04 14:58:34",NA,NA
+"NBA","401909923","2026-11-05 00:00:00","Atlanta Hawks @ Washington Wizards","Atlanta Hawks","away",0.5575,0.584,1.645,-0.0828,"DraftKings","2026-11-04 14:58:34",NA,NA
+"NBA","401909924","2026-11-05 00:30:00","Milwaukee Bucks @ Boston Celtics","Boston Celtics","home",0.8159,0.8167,1.176,-0.0402,"DraftKings","2026-11-04 14:58:34",NA,NA
+"NBA","401909925","2026-11-05 00:30:00","Charlotte Hornets @ Brooklyn Nets","Brooklyn Nets","home",0.5166,0.3968,2.42,0.2501,"DraftKings","2026-11-04 14:58:34",NA,NA
+"NBA","401909926","2026-11-05 00:30:00","Chicago Bulls @ New York Knicks","New York Knicks","home",0.7929,0.823,1.168,-0.0743,"DraftKings","2026-11-04 14:58:34",NA,NA
+"NBA","401909927","2026-11-05 01:00:00","Indiana Pacers @ Memphis Grizzlies","Memphis Grizzlies","home",0.7501,0.6903,1.391,0.0432,"DraftKings","2026-11-04 14:58:34",NA,NA
+"NBA","401909928","2026-11-05 01:00:00","Utah Jazz @ New Orleans Pelicans","New Orleans Pelicans","home",0.6987,0.6677,1.439,0.0052,"DraftKings","2026-11-04 14:58:34",NA,NA
+"NBA","401909929","2026-11-05 01:00:00","Cleveland Cavaliers @ Oklahoma City Thunder","Oklahoma City Thunder","home",0.6036,0.584,1.645,-0.007,"DraftKings","2026-11-04 14:58:34",NA,NA
+"NBA","401909930","2026-11-05 01:30:00","Minnesota Timberwolves @ Houston Rockets","Houston Rockets","home",0.6075,0.7132,1.347,-0.1815,"DraftKings","2026-11-04 14:58:34",NA,NA
+"NBA","401909931","2026-11-05 02:00:00","Toronto Raptors @ Denver Nuggets","Toronto Raptors","away",0.5133,0.3691,2.6,0.3347,"DraftKings","2026-11-04 14:58:34",NA,NA
+"NBA","401909932","2026-11-05 02:00:00","Portland Trail Blazers @ Phoenix Suns","Portland Trail Blazers","away",0.6003,0.583,1.645,-0.0124,"DraftKings","2026-11-04 14:58:34",NA,NA
+"NBA","401909933","2026-11-05 02:30:00","Dallas Mavericks @ San Antonio Spurs","San Antonio Spurs","home",0.73,0.8167,1.176,-0.1412,"DraftKings","2026-11-04 14:58:34",NA,NA
+"NBA","401909934","2026-11-05 03:00:00","Los Angeles Lakers @ Sacramento Kings","Los Angeles Lakers","away",0.7248,0.8239,1.167,-0.1544,"DraftKings","2026-11-04 14:58:34",NA,NA
+"NBA","401909935","2026-11-05 03:30:00","Miami Heat @ LA Clippers","LA Clippers","home",0.5534,0.3635,2.64,0.4609,"DraftKings","2026-11-04 14:58:34",NA,NA
+"NCAAF","401866455","2026-11-05 00:00:00","Ball State @ Massachusetts","Massachusetts","home",0.714,0.583,1.645,0.1747,"DraftKings","2026-11-04 14:58:34",NA,NA
+"NCAAF","401866457","2026-11-05 00:00:00","Toledo @ Sacramento State","Toledo","away",0.8528,0.9311,1.036,-0.1168,"DraftKings","2026-11-04 14:58:34",NA,NA
+"NCAAF","401866456","2026-11-05 00:30:00","Central Michigan @ Eastern Michigan","Central Michigan","away",0.6423,0.4826,1.98,0.2719,"DraftKings","2026-11-04 14:58:34",NA,NA
+"NHL","401892644","2026-11-05 00:30:00","Ottawa @ Buffalo","Buffalo","home",0.5507,0.5427,1.769,-0.0256,"DraftKings","2026-11-04 14:58:34",NA,NA
+"NHL","401892645","2026-11-05 00:30:00","Chicago @ Florida","Florida","home",0.6682,0.6908,1.388,-0.0728,"DraftKings","2026-11-04 14:58:34",NA,NA
+"NHL","401892646","2026-11-05 03:00:00","San Jose @ Los Angeles","Los Angeles","home",0.5857,0.583,1.645,-0.0365,"DraftKings","2026-11-04 14:58:34",NA,NA
+"NHL","401892647","2026-11-05 03:00:00","Calgary @ Seattle","Seattle","home",0.5437,0.5514,1.741,-0.0535,"DraftKings","2026-11-04 14:58:34",NA,NA
