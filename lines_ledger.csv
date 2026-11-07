@@ -664,7 +664,7 @@
 "NBA","401909291","2026-11-07 01:00:00","Oklahoma City Thunder @ Memphis Grizzlies","Memphis Grizzlies","home",0.5298,0.3903,2.46,0.3032,"DraftKings","2026-11-07 00:37:05","L",-1
 "NBA","401909292","2026-11-07 01:00:00","Toronto Raptors @ Milwaukee Bucks","Toronto Raptors","away",0.6839,0.5934,1.617,0.1061,"DraftKings","2026-11-07 00:37:05","W",0.617
 "NBA","401909293","2026-11-07 01:00:00","Minnesota Timberwolves @ New Orleans Pelicans","Minnesota Timberwolves","away",0.6372,0.5996,1.602,0.0211,"DraftKings","2026-11-07 00:37:05","W",0.602
-"NCAAF","401858510","2026-11-07 01:00:00","Nebraska @ Illinois","Nebraska","away",0.6941,0.6309,1.521,0.0556,"DraftKings","2026-11-07 00:37:05",NA,NA
+"NCAAF","401858510","2026-11-07 01:00:00","Nebraska @ Illinois","Nebraska","away",0.6941,0.6309,1.521,0.0556,"DraftKings","2026-11-07 00:37:05","L",-1
 "NHL","401892661","2026-11-07 01:00:00","Anaheim @ Calgary","Calgary","home",0.5766,0.5721,1.676,-0.0338,"DraftKings","2026-11-07 00:37:05","L",-1
 "NHL","401892660","2026-11-07 01:00:00","San Jose @ Minnesota","Minnesota","home",0.6638,0.7095,1.351,-0.1033,"DraftKings","2026-11-07 00:37:05","W",0.351
 "NCAAF","401864533","2026-11-07 02:00:00","New Mexico @ Nevada","New Mexico","away",0.7748,0.7715,1.244,-0.0362,"DraftKings","2026-11-07 01:36:32",NA,NA
