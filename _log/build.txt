@@ -1,4 +1,4 @@
-2026-11-07 22:26:55 building the page from /home/runner/work/projections/projections/Projections.R
+2026-11-07 22:56:55 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -9,28 +9,28 @@ To publish the web page, run:  source("publish_site.R")   (Shiny version: source
 Slate      | 0 games · none graded yet
 Cache      | 596 files (5.9 MB) · 23 served from disk, 1 fetched
 CFB td     | 23514 graded prop(s) on file; the earliest slates have nothing before them to correct against
-NHL rating | fitted on 75% shots, 25% goals; shots joined for 8400 of 15880 team-game(s) (53%), the rest fall back to the goal margin
+NHL rating | fitted on 75% shots, 25% goals; shots joined for 8400 of 15884 team-game(s) (53%), the rest fall back to the goal margin
 NHL goalie | 16798 appearance(s), 8400 start(s), 168 goalie(s), 4 season(s) 2023-2026
 NHL goalie | starter edge on 4169 of 14856 game(s) (28%); sd 0.179, range -0.74 to +0.69 goals
-NHL        | 273 final game(s) this season, 273 with box scores, 0 missing
-NHL        | latest final: 2026-11-07 (game 2026020273) | today 2026-11-07 has 12 game(s), 9 final | feed 6 hit / 9 fetched
-NHL goalie | 1092 appearance(s) across 273 game(s); 546 identifiable starter(s), 82 distinct goalie(s)
+NHL        | 275 final game(s) this season, 275 with box scores, 0 missing
+NHL        | latest final: 2026-11-07 (game 2026020275) | today 2026-11-07 has 12 game(s), 11 final | feed 6 hit / 9 fetched
+NHL goalie | 1100 appearance(s) across 275 game(s); 550 identifiable starter(s), 82 distinct goalie(s)
 NHL goalie | fields present -- toi 100%, shots 100%, saves 100%, goals against 100%
-NHL goalie | starters league save pct 0.8916 over 14541 shots
+NHL goalie | starters league save pct 0.8917 over 14643 shots
 NHL goalie | measured +0.35 goals of margin per goal of starter edge (se 0.23) on 7667 prior-season game(s) -- NOT used: needs the right sign and two standard errors
 NHL b2b    | measured -0.25 goals of margin on the second night of a back-to-back (se 0.06) on 7667 prior-season game(s) -- used
 NBA star   | leading man identified for 30 team(s) from the last 15 game(s); e.g. Jalen Johnson 32 min, Kevin Durant 35 min, Andrew Nembhard 33 min
-NBA ingest | 6 of 6 finished game(s) read from the summary feed (60 name(s)); history ends 2026-11-06
+NBA ingest | 7 of 7 finished game(s) read from the summary feed (70 name(s)); history ends 2026-11-06
 NBA star   | a side missing its leading man measured -3.32 points of margin (se 0.39) on 12000 prior-season game(s) -- used
 NBA roster | 14 of 14 team(s) returned a roster (240 name(s))
 NBA line-up| 7 of 7 game(s) within 8h of tip-off returned a five (70 name(s))
-2026-11-07 22:27:36   today  21.9s
+2026-11-07 22:57:37   today  21.7s
 CFB td     | recalibrated on 11381 graded prop(s) settled before this slate: slope 1.19, shift -0.22 -- a raw 25% becomes 18%, a raw 60% becomes 57%
 CFB qb     | passer found for 247 team(s), 14 flagged in all; of the 134 side(s) on THIS board, 110 could be checked and 14 are flagged; injury feed returned 3 row(s) with 1 listed out
 NBA roster | 14 of 14 team(s) returned a roster (240 name(s))
 NBA line-up| 7 of 7 game(s) within 8h of tip-off returned a five (70 name(s))
-2026-11-07 22:27:51   nfl     9.4s  3 built, 10 to pick from
-2026-11-07 22:28:05   cfb    13.3s  3 built, 12 to pick from
+2026-11-07 22:57:52   nfl     9.4s  3 built, 10 to pick from
+2026-11-07 22:58:05   cfb    13.3s  3 built, 12 to pick from
 
 ── Slate 2026-11-06 ──
 Slate      | 0 games · none graded yet
@@ -55,12 +55,12 @@ Cache      | 596 files (5.9 MB) · 19 served from disk, 1 fetched
 ── Slate 2026-11-10 ──
 Slate      | 0 games · none graded yet
 Cache      | 596 files (5.9 MB) · 19 served from disk, 1 fetched
-2026-11-07 22:28:19   mlb    13.7s  5 built, 5 to pick from
-2026-11-07 22:28:20   nhl     1.6s  5 built, 18 to pick from
+2026-11-07 22:58:21   mlb    14.8s  5 built, 5 to pick from
+2026-11-07 22:58:22   nhl     1.4s  5 built, 18 to pick from
 NBA roster | 14 of 14 team(s) returned a roster (240 name(s))
 NBA line-up| 7 of 7 game(s) within 8h of tip-off returned a five (70 name(s))
 NBA roster | 14 of 14 team(s) returned a roster (246 name(s))
 NBA roster | 16 of 16 team(s) returned a roster (280 name(s))
 NBA roster | 12 of 12 team(s) returned a roster (208 name(s))
-2026-11-07 22:28:22   nba     2.1s  5 built, 17 to pick from
-2026-11-07 22:28:22 built 15823 KB in 87s
+2026-11-07 22:58:24   nba     2.0s  5 built, 17 to pick from
+2026-11-07 22:58:24 built 15827 KB in 89s
