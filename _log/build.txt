@@ -1,4 +1,4 @@
-2026-11-08 12:30:18 building the page from /home/runner/work/projections/projections/Projections.R
+2026-11-08 13:00:17 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -24,12 +24,12 @@ NBA ingest | 1 of 1 finished game(s) read from the summary feed (10 name(s)); hi
 NBA star   | a side missing its leading man measured -3.32 points of margin (se 0.39) on 12000 prior-season game(s) -- used
 NBA roster | 14 of 14 team(s) returned a roster (246 name(s))
 NBA line-up| 0 of 7 game(s) within 8h of tip-off returned a five (0 name(s))
-2026-11-08 12:30:54   today  23.9s
+2026-11-08 13:01:05   today  25.5s
 CFB qb     | passer found for 247 team(s), 19 flagged in all; of the 134 side(s) on THIS board, 133 could be checked and 17 are flagged; injury feed returned 3 row(s) with 1 listed out
 NBA roster | 14 of 14 team(s) returned a roster (246 name(s))
 NBA line-up| 0 of 7 game(s) within 8h of tip-off returned a five (0 name(s))
-2026-11-08 12:31:11   nfl    10.1s  3 built, 10 to pick from
-2026-11-08 12:31:23   cfb    12.1s  3 built, 12 to pick from
+2026-11-08 13:01:20   nfl     9.8s  3 built, 10 to pick from
+2026-11-08 13:01:32   cfb    11.7s  3 built, 12 to pick from
 
 ── Slate 2026-11-07 ──
 Slate      | 0 games · none graded yet
@@ -54,12 +54,12 @@ Cache      | 597 files (5.9 MB) · 20 served from disk, 1 fetched
 ── Slate 2026-11-11 ──
 Slate      | 0 games · none graded yet
 Cache      | 597 files (5.9 MB) · 20 served from disk, 1 fetched
-2026-11-08 12:31:37   mlb    14.3s  5 built, 4 to pick from
-2026-11-08 12:31:39   nhl     1.5s  5 built, 18 to pick from
+2026-11-08 13:01:48   mlb    15.4s  5 built, 4 to pick from
+2026-11-08 13:01:49   nhl     1.4s  5 built, 18 to pick from
 NBA roster | 14 of 14 team(s) returned a roster (246 name(s))
 NBA line-up| 0 of 7 game(s) within 8h of tip-off returned a five (0 name(s))
 NBA roster | 16 of 16 team(s) returned a roster (281 name(s))
 NBA roster | 12 of 12 team(s) returned a roster (208 name(s))
 NBA roster | 20 of 20 team(s) returned a roster (348 name(s))
-2026-11-08 12:31:41   nba     2.2s  5 built, 17 to pick from
-2026-11-08 12:31:41 built 15652 KB in 84s
+2026-11-08 13:01:51   nba     2.2s  5 built, 17 to pick from
+2026-11-08 13:01:52 built 15317 KB in 94s
