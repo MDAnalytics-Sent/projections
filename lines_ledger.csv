@@ -740,29 +740,29 @@
 "NHL","401892673","2026-11-08 03:00:00","Vancouver @ Edmonton","Edmonton","home",0.6638,0.7572,1.267,-0.1591,"DraftKings","2026-11-08 02:58:22","W",0.267
 "NCAAF","401860912","2026-11-08 03:30:00","Texas State @ Oregon State","Oregon State","home",0.6539,0.6369,1.505,-0.0159,"DraftKings","2026-11-08 03:28:23","L",-1
 "NCAAF","401864535","2026-11-08 03:30:00","Wyoming @ UNLV","UNLV","home",0.7816,0.5934,1.617,0.2641,"DraftKings","2026-11-08 03:28:23","L",-1
-"NBA","401909945","2026-11-08 20:30:00","Philadelphia 76ers @ Chicago Bulls","Philadelphia 76ers","away",0.6753,0.7707,1.247,-0.158,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NBA","401909946","2026-11-08 23:00:00","Los Angeles Lakers @ Detroit Pistons","Detroit Pistons","home",0.6514,0.6234,1.541,0.0035,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NBA","401909947","2026-11-09 00:00:00","Utah Jazz @ Minnesota Timberwolves","Minnesota Timberwolves","home",0.8558,0.8184,1.174,0.0049,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NBA","401909948","2026-11-09 00:30:00","Brooklyn Nets @ Dallas Mavericks","Dallas Mavericks","home",0.7343,0.7339,1.309,-0.0391,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NBA","401909949","2026-11-09 01:00:00","Boston Celtics @ Milwaukee Bucks","Boston Celtics","away",0.76,0.8475,1.133,-0.1386,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NBA","401909950","2026-11-09 02:00:00","New Orleans Pelicans @ LA Clippers","LA Clippers","home",0.5756,0.4736,2.03,0.1684,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NBA","401909951","2026-11-09 02:00:00","Miami Heat @ Sacramento Kings","Miami Heat","away",0.6326,0.7707,1.246,-0.2116,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NFL","401873038","2026-11-08 14:30:00","Bengals @ Falcons","Bengals","away",0.6804,0.6164,1.556,0.0584,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NFL","401873041","2026-11-08 18:00:00","Broncos @ Panthers","Broncos","away",0.546,0.5635,1.704,-0.0694,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NFL","401873040","2026-11-08 18:00:00","Cowboys @ Colts","Cowboys","away",0.531,0.669,1.435,-0.2381,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NFL","401873045","2026-11-08 18:00:00","Jets @ Chiefs","Chiefs","home",0.7382,0.8082,1.187,-0.1238,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NFL","401873042","2026-11-08 18:00:00","Lions @ Dolphins","Lions","away",0.6585,0.7221,1.328,-0.1257,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NFL","401873039","2026-11-08 18:00:00","Browns @ Saints","Saints","home",0.6779,0.6038,1.588,0.0767,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NFL","401873044","2026-11-08 18:00:00","Giants @ Eagles","Giants","away",0.5351,0.5934,1.617,-0.1346,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NFL","401873043","2026-11-08 18:00:00","Rams @ Commanders","Rams","away",0.6379,0.675,1.42,-0.0941,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NFL","401873046","2026-11-08 21:05:00","Texans @ Chargers","Texans","away",0.6154,0.675,1.42,-0.1261,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NFL","401873047","2026-11-08 21:25:00","Raiders @ 49ers","49ers","home",0.7627,0.7867,1.22,-0.0696,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NFL","401873049","2026-11-08 21:25:00","Packers @ Patriots","Patriots","home",0.6261,0.6038,1.588,-0.0057,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NFL","401873048","2026-11-08 21:25:00","Cardinals @ Seahawks","Seahawks","home",0.7888,0.7819,1.227,-0.0319,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NFL","401873050","2026-11-09 01:20:00","Buccaneers @ Bears","Bears","home",0.6398,0.6958,1.377,-0.1187,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NHL","401892674","2026-11-08 18:00:00","Florida @ Boston","Boston","home",0.5784,0.5635,1.704,-0.0143,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NHL","401892675","2026-11-08 20:30:00","Vegas @ Buffalo","Buffalo","home",0.504,0.4957,1.926,-0.0293,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NHL","401892677","2026-11-08 23:00:00","Tampa Bay @ Winnipeg","Winnipeg","home",0.5057,0.4279,2.24,0.1329,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NHL","401892676","2026-11-09 00:00:00","New Jersey @ Toronto","New Jersey","away",0.5657,0.583,1.645,-0.0694,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NHL","401892678","2026-11-09 00:00:00","Philadelphia @ Calgary","Calgary","home",0.5535,0.4826,1.98,0.0961,"DraftKings","2026-11-08 13:48:38",NA,NA
-"NHL","401892679","2026-11-09 01:00:00","Pittsburgh @ Anaheim","Anaheim","home",0.569,0.5217,1.833,0.0432,"DraftKings","2026-11-08 13:48:38",NA,NA
+"NBA","401909945","2026-11-08 20:30:00","Philadelphia 76ers @ Chicago Bulls","Philadelphia 76ers","away",0.6753,0.7707,1.247,-0.158,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NBA","401909946","2026-11-08 23:00:00","Los Angeles Lakers @ Detroit Pistons","Detroit Pistons","home",0.6514,0.6234,1.541,0.0035,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NBA","401909947","2026-11-09 00:00:00","Utah Jazz @ Minnesota Timberwolves","Minnesota Timberwolves","home",0.8558,0.8184,1.174,0.0049,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NBA","401909948","2026-11-09 00:30:00","Brooklyn Nets @ Dallas Mavericks","Dallas Mavericks","home",0.7343,0.7339,1.309,-0.0391,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NBA","401909949","2026-11-09 01:00:00","Boston Celtics @ Milwaukee Bucks","Boston Celtics","away",0.76,0.8475,1.133,-0.1386,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NBA","401909950","2026-11-09 02:00:00","New Orleans Pelicans @ LA Clippers","LA Clippers","home",0.5756,0.4736,2.03,0.1684,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NBA","401909951","2026-11-09 02:00:00","Miami Heat @ Sacramento Kings","Miami Heat","away",0.6326,0.7713,1.245,-0.2124,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NFL","401873038","2026-11-08 14:30:00","Bengals @ Falcons","Bengals","away",0.6804,0.6164,1.556,0.0584,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NFL","401873041","2026-11-08 18:00:00","Broncos @ Panthers","Broncos","away",0.546,0.5635,1.704,-0.0694,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NFL","401873040","2026-11-08 18:00:00","Cowboys @ Colts","Cowboys","away",0.531,0.669,1.435,-0.2381,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NFL","401873045","2026-11-08 18:00:00","Jets @ Chiefs","Chiefs","home",0.7382,0.8082,1.187,-0.1238,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NFL","401873042","2026-11-08 18:00:00","Lions @ Dolphins","Lions","away",0.6585,0.7221,1.328,-0.1257,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NFL","401873039","2026-11-08 18:00:00","Browns @ Saints","Saints","home",0.6779,0.6038,1.588,0.0767,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NFL","401873044","2026-11-08 18:00:00","Giants @ Eagles","Giants","away",0.5351,0.5934,1.617,-0.1346,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NFL","401873043","2026-11-08 18:00:00","Rams @ Commanders","Rams","away",0.6379,0.675,1.42,-0.0941,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NFL","401873046","2026-11-08 21:05:00","Texans @ Chargers","Texans","away",0.6154,0.669,1.435,-0.1171,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NFL","401873047","2026-11-08 21:25:00","Raiders @ 49ers","49ers","home",0.7627,0.7867,1.22,-0.0696,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NFL","401873049","2026-11-08 21:25:00","Packers @ Patriots","Patriots","home",0.6261,0.6038,1.588,-0.0057,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NFL","401873048","2026-11-08 21:25:00","Cardinals @ Seahawks","Seahawks","home",0.7888,0.7819,1.227,-0.0319,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NFL","401873050","2026-11-09 01:20:00","Buccaneers @ Bears","Bears","home",0.6398,0.6958,1.377,-0.1187,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NHL","401892674","2026-11-08 18:00:00","Florida @ Boston","Boston","home",0.5784,0.5635,1.704,-0.0143,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NHL","401892675","2026-11-08 20:30:00","Vegas @ Buffalo","Buffalo","home",0.504,0.4957,1.926,-0.0293,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NHL","401892677","2026-11-08 23:00:00","Tampa Bay @ Winnipeg","Winnipeg","home",0.5057,0.4279,2.24,0.1329,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NHL","401892676","2026-11-09 00:00:00","New Jersey @ Toronto","New Jersey","away",0.5657,0.583,1.645,-0.0694,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NHL","401892678","2026-11-09 00:00:00","Philadelphia @ Calgary","Calgary","home",0.5535,0.4826,1.98,0.0961,"DraftKings","2026-11-08 14:18:38",NA,NA
+"NHL","401892679","2026-11-09 01:00:00","Pittsburgh @ Anaheim","Anaheim","home",0.569,0.5217,1.833,0.0432,"DraftKings","2026-11-08 14:18:38",NA,NA
