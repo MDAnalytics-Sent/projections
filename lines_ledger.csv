@@ -755,8 +755,8 @@
 "NFL","401873047","2026-11-08 21:25:00","Raiders @ 49ers","49ers","home",0.7627,0.7715,1.244,-0.0512,"DraftKings","2026-11-08 21:01:55","W",0.244
 "NFL","401873049","2026-11-08 21:25:00","Packers @ Patriots","Patriots","home",0.6258,0.6225,1.541,-0.036,"DraftKings","2026-11-08 21:01:55","L",-1
 "NFL","401873048","2026-11-08 21:25:00","Cardinals @ Seahawks","Seahawks","home",0.7888,0.7867,1.22,-0.0378,"DraftKings","2026-11-08 21:01:55","W",0.22
-"NBA","401909946","2026-11-08 23:00:00","Los Angeles Lakers @ Detroit Pistons","Detroit Pistons","home",0.6514,0.7055,1.361,-0.1134,"DraftKings","2026-11-08 22:59:45",NA,NA
-"NHL","401892677","2026-11-08 23:00:00","Tampa Bay @ Winnipeg","Winnipeg","home",0.5057,0.4066,2.36,0.1935,"DraftKings","2026-11-08 22:59:45",NA,NA
+"NBA","401909946","2026-11-08 23:00:00","Los Angeles Lakers @ Detroit Pistons","Detroit Pistons","home",0.6514,0.7055,1.361,-0.1134,"DraftKings","2026-11-08 22:59:45","L",-1
+"NHL","401892677","2026-11-08 23:00:00","Tampa Bay @ Winnipeg","Winnipeg","home",0.5057,0.4066,2.36,0.1935,"DraftKings","2026-11-08 22:59:45","W",1.36
 "NBA","401909947","2026-11-09 00:00:00","Utah Jazz @ Minnesota Timberwolves","Minnesota Timberwolves","home",0.8558,0.8409,1.143,-0.022,"DraftKings","2026-11-08 23:59:45",NA,NA
 "NHL","401892676","2026-11-09 00:00:00","New Jersey @ Toronto","New Jersey","away",0.5657,0.5934,1.617,-0.0851,"DraftKings","2026-11-08 23:59:45",NA,NA
 "NHL","401892678","2026-11-09 00:00:00","Philadelphia @ Calgary","Calgary","home",0.5535,0.4826,1.98,0.0961,"DraftKings","2026-11-08 23:59:45",NA,NA
@@ -764,5 +764,5 @@
 "NBA","401909949","2026-11-09 01:00:00","Boston Celtics @ Milwaukee Bucks","Boston Celtics","away",0.76,0.8527,1.127,-0.1438,"DraftKings","2026-11-09 00:59:45",NA,NA
 "NHL","401892679","2026-11-09 01:00:00","Pittsburgh @ Anaheim","Anaheim","home",0.569,0.5217,1.833,0.0432,"DraftKings","2026-11-09 00:59:45",NA,NA
 "NFL","401873050","2026-11-09 01:20:00","Buccaneers @ Bears","Bears","home",0.6403,0.7002,1.37,-0.1225,"DraftKings","2026-11-09 01:00:50",NA,NA
-"NBA","401909950","2026-11-09 02:00:00","New Orleans Pelicans @ LA Clippers","LA Clippers","home",0.5756,0.4736,2.03,0.1684,"DraftKings","2026-11-09 01:31:04",NA,NA
-"NBA","401909951","2026-11-09 02:00:00","Miami Heat @ Sacramento Kings","Miami Heat","away",0.6326,0.8194,1.172,-0.2584,"DraftKings","2026-11-09 01:31:04",NA,NA
+"NBA","401909950","2026-11-09 02:00:00","New Orleans Pelicans @ LA Clippers","LA Clippers","home",0.5756,0.4593,2.09,0.203,"DraftKings","2026-11-09 01:59:48",NA,NA
+"NBA","401909951","2026-11-09 02:00:00","Miami Heat @ Sacramento Kings","Miami Heat","away",0.6326,0.8277,1.161,-0.2654,"DraftKings","2026-11-09 01:59:48",NA,NA
