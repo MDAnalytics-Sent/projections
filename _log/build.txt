@@ -1,4 +1,4 @@
-2026-11-09 07:41:39 building the page from /home/runner/work/projections/projections/Projections.R
+2026-11-09 08:11:40 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -13,7 +13,7 @@ NHL rating | fitted on 75% shots, 25% goals; shots joined for 8436 of 15898 team
 NHL goalie | 16870 appearance(s), 8436 start(s), 168 goalie(s), 4 season(s) 2023-2026
 NHL goalie | starter edge on 4187 of 14856 game(s) (28%); sd 0.180, range -0.74 to +0.69 goals
 NHL        | 282 final game(s) this season, 282 with box scores, 0 missing
-NHL        | latest final: 2026-11-08 (game 2026020282) | today 2026-11-09 has 3 game(s), 0 final | feed 6 hit / 9 fetched
+NHL        | latest final: 2026-11-08 (game 2026020282) | today 2026-11-09 has 3 game(s), 0 final | feed 5 hit / 10 fetched
 NHL goalie | 1128 appearance(s) across 282 game(s); 564 identifiable starter(s), 82 distinct goalie(s)
 NHL goalie | fields present -- toi 100%, shots 100%, saves 100%, goals against 100%
 NHL goalie | starters league save pct 0.8920 over 15041 shots
@@ -23,11 +23,11 @@ NBA star   | leading man identified for 30 team(s) from the last 15 game(s); e.g
 NBA ingest | 8 of 8 finished game(s) read from the summary feed (80 name(s)); history ends 2026-11-07
 NBA star   | a side missing its leading man measured -3.32 points of margin (se 0.39) on 12000 prior-season game(s) -- used
 NBA roster | 16 of 16 team(s) returned a roster (281 name(s))
-2026-11-09 07:42:44   today  37.8s
+2026-11-09 08:12:47   today  41.0s
 CFB qb     | passer found for 247 team(s), 19 flagged in all; of the 134 side(s) on THIS board, 133 could be checked and 17 are flagged; injury feed returned 3 row(s) with 1 listed out
 NBA roster | 16 of 16 team(s) returned a roster (281 name(s))
-2026-11-09 07:43:11   nfl    16.7s  3 built, 10 to pick from
-2026-11-09 07:43:30   cfb    19.3s  3 built, 12 to pick from
+2026-11-09 08:13:13   nfl    16.0s  3 built, 10 to pick from
+2026-11-09 08:13:33   cfb    20.0s  3 built, 12 to pick from
 
 ── Slate 2026-11-08 ──
 Slate      | 0 games · none graded yet
@@ -35,11 +35,11 @@ Cache      | 598 files (5.9 MB) · 21 served from disk, 0 fetched
 
 ── Slate 2026-11-09 ──
 Slate      | 0 games · none graded yet
-Cache      | 598 files (5.9 MB) · 22 served from disk, 0 fetched
+Cache      | 598 files (5.9 MB) · 17 served from disk, 5 fetched
 
 ── Slate 2026-11-09 ──
 Slate      | 0 games · none graded yet
-Cache      | 598 files (5.9 MB) · 17 served from disk, 5 fetched
+Cache      | 598 files (5.9 MB) · 22 served from disk, 0 fetched
 
 ── Slate 2026-11-10 ──
 Slate      | 0 games · none graded yet
@@ -52,11 +52,11 @@ Cache      | 598 files (5.9 MB) · 21 served from disk, 1 fetched
 ── Slate 2026-11-12 ──
 Slate      | 0 games · none graded yet
 Cache      | 598 files (5.9 MB) · 21 served from disk, 1 fetched
-2026-11-09 07:43:57   mlb    26.3s  5 built, 4 to pick from
-2026-11-09 07:43:59   nhl     2.4s  5 built, 18 to pick from
+2026-11-09 08:14:00   mlb    26.0s  5 built, 4 to pick from
+2026-11-09 08:14:02   nhl     2.4s  5 built, 18 to pick from
 NBA roster | 16 of 16 team(s) returned a roster (281 name(s))
-NBA roster | 12 of 12 team(s) returned a roster (208 name(s))
-NBA roster | 20 of 20 team(s) returned a roster (349 name(s))
+NBA roster | 12 of 12 team(s) returned a roster (207 name(s))
+NBA roster | 20 of 20 team(s) returned a roster (348 name(s))
 NBA roster | 8 of 8 team(s) returned a roster (139 name(s))
-2026-11-09 07:44:03   nba     3.8s  5 built, 17 to pick from
-2026-11-09 07:44:03 built 15823 KB in 144s
+2026-11-09 08:14:07   nba     4.4s  5 built, 17 to pick from
+2026-11-09 08:14:07 built 15822 KB in 147s
