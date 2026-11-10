@@ -1,4 +1,4 @@
-2026-11-10 05:55:41 building the page from /home/runner/work/projections/projections/Projections.R
+2026-11-10 06:25:41 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -27,20 +27,20 @@ NBA star   | leading man identified for 30 team(s) from the last 15 game(s); e.g
 NBA ingest | 9 of 9 finished game(s) read from the summary feed (90 name(s)); history ends 2026-11-08
 NBA star   | a side missing its leading man measured -3.32 points of margin (se 0.39) on 12000 prior-season game(s) -- used
 NBA roster | 12 of 12 team(s) returned a roster (207 name(s))
-2026-11-10 05:57:01   today  40.9s
+2026-11-10 06:26:56   today  38.8s
 CFB qb     | passer found for 247 team(s), 19 flagged in all; of the 134 side(s) on THIS board, 133 could be checked and 17 are flagged; injury feed returned 3 row(s) with 1 listed out
 NHL avail  | goalscorer list gated on the injury feed (121 row(s), 65 team(s) keyed); the GAME projection for these 7 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NBA roster | 12 of 12 team(s) returned a roster (207 name(s))
-2026-11-10 05:57:28   nfl    16.6s  3 built, 11 to pick from
-2026-11-10 05:58:01   cfb    20.9s  3 built, 12 to pick from
+2026-11-10 06:27:24   nfl    17.1s  3 built, 11 to pick from
+2026-11-10 06:27:44   cfb    20.3s  3 built, 12 to pick from
 
 ── Slate 2026-11-09 ──
 Slate      | 0 games · none graded yet
-Cache      | 599 files (5.9 MB) · 18 served from disk, 2 fetched
+Cache      | 599 files (5.9 MB) · 20 served from disk, 0 fetched
 
 ── Slate 2026-11-10 ──
 Slate      | 0 games · none graded yet
-Cache      | 599 files (5.9 MB) · 20 served from disk, 1 fetched
+Cache      | 599 files (5.9 MB) · 18 served from disk, 3 fetched
 
 ── Slate 2026-11-10 ──
 Slate      | 0 games · none graded yet
@@ -57,16 +57,16 @@ Cache      | 599 files (5.9 MB) · 20 served from disk, 1 fetched
 ── Slate 2026-11-13 ──
 Slate      | 0 games · none graded yet
 Cache      | 599 files (5.9 MB) · 20 served from disk, 1 fetched
-2026-11-10 05:58:31   mlb    28.9s  5 built, 3 to pick from
+2026-11-10 06:28:13   mlb    28.3s  5 built, 3 to pick from
 NHL avail  | goalscorer list gated on the injury feed (NO row(s), no team(s) keyed); the GAME projection for these 3 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NHL avail  | goalscorer list gated on the injury feed (121 row(s), 65 team(s) keyed); the GAME projection for these 7 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NHL avail  | goalscorer list gated on the injury feed (121 row(s), 65 team(s) keyed); the GAME projection for these 6 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NHL avail  | goalscorer list gated on the injury feed (121 row(s), 65 team(s) keyed); the GAME projection for these 11 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NHL avail  | goalscorer list gated on the injury feed (121 row(s), 65 team(s) keyed); the GAME projection for these 2 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
-2026-11-10 05:58:34   nhl     3.2s  5 built, 18 to pick from
+2026-11-10 06:28:16   nhl     3.1s  5 built, 18 to pick from
 NBA roster | 12 of 12 team(s) returned a roster (207 name(s))
 NBA roster | 20 of 20 team(s) returned a roster (348 name(s))
 NBA roster | 8 of 8 team(s) returned a roster (139 name(s))
 NBA roster | 18 of 18 team(s) returned a roster (313 name(s))
-2026-11-10 05:58:38   nba     4.0s  5 built, 17 to pick from
-2026-11-10 05:58:38 built 15934 KB in 177s
+2026-11-10 06:28:20   nba     3.9s  5 built, 17 to pick from
+2026-11-10 06:28:20 built 15934 KB in 159s
