@@ -4154,6 +4154,12 @@ QB_MIN_N          <- 100   # flagged games needed before the quarterback term is
 # before Monday. Keyless and public, like the other three.
 NFL_INJ_URL <- "https://site.api.espn.com/apis/site/v2/sports/football/nfl/injuries"
 NFL_INJ_TTL <- 30    # minutes; the feed moves during the day, unlike the weekly report
+# How far ahead the live feed is allowed to speak. It says who is hurt TODAY and carries
+# no date, so without this it marks a side down in week 18 for a hamstring pulled in
+# November -- 34 sides were flagged across 137 remaining games on the first build, most of
+# them months away. A man out this week is usually back by next month; the weekly report
+# is dated and needs no such limit. Same reasoning as CFB_QB_STALE, pointing forwards.
+NFL_INJ_HORIZON_D <- 10
 NFL_INJ_OUT <- c("out", "doubtful", "injured reserve", "suspension", "suspended",
                  "physically unable to perform", "non football injury",
                  "out for season", "season-ending injury")
@@ -5021,7 +5027,9 @@ qb_change_flags <- function(sch, inj = NULL, espn = NULL, tkey = NULL) {
     if (nrow(e)) {
       ek <- unique(paste(e$abbr, e$pkey))
       # the feed speaks names, so the opener's NAME is what gets reduced and compared
-      L$v <- as.integer(L$fut & !is.na(L$openern) & L$openern != "" &
+      # near enough that today's status still describes the game
+      soon <- !is.na(L$ko) & L$ko <= as.numeric(now_et()) + NFL_INJ_HORIZON_D * 86400
+      L$v <- as.integer(L$fut & soon & !is.na(L$openern) & L$openern != "" &
                         paste(L$team, qb_short_key(L$openern)) %in% ek)
       h2 <- L[L$side == "h", ]; a2 <- L[L$side == "a", ]
       sch$h_qbesp[h2$i] <- h2$v; sch$a_qbesp[a2$i] <- a2$v
