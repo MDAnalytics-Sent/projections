@@ -4085,7 +4085,10 @@ CACHE_DIR    <- "nfl_cache"
 CACHE_VER    <- 7
 LEDGER_DIR   <- "nfl_ledger"
 LEDGER_FILE  <- file.path(LEDGER_DIR, "predictions.rds")
-MODEL_VER    <- "epa-pd-qb-v5"      # v5 lets the injury report raise the QB flag, days
+MODEL_VER    <- "epa-pd-qb-v6"      # v6 adds the live ESPN injuries feed, which the
+                                    # NFL alone never had, so a coach's announcement
+                                    # reaches the board the day it is made.
+                                    # v5 lets the injury report raise the QB flag, days
                                     # before the named starter updates (which on
                                     # 2026-11-09 happened ten minutes AFTER kick-off).
                                     # v4 swapped the QB-change term for a persistent one
@@ -4145,6 +4148,15 @@ POLL_MIN          <- 15
 # ---------------------------------------------------------------------------------------
 INJ_OUT           <- c("Out", "Doubtful")
 QB_MIN_N          <- 100   # flagged games needed before the quarterback term is fitted
+# The live ESPN injuries feed for the NFL. NHL, NBA and CFB have each had one of these
+# for months through the same espn_inj() helper; the NFL was simply never given one,
+# which is the whole of why a coach's Thursday announcement could not reach this board
+# before Monday. Keyless and public, like the other three.
+NFL_INJ_URL <- "https://site.api.espn.com/apis/site/v2/sports/football/nfl/injuries"
+NFL_INJ_TTL <- 30    # minutes; the feed moves during the day, unlike the weekly report
+NFL_INJ_OUT <- c("out", "doubtful", "injured reserve", "suspension", "suspended",
+                 "physically unable to perform", "non football injury",
+                 "out for season", "season-ending injury")
 FAR_FUTURE        <- as.POSIXct("2100-01-01", tz = "America/New_York")
 
 TEAM_FIX <- c(STL = "LA", SD = "LAC", OAK = "LV", LAR = "LA", JAC = "JAX", WSH = "WAS")
@@ -4855,16 +4867,51 @@ build_pd_long <- function(sch) {
 #
 # h_qbchg is kept because it costs nothing and records what the old flag saw, but no
 # model reads it any more.
-qb_change_flags <- function(sch, inj = NULL) {
+nfl_inj <- function()
+  espn_inj(NFL_INJ_URL, file.path(CACHE_DIR, sprintf("nfl_inj_v%d.rds", CACHE_VER)),
+           NFL_INJ_TTL, NFL_INJ_OUT)
+
+# ESPN names a team by its display name ("Minnesota Vikings"); this board speaks in
+# abbreviations. load_teams() is already on disk for the colours and carries both, so the
+# mapping costs no extra download.
+nfl_team_key <- function() {
+  f <- teams_file()
+  t <- if (file.exists(f)) try(readRDS(f), silent = TRUE) else NULL
+  if (is.null(t) || inherits(t, "try-error") || !is.data.frame(t) ||
+      !all(c("team_abbr", "team_name") %in% names(t))) return(character(0))
+  ab <- fix_team(t$team_abbr)
+  ok <- !is.na(ab) & !is.na(t$team_name) & t$team_name != ""
+  if (!any(ok)) return(character(0))
+  stats::setNames(ab[ok], nhl_norm(t$team_name[ok]))
+}
+
+# ESPN publishes a player as "K. Murray", so a full name has to be reduced to the same
+# shape before the two can be compared. Matching full names against it finds nothing,
+# quietly -- the failure mode this file keeps producing.
+qb_short_key <- function(full) {
+  full <- as.character(full); full[is.na(full)] <- ""
+  vapply(strsplit(trimws(full), "[[:space:]]+"), function(p) {
+    if (!length(p) || !nzchar(p[1])) return("")
+    nhl_norm(paste0(substr(p[1], 1, 1), p[length(p)]))
+  }, character(1), USE.NAMES = FALSE)
+}
+
+qb_change_flags <- function(sch, inj = NULL, espn = NULL, tkey = NULL) {
   sch$h_qbchg <- 0L; sch$a_qbchg <- 0L
   sch$h_qbbk  <- 0L; sch$a_qbbk  <- 0L
   if (!all(c("home_qb_id", "away_qb_id") %in% names(sch))) return(sch)
   L <- rbind(
     data.frame(i = seq_len(nrow(sch)), season = sch$season, team = sch$home_team,
                ko = as.numeric(sch$ko), qb = as.character(sch$home_qb_id),
+               # The id identifies the man; the name is what the feeds speak. Both are
+               # carried because matching the wrong one fails in silence: the weekly
+               # report was compared id-against-full-name for an hour and could never
+               # have fired, and the test fixture used names so it did not notice.
+               qbn = as.character(sch$home_qb_name %||% rep(NA_character_, nrow(sch))),
                side = "h", stringsAsFactors = FALSE),
     data.frame(i = seq_len(nrow(sch)), season = sch$season, team = sch$away_team,
                ko = as.numeric(sch$ko), qb = as.character(sch$away_qb_id),
+               qbn = as.character(sch$away_qb_name %||% rep(NA_character_, nrow(sch))),
                side = "a", stringsAsFactors = FALSE))
   L$qb[is.na(L$qb)] <- ""
   L <- L[order(L$season, L$team, L$ko), ]
@@ -4916,31 +4963,75 @@ qb_change_flags <- function(sch, inj = NULL) {
   # the report catches the fresh absence, the named starter the established one -- so the
   # flag is the union, and union is also the safe direction: either source alone being
   # silent is what cost last night.
+  # Who opened each team's season, worked out once and shared by both of the sources
+  # below. The week comes from the schedule row each side belongs to: L carries no week
+  # column, and paste() drops a NULL without complaining, so reading L$week once built
+  # the key "2026 MIN murray" instead of "2026 9 MIN murray", matched nothing, and
+  # ignored the report in silence.
+  g <- paste(L$season, L$team)
+  opn <- stats::setNames(rep(NA_character_, 0), character(0))
+  opnm <- stats::setNames(rep(NA_character_, 0), character(0))
+  L$qbn[is.na(L$qbn)] <- ""
+  for (k in unique(g)) {
+    ix <- which(g == k); q <- L$qb[ix]
+    j <- which(q != "")[1]
+    if (!is.na(j)) { opn[k] <- q[ix_first <- j]; opnm[k] <- L$qbn[ix[j]] }
+  }
+  L$opener  <- unname(opn[g])     # his id, for the report
+  L$openern <- unname(opnm[g])    # his name, for the live feed
+  L$wk <- sch$week[L$i]
+  hs <- sch$has_score %||% rep(FALSE, nrow(sch))
+  L$fut <- !(hs[L$i] %in% TRUE)
+
+  # Source two: the weekly injury report. 94% of the time it names the opener Out or
+  # Doubtful, a backup did start; it catches 22% of backup starts, which is what the
+  # report is for -- the rest are benchings and settled changes the named starter sees.
   sch$h_qbinj <- 0L; sch$a_qbinj <- 0L
   if (!is.null(inj) && NROW(inj) &&
       all(c("season", "week", "team", "full_name", "report_status") %in% names(inj))) {
-    ik <- paste(inj$season, inj$week, inj$team, inj$full_name)[inj$report_status %in% INJ_OUT]
-    opn <- stats::setNames(rep(NA_character_, 0), character(0))
-    g <- paste(L$season, L$team)
-    for (k in unique(g)) {
-      ix <- which(g == k); q <- L$qb[ix]
-      o <- q[q != ""][1]
-      if (!is.na(o)) opn[k] <- o
-    }
-    L$opener <- unname(opn[g])
-    # The week comes from the schedule row each side belongs to. L itself carries no week
-    # column, and paste() silently drops a NULL rather than complaining, so reading
-    # L$week built the key "2026 MIN murray" instead of "2026 9 MIN murray" -- it matched
-    # nothing and the report was quietly ignored.
-    L$wk <- sch$week[L$i]
-    L$inj <- as.integer(!is.na(L$opener) & !is.na(L$wk) &
-                        paste(L$season, L$wk, L$team, L$opener) %in% ik)
+    # On gsis_id, which is the same identifier the schedule names a starter by. Matching
+    # the id against full_name -- which is what this did when first written -- compares
+    # "00-0035228" with "Kyler Murray" and silently never fires.
+    idc <- if ("gsis_id" %in% names(inj)) as.character(inj$gsis_id) else NULL
+    oid <- if (!is.null(idc)) L$opener else L$openern
+    nmc <- if (!is.null(idc)) idc else as.character(inj$full_name)
+    ik <- paste(inj$season, inj$week, inj$team, nmc)[inj$report_status %in% INJ_OUT]
+    L$v <- as.integer(!is.na(oid) & oid != "" & !is.na(L$wk) &
+                      paste(L$season, L$wk, L$team, oid) %in% ik)
     h2 <- L[L$side == "h", ]; a2 <- L[L$side == "a", ]
-    sch$h_qbinj[h2$i] <- h2$inj; sch$a_qbinj[a2$i] <- a2$inj
-    # the flag the model reads is either source
-    sch$h_qbbk <- pmax(sch$h_qbbk, sch$h_qbinj)
-    sch$a_qbbk <- pmax(sch$a_qbbk, sch$a_qbinj)
+    sch$h_qbinj[h2$i] <- h2$v; sch$a_qbinj[a2$i] <- a2$v
   }
+
+  # Source three: the live ESPN feed, which NHL, NBA and CFB have each had for months and
+  # the NFL never got. It updates daily, where the report is weekly, so it carries a
+  # ruling-out the day a coach makes it. Kevin O'Connell said on Thursday 5 November 2026
+  # that Carson Wentz would start the Monday night game; nflverse's named starter did not
+  # agree until ten minutes after kick-off, four days later.
+  #
+  # Restricted to games NOT yet played, and that restriction is load-bearing: this feed
+  # states who is hurt TODAY, with no date on it. Applied to a finished game it would
+  # mark a team down for an injury suffered weeks afterwards -- and those rows are what
+  # the model trains on, so it would corrupt the coefficient as well as the board.
+  sch$h_qbesp <- 0L; sch$a_qbesp <- 0L
+  if (!is.null(espn) && NROW(espn) && !is.null(tkey) && length(tkey) &&
+      all(c("tkey", "pkey", "out") %in% names(espn))) {
+    e <- espn[espn$out %in% TRUE, , drop = FALSE]
+    e$abbr <- unname(tkey[e$tkey])
+    e <- e[!is.na(e$abbr), , drop = FALSE]
+    if (nrow(e)) {
+      ek <- unique(paste(e$abbr, e$pkey))
+      # the feed speaks names, so the opener's NAME is what gets reduced and compared
+      L$v <- as.integer(L$fut & !is.na(L$openern) & L$openern != "" &
+                        paste(L$team, qb_short_key(L$openern)) %in% ek)
+      h2 <- L[L$side == "h", ]; a2 <- L[L$side == "a", ]
+      sch$h_qbesp[h2$i] <- h2$v; sch$a_qbesp[a2$i] <- a2$v
+    }
+  }
+
+  # The flag the model reads is any source. Union is the safe direction: each of the three
+  # is silent in a case the others catch, and silence is what cost a game.
+  sch$h_qbbk <- pmax(sch$h_qbbk, sch$h_qbinj, sch$h_qbesp)
+  sch$a_qbbk <- pmax(sch$a_qbbk, sch$a_qbinj, sch$a_qbesp)
   sch
 }
 
@@ -4949,7 +5040,9 @@ load_all <- function() {
   # source that knows about a fresh absence before kick-off.
   qf <- inj_file()
   inj <- if (file.exists(qf)) readRDS(qf) else NULL
-  sch <- qb_change_flags(add_kickoff(readRDS(sched_file())), inj)
+  einj <- tryCatch(nfl_inj(), error = function(e) NULL)
+  etk  <- tryCatch(nfl_team_key(), error = function(e) character(0))
+  sch <- qb_change_flags(add_kickoff(readRDS(sched_file())), inj, einj, etk)
   # What the flag sees on the games still to play, and which source saw it. Split by
   # source on purpose: "the report alone" is the column that was empty on 9 November
   # 2026, and a reader has to be able to tell a quiet night from a dead feed.
@@ -4958,12 +5051,22 @@ load_all <- function() {
     n_up <- sum(up)
     nf <- sum(sch$h_qbbk[up]) + sum(sch$a_qbbk[up])
     gi <- sch$h_qbinj %||% rep(0L, nrow(sch)); ga <- sch$a_qbinj %||% rep(0L, nrow(sch))
+    ge <- sch$h_qbesp %||% rep(0L, nrow(sch)); gea <- sch$a_qbesp %||% rep(0L, nrow(sch))
     n_inj  <- sum(gi[up]) + sum(ga[up])
-    n_name <- sum(sch$h_qbbk[up] & !gi[up]) + sum(sch$a_qbbk[up] & !ga[up])
+    n_esp  <- sum(ge[up]) + sum(gea[up])
+    n_name <- sum(sch$h_qbbk[up] & !gi[up] & !ge[up]) +
+              sum(sch$a_qbbk[up] & !ga[up] & !gea[up])
     mlog(sprintf(paste0("NFL qb     | %d side(s) on the %d game(s) still to play are without ",
-                        "the man who opened their season: %d from the injury report, %d from ",
-                        "the named starter; report held %s row(s)"),
-                 nf, n_up, n_inj, n_name,
+                        "the man who opened their season: %d from the live ESPN feed, %d from ",
+                        "the weekly report, %d from the named starter"),
+                 nf, n_up, n_esp, n_inj, n_name))
+    # Said separately and always, so a dead feed cannot pass for a quiet night -- the
+    # college endpoint returns 3 rows for its entire sport and looked fine for days.
+    mlog(sprintf(paste0("NFL avail  | live ESPN feed: %s row(s), %s listed out, %d team(s) ",
+                        "keyed | weekly report: %s row(s)"),
+                 if (is.null(einj) || !NROW(einj)) "NO" else format(NROW(einj)),
+                 if (is.null(einj) || !NROW(einj)) "0" else format(sum(einj$out %in% TRUE)),
+                 length(etk),
                  if (is.null(inj) || !NROW(inj)) "NO" else format(NROW(inj))))
   }
   pbp <- dplyr::bind_rows(lapply(LOAD_SEASONS, function(y) {
