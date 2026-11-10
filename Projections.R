@@ -5931,50 +5931,31 @@ CFB_QB_LGYPA <- 7.28 # league yards an attempt, over 10,896 passer-games since 2
 
 cfb_inj <- function() espn_inj(CFB_INJ_URL, cfb_path("inj"), CFB_INJ_TTL, CFB_INJ_OUT)
 
-# The league-wide college injuries endpoint returns 3 rows for the entire sport. It is
-# not down -- it answers 200 and looks healthy -- it simply has nothing in it, which is
-# why it sat there for days appearing to work. So the college boards have no live source
-# at all: the quarterback flag reads a box score, which only exists once a game has been
-# played, and therefore can only ever catch the SECOND game of an absence onwards. The
-# same blindness the NFL had until tonight, and worse.
+# WHY THE COLLEGE BOARDS HAVE NO LIVE AVAILABILITY SOURCE, measured rather than assumed.
 #
-# ESPN also publishes injuries per team, and the college box files are ESPN's own, so
-# every side on the board already has an ESPN team id to ask with. Whether that endpoint
-# carries anything is not knowable from here -- ESPN is firewalled from the sandbox this
-# was written in, and the one thing this file should have learnt by now is not to ship a
-# loop over 136 teams on a guess. So: ask for a few, say exactly what came back, and
-# build on what the log reports rather than on what I assume.
-CFB_INJ_TEAM_URL <- "https://site.api.espn.com/apis/site/v2/sports/football/college-football/teams/%s/injuries"
-CFB_INJ_PROBE_N  <- 3L     # teams asked per build, deliberately small
-CFB_INJ_PROBE_TO <- 8      # seconds each
-
-cfb_inj_probe <- function(team_ids) {
-  ids <- unique(as.character(team_ids))
-  ids <- ids[!is.na(ids) & ids != ""]
-  if (!length(ids)) return(invisible(NULL))
-  ids <- utils::head(ids, CFB_INJ_PROBE_N)
-  out <- character(0)
-  for (id in ids) {
-    u <- sprintf(CFB_INJ_TEAM_URL, id)
-    r <- tryCatch(httr::GET(u, httr::timeout(CFB_INJ_PROBE_TO)), error = function(e) NULL)
-    if (is.null(r)) { out <- c(out, sprintf("%s unreachable", id)); next }
-    sc <- httr::status_code(r)
-    if (!identical(sc, 200L)) { out <- c(out, sprintf("%s HTTP %s", id, sc)); next }
-    j <- tryCatch(jsonlite::fromJSON(httr::content(r, "text", encoding = "UTF-8"),
-                                     simplifyVector = FALSE), error = function(e) NULL)
-    n <- if (is.null(j)) NA_integer_ else length(j$injuries %||% list())
-    # what the entries look like, since a count of 1 holding a whole roster reads the
-    # same as a count of 1 holding nothing
-    inner <- if (!is.null(j) && length(j$injuries %||% list()))
-      sum(vapply(j$injuries, function(z) length(z$injuries %||% list()), 0L)) else 0L
-    out <- c(out, sprintf("%s ok: %s group(s), %d entr(y/ies)", id,
-                          if (is.na(n)) "unparsable" else format(n), inner))
-  }
-  mlog(sprintf("CFB avail  | per-team injuries probe (%d of %d team(s) on the board): %s",
-               length(ids), length(unique(as.character(team_ids))),
-               paste(out, collapse = " | ")))
-  invisible(NULL)
-}
+# The league-wide college injuries endpoint answers 200 and returns 3 rows for the entire
+# sport. It is not broken, it is empty, which is why it sat there looking healthy for
+# days. ESPN also publishes injuries per team, and the college box files are ESPN's own,
+# so every side on the board carries an ESPN team id to ask with -- that looked like the
+# obvious fix. It is not. Probed from a live build on 9 November 2026, three teams on
+# that night's board (2006, 189, 193) each answered HTTP 200 with 0 groups and 0 entries.
+# Not an error, not a rate limit, not a key problem. There is nothing there.
+#
+# And the reason is not an ESPN oversight. The NFL's weekly report exists because the
+# league mandates disclosure; the NCAA mandates nothing, and most programmes decline to
+# give injury information at all. The structured data largely does not exist to be
+# fetched, so no amount of endpoint-hunting will produce it. Do not write the 136-team
+# loop, and do not re-probe: the answer is recorded here instead of costing three
+# requests a build forever.
+#
+# What that leaves, stated plainly rather than papered over: the college quarterback flag
+# reads the box score, which exists only once a game has been played, so it catches the
+# SECOND game of an absence onwards and never the first -- inverted from where it would
+# be worth most, since the first is the game the rating has not yet absorbed. That is a
+# real limitation of this board, not a bug to be fixed by trying harder. Closing it needs
+# a source that is not free: CFBD carries some of it behind an API key, which this project
+# has deliberately done without, and the rest is news text rather than a feed. That is the
+# owner's call to make, not one to assume either way.
 
 # Each team's starting passer, by attempts over its recent games. The box files keep
 # passing attempts as "completions/attempts" text, so the figure is taken after the slash.
@@ -11028,11 +11009,6 @@ server <- function(input, output, session) {
                      if (is.na(ni)) "UNREACHABLE or empty" else sprintf("returned %d row(s)", ni), no))
         if (nq == 0L)
           mlog("CFB qb     | no passer identified anywhere -- check the box files carry a passing category")
-        # Only while a week is still to be played, and only a few teams, so this costs
-        # three requests a build rather than one per team.
-        tryCatch(cfb_inj_probe(c(as.character(g$home_id), as.character(g$away_id))),
-                 error = function(e) mlog(sprintf("CFB avail  | probe failed: %s",
-                                                  conditionMessage(e))))
         if (is.na(ni))
           mlog(sprintf("CFB qb     | the college injuries endpoint gave nothing: %s", CFB_INJ_URL))
       }
