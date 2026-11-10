@@ -1,4 +1,4 @@
-2026-11-09 23:32:23 building the page from /home/runner/work/projections/projections/Projections.R
+2026-11-09 23:41:24 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -26,13 +26,12 @@ NHL avail  | goalscorer list gated on the injury feed (NO row(s), no team(s) key
 NBA star   | leading man identified for 30 team(s) from the last 15 game(s); e.g. Jalen Johnson 33 min, Jabari Smith Jr. 35 min, Ethan Thompson 33 min
 NBA ingest | 9 of 9 finished game(s) read from the summary feed (90 name(s)); history ends 2026-11-08
 NBA star   | a side missing its leading man measured -3.32 points of margin (se 0.39) on 12000 prior-season game(s) -- used
-2026-11-09 23:34:01   today  42.9s
+2026-11-09 23:43:20   today  52.7s
 CFB qb     | passer found for 247 team(s), 19 flagged in all; of the 134 side(s) on THIS board, 133 could be checked and 17 are flagged; injury feed returned 3 row(s) with 1 listed out
-CFB avail  | per-team injuries probe (3 of 134 team(s) on the board): 2006 ok: 0 group(s), 0 entr(y/ies) | 189 ok: 0 group(s), 0 entr(y/ies) | 193 ok: 0 group(s), 0 entr(y/ies)
 NHL avail  | goalscorer list gated on the injury feed (121 row(s), 65 team(s) keyed); the GAME projection for these 7 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NBA roster | 12 of 12 team(s) returned a roster (207 name(s))
-2026-11-09 23:36:08   nfl   117.8s  11 built, 11 to pick from
-2026-11-09 23:36:44   cfb    36.1s  12 built, 12 to pick from
+2026-11-09 23:45:53   nfl   142.6s  11 built, 11 to pick from
+2026-11-09 23:46:38   cfb    45.6s  12 built, 12 to pick from
 
 ── Slate 2026-10-26 ──
 Win model  | learned weights: run model 0.960, Pythagorean gap 0.749 (fit on 2,465 graded mlb-runs-v10 games, 48% data, half-life 60 d)
@@ -109,7 +108,7 @@ Cache      | 599 files (5.9 MB) · 21 served from disk, 1 fetched
 ── Slate 2026-11-12 ──
 Slate      | 0 games · none graded yet
 Cache      | 599 files (5.9 MB) · 21 served from disk, 1 fetched
-2026-11-09 23:37:49   mlb    65.0s  15 built, 4 to pick from
+2026-11-09 23:47:55   mlb    76.7s  15 built, 4 to pick from
 NHL avail  | goalscorer list gated on the injury feed (NO row(s), no team(s) keyed); the GAME projection for these 3 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NHL avail  | goalscorer list gated on the injury feed (NO row(s), no team(s) keyed); the GAME projection for these 11 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NHL avail  | goalscorer list gated on the injury feed (NO row(s), no team(s) keyed); the GAME projection for these 4 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
@@ -125,9 +124,9 @@ NHL avail  | goalscorer list gated on the injury feed (NO row(s), no team(s) key
 NHL avail  | goalscorer list gated on the injury feed (121 row(s), 65 team(s) keyed); the GAME projection for these 7 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NHL avail  | goalscorer list gated on the injury feed (121 row(s), 65 team(s) keyed); the GAME projection for these 6 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NHL avail  | goalscorer list gated on the injury feed (121 row(s), 65 team(s) keyed); the GAME projection for these 11 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
-2026-11-09 23:37:55   nhl     5.9s  15 built, 18 to pick from
+2026-11-09 23:48:03   nhl     7.6s  15 built, 18 to pick from
 NBA roster | 12 of 12 team(s) returned a roster (207 name(s))
 NBA roster | 20 of 20 team(s) returned a roster (348 name(s))
 NBA roster | 8 of 8 team(s) returned a roster (139 name(s))
-2026-11-09 23:38:04   nba     8.6s  15 built, 17 to pick from
-2026-11-09 23:38:04 built 15939 KB in 341s
+2026-11-09 23:48:14   nba    10.6s  15 built, 17 to pick from
+2026-11-09 23:48:14 built 15947 KB in 410s
