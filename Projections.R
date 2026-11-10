@@ -4085,7 +4085,10 @@ CACHE_DIR    <- "nfl_cache"
 CACHE_VER    <- 7
 LEDGER_DIR   <- "nfl_ledger"
 LEDGER_FILE  <- file.path(LEDGER_DIR, "predictions.rds")
-MODEL_VER    <- "epa-pd-qb-v4"      # v4 swapped the QB-change term for a persistent one
+MODEL_VER    <- "epa-pd-qb-v5"      # v5 lets the injury report raise the QB flag, days
+                                    # before the named starter updates (which on
+                                    # 2026-11-09 happened ten minutes AFTER kick-off).
+                                    # v4 swapped the QB-change term for a persistent one
                                     # (see qb_change_flags: the change flag went quiet
                                     # while the backup kept starting, missing half the
                                     # affected games at -3.65 points each).
@@ -4104,6 +4107,7 @@ AVAIL_IDLE_MIN    <- 24 * 60
 CFB_REFRESH_MIN   <- 30
 POLL_MIN          <- 15
 INJ_OUT           <- c("Out", "Doubtful")
+QB_MIN_N          <- 100   # flagged games needed before the quarterback term is fitted
 FAR_FUTURE        <- as.POSIXct("2100-01-01", tz = "America/New_York")
 
 TEAM_FIX <- c(STL = "LA", SD = "LAC", OAK = "LV", LAR = "LA", JAC = "JAX", WSH = "WAS")
@@ -4814,7 +4818,7 @@ build_pd_long <- function(sch) {
 #
 # h_qbchg is kept because it costs nothing and records what the old flag saw, but no
 # model reads it any more.
-qb_change_flags <- function(sch) {
+qb_change_flags <- function(sch, inj = NULL) {
   sch$h_qbchg <- 0L; sch$a_qbchg <- 0L
   sch$h_qbbk  <- 0L; sch$a_qbbk  <- 0L
   if (!all(c("home_qb_id", "away_qb_id") %in% names(sch))) return(sch)
@@ -4845,11 +4849,86 @@ qb_change_flags <- function(sch) {
   h <- L[L$side == "h", ]; a <- L[L$side == "a", ]
   sch$h_qbchg[h$i] <- h$chg; sch$a_qbchg[a$i] <- a$chg
   sch$h_qbbk[h$i]  <- h$bk;  sch$a_qbbk[a$i]  <- a$bk
+
+  # The named starter alone is no good before kick-off, and Minnesota on 9 November 2026
+  # is the proof. Kyler Murray opened their season; Carson Wentz started that Monday
+  # night. nflverse still said Murray at 01:15 UTC when the ball went up and corrected
+  # itself to Wentz at 01:25 -- ten minutes after kick-off, and the projection locks at
+  # kick-off. So the flag was 0 for every build that could still have used it, the Bills
+  # were not favoured, and nothing anywhere said why. For a FRESH absence the named
+  # starter is always the man who is about to not play.
+  #
+  # The injury report knows days earlier, and this app already downloads it for the prop
+  # boards. Murray was listed Out for week 9 from midweek. So: a side is also flagged
+  # when the man who opened its season is Out or Doubtful on that week's report.
+  #
+  # Measured on 1,932 team-weeks, 2023-2026, against who actually started:
+  #
+  #   Out                        fires  87 | 95% of them a backup did start | catches 20%
+  #   Out or Doubtful            fires 100 | 94%                            | catches 22%
+  #   adding Questionable        fires 163 | 79%                            | catches 31%
+  #
+  # Out-or-Doubtful is the cut, and it is INJ_OUT, which the prop boards already use.
+  # Questionable buys eleven more absences and gives up fifteen points of precision,
+  # which is not a trade worth making on a four-point markdown. The six sides it does get
+  # wrong are men listed Out or Doubtful who played anyway.
+  #
+  # Catching only 22% is not a defect of the report, it is what the report is for: most
+  # of the 422 backup starts are benchings and settled changes rather than injuries, and
+  # in those the named starter does update in time. The two sources are complementary --
+  # the report catches the fresh absence, the named starter the established one -- so the
+  # flag is the union, and union is also the safe direction: either source alone being
+  # silent is what cost last night.
+  sch$h_qbinj <- 0L; sch$a_qbinj <- 0L
+  if (!is.null(inj) && NROW(inj) &&
+      all(c("season", "week", "team", "full_name", "report_status") %in% names(inj))) {
+    ik <- paste(inj$season, inj$week, inj$team, inj$full_name)[inj$report_status %in% INJ_OUT]
+    opn <- stats::setNames(rep(NA_character_, 0), character(0))
+    g <- paste(L$season, L$team)
+    for (k in unique(g)) {
+      ix <- which(g == k); q <- L$qb[ix]
+      o <- q[q != ""][1]
+      if (!is.na(o)) opn[k] <- o
+    }
+    L$opener <- unname(opn[g])
+    # The week comes from the schedule row each side belongs to. L itself carries no week
+    # column, and paste() silently drops a NULL rather than complaining, so reading
+    # L$week built the key "2026 MIN murray" instead of "2026 9 MIN murray" -- it matched
+    # nothing and the report was quietly ignored.
+    L$wk <- sch$week[L$i]
+    L$inj <- as.integer(!is.na(L$opener) & !is.na(L$wk) &
+                        paste(L$season, L$wk, L$team, L$opener) %in% ik)
+    h2 <- L[L$side == "h", ]; a2 <- L[L$side == "a", ]
+    sch$h_qbinj[h2$i] <- h2$inj; sch$a_qbinj[a2$i] <- a2$inj
+    # the flag the model reads is either source
+    sch$h_qbbk <- pmax(sch$h_qbbk, sch$h_qbinj)
+    sch$a_qbbk <- pmax(sch$a_qbbk, sch$a_qbinj)
+  }
   sch
 }
 
 load_all <- function() {
-  sch <- qb_change_flags(add_kickoff(readRDS(sched_file())))
+  # The injury report is read first because the quarterback flag needs it: it is the only
+  # source that knows about a fresh absence before kick-off.
+  qf <- inj_file()
+  inj <- if (file.exists(qf)) readRDS(qf) else NULL
+  sch <- qb_change_flags(add_kickoff(readRDS(sched_file())), inj)
+  # What the flag sees on the games still to play, and which source saw it. Split by
+  # source on purpose: "the report alone" is the column that was empty on 9 November
+  # 2026, and a reader has to be able to tell a quiet night from a dead feed.
+  {
+    up <- !sch$has_score & !is.na(sch$ko) & sch$ko >= now_et() - 86400
+    n_up <- sum(up)
+    nf <- sum(sch$h_qbbk[up]) + sum(sch$a_qbbk[up])
+    gi <- sch$h_qbinj %||% rep(0L, nrow(sch)); ga <- sch$a_qbinj %||% rep(0L, nrow(sch))
+    n_inj  <- sum(gi[up]) + sum(ga[up])
+    n_name <- sum(sch$h_qbbk[up] & !gi[up]) + sum(sch$a_qbbk[up] & !ga[up])
+    mlog(sprintf(paste0("NFL qb     | %d side(s) on the %d game(s) still to play are without ",
+                        "the man who opened their season: %d from the injury report, %d from ",
+                        "the named starter; report held %s row(s)"),
+                 nf, n_up, n_inj, n_name,
+                 if (is.null(inj) || !NROW(inj)) "NO" else format(NROW(inj))))
+  }
   pbp <- dplyr::bind_rows(lapply(LOAD_SEASONS, function(y) {
     f <- pbp_file(y); if (file.exists(f)) readRDS(f) else NULL
   }))
@@ -4870,8 +4949,6 @@ load_all <- function() {
   }
   rf <- ros_file()
   ros <- if (file.exists(rf)) readRDS(rf) else NULL
-  qf <- inj_file()
-  inj <- if (file.exists(qf)) readRDS(qf) else NULL
   list(sch = sch, tw = tw, pdl = build_pd_long(sch), pbp_ids = unique(pbp$game_id),
        teams = sort(unique(c(sch$home_team, sch$away_team))),
        col = pal$col, logo = pal$logo, plr = plr, ros = ros, inj = inj,
@@ -5134,9 +5211,39 @@ fit_history <- function(tw, sch, pdl, teams, season_) {
   if (nrow(d) < 100) return(NULL)
   if (!"qbd" %in% names(d)) d$qbd <- 0
   d$qbd[is.na(d$qbd)] <- 0
-  f_early <- lm(margin ~ diff + qbd, data = d)
+
+  # Guarded and logged like every other fitted term in this file -- the right sign and two
+  # standard errors, and the log says so either way. The absence of this line is why the
+  # 9 November 2026 Monday night game was invisible: the term was in the model, fitted
+  # honestly, and fed a flag that was 0 for every build before kick-off. Three boards
+  # printed what their quarterback terms measured and whether they were used. This one
+  # printed nothing, so there was no way to tell a term that is working from a term being
+  # handed zeros, which is exactly the silent failure this log exists to prevent.
+  nq <- sum(d$qbd != 0)
+  qb_b <- NA_real_; qb_se <- NA_real_; qb_used <- FALSE
+  if (nq >= QB_MIN_N) {
+    cf <- summary(lm(margin ~ diff + qbd, data = d))$coefficients
+    if ("qbd" %in% rownames(cf)) {
+      qb_b <- cf["qbd", 1]; qb_se <- cf["qbd", 2]
+      # Positive: qbd is the AWAY flag minus the HOME one, so a flagged away side must
+      # raise the home margin. A negative fit would mean the flag is upside down.
+      qb_used <- is.finite(qb_b) && is.finite(qb_se) && qb_b > 0 && qb_b > 2 * qb_se
+    }
+  }
+  mlog(sprintf(paste0("NFL qb     | a side without the man who opened its season measured ",
+                      "%+.2f points of margin (se %.2f) on %d of %d prior game(s) -- %s"),
+               qb_b, qb_se, nq, nrow(d),
+               if (qb_used) "used"
+               else if (nq < QB_MIN_N) sprintf("NOT used: fewer than %d such games", QB_MIN_N)
+               else "NOT used: needs the right sign and two standard errors"))
+
+  # Left out of the formula entirely when it fails the guard, rather than zeroed. A
+  # constant column makes lm return an NA coefficient, and predict() turns one NA
+  # coefficient into NA for every game on the board.
   dl <- d[d$week >= PD_FROM_WEEK, ]
-  f_late <- if (nrow(dl) >= 100) lm(margin ~ diff + pdd + qbd, data = dl) else NULL
+  f_early <- lm(if (qb_used) margin ~ diff + qbd else margin ~ diff, data = d)
+  f_late <- if (nrow(dl) >= 100)
+    lm(if (qb_used) margin ~ diff + pdd + qbd else margin ~ diff + pdd, data = dl) else NULL
   d$pred <- project(list(f_early = f_early, f_late = f_late), d$week, d$diff, d$pdd, d$qbd)
   d <- d[d$margin != 0, ]
   d$hit <- as.integer((d$pred > 0) == (d$margin > 0))
