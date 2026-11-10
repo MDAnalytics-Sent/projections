@@ -4106,6 +4106,43 @@ AVAIL_REFRESH_MIN <- 20
 AVAIL_IDLE_MIN    <- 24 * 60
 CFB_REFRESH_MIN   <- 30
 POLL_MIN          <- 15
+# ---------------------------------------------------------------------------------------
+# WHO IS NOT PLAYING -- the standing audit. Read this before touching any availability
+# code, and update it when you do.
+#
+# This is written down because the same fault was found and fixed four separate times,
+# once per sport, each time on the board someone happened to be looking at, and the
+# structural version was noted in passing and left. On 9 November 2026 it cost a Monday
+# night game: the NFL PROP board knew Kyler Murray was Out, because plr_avail reads the
+# injury report, while the NFL GAME model read nflverse's named starter and did not --
+# same sport, same night, same file, same loaded data, two consumers, one blind.
+#
+# What each GAME model is handed about who is playing:
+#
+#   NFL   the quarterback, from the injury report and the named starter   (since v5)
+#   CFB   the quarterback, from the box score and an ESPN endpoint that
+#         returns 3 rows for the entire sport -- a dead feed that looks alive
+#   NBA   the leading minutes-getter, from the ESPN feed
+#   NHL   NOTHING. nhl_predict takes no availability argument at all. The goalie
+#         term WAS measured (+0.35 goals, se 0.23) and honestly refused by the
+#         guard; nothing has ever been measured for skaters.
+#   MLB   lineups and probable pitchers, a different shape from the above
+#
+# And four vocabularies for the same word: INJ_OUT, CFB_INJ_OUT, NHL_INJ_OUT,
+# NBA_INJ_OUT, with four readers -- plr_avail, espn_inj_gate, cfb_qb_out, and the
+# inline block in nhl_gs.
+#
+# Two rules that follow, and the reason each exists:
+#
+#   1. A model that publishes a number must say in the log what it knows about
+#      availability and whether it used it -- including when the answer is "nothing".
+#      Three sports printed that line; NFL did not, which is why a human had to be the
+#      one who noticed. Silence has to be impossible, not merely unlikely.
+#   2. A flag must come from a source that knows BEFORE the event. The named starter
+#      updates after kick-off and the college box score only exists once the game is
+#      played, so both describe the past. Check the timing of a feed before trusting it,
+#      not just its contents.
+# ---------------------------------------------------------------------------------------
 INJ_OUT           <- c("Out", "Doubtful")
 QB_MIN_N          <- 100   # flagged games needed before the quarterback term is fitted
 FAR_FUTURE        <- as.POSIXct("2100-01-01", tz = "America/New_York")
@@ -7336,6 +7373,11 @@ nhl_fit <- function(R, season_) {
        rest = use_rest, rest_beta = rest_b, rest_se = rest_se)
 }
 
+# No availability input, and the log says so on every build rather than leaving it to be
+# discovered. See the audit beside INJ_OUT. The goalie term was measured and refused by
+# the guard; skaters have never been measured, so there is nothing honest to put here yet
+# -- but "nothing" is a finding, and it belongs in the log where the other sports' terms
+# report theirs.
 nhl_predict <- function(panel, endr, ents, m, g, cutoff, gf = NULL) {
   if (is.null(m) || !nrow(g)) return(NULL)
   s <- g$season[1]
@@ -11469,6 +11511,17 @@ server <- function(input, output, session) {
     inj <- if (live) tryCatch(nhl_inj(), error = function(e) NULL) else NULL
     tk  <- if (live) tryCatch(nhl_team_key(d$sch), error = function(e) NULL) else NULL
     x <- nhl_gs(d$sk, b$cut, unique(c(b$g$home, b$g$away)), inj, tk)
+    # Rule 1 of the audit beside INJ_OUT: a board says what it knows about availability,
+    # including when the answer is nothing. The goalscorer list is gated on this feed; the
+    # game projection on the same slate is not gated on anything, and that asymmetry is
+    # the thing to keep in view rather than rediscover.
+    mlog(sprintf(paste0("NHL avail  | goalscorer list gated on the injury feed (%s row(s), ",
+                        "%s team(s) keyed); the GAME projection for these %d game(s) uses ",
+                        "no availability input at all -- skaters unmeasured, goalie term ",
+                        "measured and refused by its guard"),
+                 if (is.null(inj) || !NROW(inj)) "NO" else format(NROW(inj)),
+                 if (is.null(tk) || !length(tk)) "no" else format(length(tk)),
+                 nrow(b$g)))
     if (is.null(x) || !nrow(x)) return(NULL)
     st <- grade_state(x$pid, x$team, b, d$sk)
     j <- attr(st, "row"); r <- attr(st, "src")
