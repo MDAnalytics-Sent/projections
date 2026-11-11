@@ -8335,7 +8335,7 @@ cbb_load <- function() {
   if (is.null(sch) || !nrow(sch)) return(NULL)
   nm <- stats::setNames(c(sch$hname, sch$aname), c(sch$home, sch$away))
   nm <- nm[!is.na(names(nm)) & !duplicated(names(nm))]
-  list(sch = sch, ok = cbb_rateable(sch), nm = nm)
+  list(sch = sch, nm = nm)
 }
 
 cbb_dir <- file.path(CACHE_DIR, "cbb")
@@ -8396,11 +8396,26 @@ cbb_sched <- function() {
 
 # Teams with a real schedule. Everyone else is a guarantee-game visitor who cannot be
 # rated from one result and must not be allowed to stand in as an average opponent.
-cbb_rateable <- function(sch) {
+cbb_rateable <- function(sch, at = NULL) {
   d <- sch[sch$has_score, , drop = FALSE]
+  if (!is.null(at))
+    d <- d[d$date < as.Date(at) & d$date >= as.Date(at) - CBB_WIN_D, , drop = FALSE]
   if (!nrow(d)) return(character(0))
+  # A games-played floor alone does NOT separate Division I from the visitors, and the
+  # first live board proved it: Bethesda University and Virginia-Lynchburg clear fifteen
+  # games across four seasons of being blown out, so both were rated, shown, and sat at
+  # the top of the table at 97% confidence on a fifty-point projection. Exactly the
+  # useless-information complaint the college football board earned.
+  #
+  # The conference id is the real line. ESPN leaves it NA for everyone outside Division I
+  # -- 366 teams carry one, 663 do not, and the ones that do not are the guarantee-game
+  # opponents. Both tests are kept: the conference id says which division, the games
+  # floor says whether there is enough recent record to rate.
+  cf <- c(stats::setNames(as.character(d$hconf), d$home),
+          stats::setNames(as.character(d$aconf), d$away))
+  cf <- cf[!is.na(cf) & cf != "" & cf != "NA"]
   tb <- table(c(d$home, d$away))
-  names(tb)[tb >= CBB_MIN_G]
+  intersect(names(tb)[tb >= CBB_MIN_G], unique(names(cf)))
 }
 
 # Ridge on a difference design over a decayed two-season window, so last season is
@@ -8427,7 +8442,7 @@ cbb_rate <- function(h, at, lam = CBB_LAM) {
 
 # The projection for one slate, from games played before it.
 cbb_predict <- function(sch, g, at) {
-  ok <- cbb_rateable(sch)
+  ok <- cbb_rateable(sch, at)
   h <- sch[sch$has_score & sch$date < as.Date(at) &
            sch$date >= as.Date(at) - CBB_WIN_D &
            sch$home %in% ok & sch$away %in% ok, , drop = FALSE]
@@ -12163,8 +12178,9 @@ server <- function(input, output, session) {
     # Only the games this model can speak about. A guarantee game against a side with one
     # result on record is not a forecast, it is a guess dressed as one, so it is left off
     # the board rather than shown with a number nobody should act on.
+    ok <- cbb_rateable(d$sch, as.Date(input$cbdate))
     g <- d$sch[d$sch$date == as.Date(input$cbdate) &
-               d$sch$home %in% d$ok & d$sch$away %in% d$ok, , drop = FALSE]
+               d$sch$home %in% ok & d$sch$away %in% ok, , drop = FALSE]
     if (!nrow(g)) return(NULL)
     now <- now_et()
     st <- game_settle(CBB_LEDGER, CBB_MODEL,
@@ -12197,7 +12213,23 @@ server <- function(input, output, session) {
                    nrow(b$g), sum(b$st$locked %in% TRUE)), extra))
   })
   output$cbboard_sec <- renderUI({
-    req(cbboard()); tagList(div(class = "sec-hdr", "Game outcomes"), DTOutput("cbboard"))
+    b <- cbboard(); req(b)
+    # The table below is ranked by confidence, which on a college slate puts twenty-point
+    # mismatches on top -- true, and no use to anybody. The calls worth reading are the
+    # confident ones among games that are actually close: measured, the best three a day
+    # inside ten points hold at 75.3%, against 91.6% for the top three overall, which is
+    # just being right about a blowout.
+    i <- which(abs(b$st$pred) <= CBB_TIGHT & !b$done)
+    best <- if (length(i)) {
+      i <- i[order(-b$st$conf[i])][seq_len(min(3L, length(i)))]
+      div(class = "rec",
+          sprintf("Best calls among the close games: %s.",
+                  paste(sprintf("%s by %.1f (%.0f%%)",
+                                ifelse(is.na(unname(cbdat()$nm[b$pick[i]])), b$pick[i],
+                                       unname(cbdat()$nm[b$pick[i]])),
+                                abs(b$st$pred[i]), 100 * b$st$conf[i]), collapse = "; ")))
+    } else NULL
+    tagList(best, div(class = "sec-hdr", "Game outcomes"), DTOutput("cbboard"))
   })
   output$cbboard <- renderDT({
     b <- cbboard(); req(b); d <- cbdat(); g <- b$g
