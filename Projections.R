@@ -5048,6 +5048,69 @@ load_all <- function() {
   # source that knows about a fresh absence before kick-off.
   qf <- inj_file()
   inj <- if (file.exists(qf)) readRDS(qf) else NULL
+  # ---- TEMPORARY: what availability data exists for men's college basketball ----
+  # Removed once it has answered. I told the owner college basketball would be blind like
+  # college football, on the strength of the CFB probe alone, without testing basketball.
+  # That is the same extrapolation that has been wrong twice this week, so: ask, log what
+  # came back, and build on that. ESPN is firewalled from the sandbox this is written in,
+  # so a live build is the only place the question can be answered.
+  tryCatch({
+    bb <- "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball"
+    get <- function(u, to = 10) {
+      r <- tryCatch(httr::GET(u, httr::timeout(to)), error = function(e) NULL)
+      if (is.null(r) || !identical(httr::status_code(r), 200L)) return(NULL)
+      tryCatch(jsonlite::fromJSON(httr::content(r, "text", encoding = "UTF-8"),
+                                  simplifyVector = FALSE), error = function(e) NULL)
+    }
+    say <- function(...) mlog(paste0("CBB probe  | ", sprintf(...)))
+
+    j <- get(sprintf("%s/injuries", bb))
+    say("league injuries: %s group(s), %d entr(y/ies)",
+        if (is.null(j)) "unreachable" else format(length(j$injuries %||% list())),
+        if (is.null(j)) 0L else sum(vapply(j$injuries %||% list(),
+                                           function(z) length(z$injuries %||% list()), 0L)))
+    for (id in c("158", "2567", "245")) {
+      j <- get(sprintf("%s/teams/%s/injuries", bb, id))
+      say("team %s injuries: %s", id,
+          if (is.null(j)) "unreachable" else sprintf("%d group(s), %d entr(y/ies)",
+            length(j$injuries %||% list()),
+            sum(vapply(j$injuries %||% list(), function(z) length(z$injuries %||% list()), 0L))))
+    }
+    sb <- get(sprintf("%s/scoreboard?dates=%s&limit=400", bb,
+                      format(now_et(), "%Y%m%d")))
+    ev <- sb$events %||% list()
+    say("scoreboard for today: %d event(s)", length(ev))
+    if (length(ev)) {
+      # the first game that has not started -- that is where a pre-game lineup would be
+      pre <- Filter(function(e) !isTRUE(e$status$type$completed) &&
+                      identical(e$status$type$state, "pre"), ev)
+      e <- if (length(pre)) pre[[1]] else ev[[1]]
+      say("inspecting event %s (%s): top-level keys %s", e$id %||% "?",
+          e$status$type$state %||% "?", paste(utils::head(names(e), 12), collapse = ","))
+      s <- get(sprintf("%s/summary?event=%s", bb, e$id))
+      if (is.null(s)) say("summary: unreachable")
+      else {
+        say("summary keys: %s", paste(names(s), collapse = ","))
+        for (k in c("rosters", "boxscore", "probables", "predictor", "injuries", "leaders")) {
+          v <- s[[k]]
+          if (is.null(v)) next
+          say("  summary$%s present: %d element(s)%s", k, length(v),
+              if (k == "rosters" && length(v))
+                sprintf("; first roster keys %s, %d player(s)",
+                        paste(utils::head(names(v[[1]]), 8), collapse = ","),
+                        length(v[[1]]$roster %||% list())) else "")
+          if (k == "rosters" && length(v) && length(v[[1]]$roster %||% list())) {
+            pl <- v[[1]]$roster[[1]]
+            say("  a roster entry's keys: %s", paste(utils::head(names(pl), 12), collapse = ","))
+            say("  does it mark a starter? starter=%s didNotPlay=%s",
+                format(pl$starter %||% NA), format(pl$didNotPlay %||% NA))
+          }
+        }
+      }
+    }
+  }, error = function(e) mlog(sprintf("CBB probe  | failed: %s", conditionMessage(e))))
+  # ---- end temporary probe ----
+
   einj <- tryCatch(nfl_inj(), error = function(e) NULL)
   etk  <- tryCatch(nfl_team_key(), error = function(e) character(0))
   sch <- qb_change_flags(add_kickoff(readRDS(sched_file())), inj, einj, etk)
