@@ -248,6 +248,13 @@ site_capture <- function(app, tz, out_dir) {
         site_fill(ui("bfb_sec"), dts), site_fill(ui("bleak"), dts)),
         list(tdx = list(bboard = tdx))))
     }
+    cbb_state <- function(d) {
+      set(cbdate = as.Date(d))
+      dts <- dts_of("cbboard")
+      list(games = !is.null(dts$cbboard), html = site_frag(c(
+        site_fill(ui("cbrecord"), dts), site_fill(ui("cbboard_sec"), dts),
+        site_fill(ui("cbnote"), dts))))
+    }
     window_days <- format(seq(today - SITE_BACK, today + SITE_AHEAD, by = 1))
     game_days <- function(dates, cur) {
       d <- dates[!is.na(dates)]
@@ -257,7 +264,7 @@ site_capture <- function(app, tz, out_dir) {
     set(client_today = format(today), client_tz = tz,
         season = as.character(max(app$PICK_SEASONS)), week = "1",
         cseason = as.character(max(app$CFB_PICK)), cweek = "1",
-        date_picker = today, ndate = today, bdate = today,
+        date_picker = today, ndate = today, bdate = today, cbdate = today,
         refresh = 0L, crefresh = 0L, refresh_btn = 0L, nrefresh = 0L, brefresh = 0L, dash_refresh = 0L)
 
     step("today", function() {
@@ -302,6 +309,11 @@ site_capture <- function(app, tz, out_dir) {
       set(lg = "nba")
       cur <- format(as.Date(input$bdate)); keys <- game_days(bdat()$sch$date, cur)
       league("nba", keys, site_day_label(keys, today), cur, keys[as.Date(keys) >= today - 1], nba_state)
+    })
+    step("cbb", function() {
+      set(lg = "cbb")
+      cur <- format(as.Date(input$cbdate)); keys <- game_days(cbdat()$sch$date, cur)
+      league("cbb", keys, site_day_label(keys, today), cur, keys[as.Date(keys) >= today - 1], cbb_state)
     })
   })
   jsonlite::write_json(M$man, M$file, auto_unbox = TRUE, null = "null")
@@ -348,11 +360,14 @@ site_page <- function(app, R, built, tz, out_dir) {
     htmltools::div(class = "lg-pane", `data-lg` = "nhl",
       htmltools::div(class = "controls-bar", pick("nhl", "Date")), htmltools::div(class = "content", body("nhl"))),
     htmltools::div(class = "lg-pane", `data-lg` = "nba",
-      htmltools::div(class = "controls-bar", pick("nba", "Date")), htmltools::div(class = "content", body("nba")))
+      htmltools::div(class = "controls-bar", pick("nba", "Date")), htmltools::div(class = "content", body("nba"))),
+    htmltools::div(class = "lg-pane", `data-lg` = "cbb",
+      htmltools::div(class = "controls-bar", pick("cbb", "Date")), htmltools::div(class = "content", body("cbb")))
   )
 
   nav <- list(c("today", "\U0001F4CB", "Today"), c("nfl", "\U0001F3C8", "NFL"), c("cfb", "\U0001F3C8", "NCAAF"),
-              c("mlb", "\u26be", "MLB"), c("nhl", "\U0001F3D2", "NHL"), c("nba", "\U0001F3C0", "NBA"))
+              c("mlb", "\u26be", "MLB"), c("nhl", "\U0001F3D2", "NHL"), c("nba", "\U0001F3C0", "NBA"),
+              c("cbb", "\U0001F3C0", "NCAAB"))
   nav_ul <- htmltools::tags$ul(class = "nav nav-pills nav-stacked", id = "lg",
     lapply(nav, function(x) htmltools::tags$li(
       htmltools::tags$a(href = paste0("#", x[1]), `data-value` = x[1], app$nav_item(x[2], x[3])))))

@@ -8324,10 +8324,19 @@ CBB_MIN_G    <- 15L          # games before a team is rateable at all
 CBB_MAX_SD   <- 12.09        # residual sd, for turning a margin into a probability
 CBB_CONF_CAP <- 0.97         # no college basketball game is a lock
 CBB_TIGHT    <- 10           # a game projected inside this is "competitive"
+CBB_GAME_MIN <- 135L         # minutes after tip a game is treated as over
 CBB_MODEL    <- sprintf("cbb-ridge-v%d", CBB_VER)
 CBB_LEDGER   <- file.path(LEDGER_DIR, "cbb_predictions.rds")
 CBB_REL_SCH  <- "espn_mens_college_basketball_schedules"
 CBB_REL_ROS  <- "espn_mens_college_basketball_game_rosters"
+
+cbb_load <- function() {
+  sch <- cbb_sched()
+  if (is.null(sch) || !nrow(sch)) return(NULL)
+  nm <- stats::setNames(c(sch$hname, sch$aname), c(sch$home, sch$away))
+  nm <- nm[!is.na(names(nm)) & !duplicated(names(nm))]
+  list(sch = sch, ok = cbb_rateable(sch), nm = nm)
+}
 
 cbb_dir <- file.path(CACHE_DIR, "cbb")
 dir.create(cbb_dir, showWarnings = FALSE, recursive = TRUE)
@@ -8369,8 +8378,10 @@ cbb_sched <- function() {
       hname = nm("home_display_name"), aname = nm("away_display_name"),
       habb = nm("home_abbreviation"), aabb = nm("away_abbreviation"),
       hconf = nm("home_conference_id"), aconf = nm("away_conference_id"),
-      hs = suppressWarnings(as.numeric(z$home_score)),
-      as_ = suppressWarnings(as.numeric(z$away_score)),
+      # named as game_grade_slate and friends expect, so there is one vocabulary here and
+      # not two; nothing good has ever come of a second name for the same column
+      home_score = suppressWarnings(as.numeric(z$home_score)),
+      away_score = suppressWarnings(as.numeric(z$away_score)),
       neutral = z$neutral_site %in% TRUE,
       # the only safe test; a score of 0 is what an unplayed game carries
       has_score = z$status_type_completed %in% TRUE,
@@ -8378,7 +8389,8 @@ cbb_sched <- function() {
   })
   z <- dplyr::bind_rows(out)
   if (is.null(z) || !nrow(z)) return(NULL)
-  z$marg <- ifelse(z$has_score, z$hs - z$as_, NA_real_)
+  z$marg <- ifelse(z$has_score, z$home_score - z$away_score, NA_real_)
+  z$final_at <- z$ko + CBB_GAME_MIN * 60
   z[!is.na(z$date), , drop = FALSE]
 }
 
@@ -10467,7 +10479,8 @@ ui <- fluidPage(
         tabPanel(nav_item("\U0001F3C8", "NCAAF"), value = "cfb"),
         tabPanel(nav_item("\u26be", "MLB"),       value = "mlb"),
         tabPanel(nav_item("\U0001F3D2", "NHL"), value = "nhl"),
-        tabPanel(nav_item("\U0001F3C0", "NBA"), value = "nba")
+        tabPanel(nav_item("\U0001F3C0", "NBA"), value = "nba"),
+        tabPanel(nav_item("\U0001F3C0", "NCAAB"), value = "cbb")
       )
     ),
     div(class = "main",
@@ -10556,6 +10569,17 @@ ui <- fluidPage(
           uiOutput("bboard_sec"),
           uiOutput("bfb_sec"),
           uiOutput("bleak")
+        )),
+      conditionalPanel(
+        "input.lg == 'cbb'",
+        div(class = "controls-bar",
+            div(tags$label(class = "ctrl-lbl", "Date"),
+                dateInput("cbdate", NULL, value = Sys.Date(), min = "2023-11-01", max = "2027-07-01")),
+            actionButton("cbrefresh", "\u27F3  Run forecast", class = "btn-run")),
+        div(class = "content",
+          uiOutput("cbrecord"),
+          uiOutput("cbboard_sec"),
+          uiOutput("cbnote")
         ))
     )
   )
@@ -10581,6 +10605,7 @@ server <- function(input, output, session) {
     out <- list()
     if (!is.null(q$lg) && q$lg %in% c("today", "nfl", "cfb", "mlb", "nhl", "nba")) out$lg <- q$lg
     out$date_picker <- dt(q$d); out$ndate <- dt(q$nd); out$bdate <- dt(q$bd)
+    out$cbdate <- dt(q$cb)
     out$week <- iv(q$wk); out$cweek <- iv(q$cw)
     out
   })
@@ -10596,6 +10621,7 @@ server <- function(input, output, session) {
     if (lg == "cfb" && !is.null(input$cweek))       q$cw <- input$cweek
     if (lg == "nhl" && !is.null(input$ndate))       q$nd <- format(as.Date(input$ndate))
     if (lg == "nba" && !is.null(input$bdate))       q$bd <- format(as.Date(input$bdate))
+    if (lg == "cbb" && !is.null(input$cbdate))      q$cb <- format(as.Date(input$cbdate))
     updateQueryString(paste0("?", paste(names(q), vapply(q, function(v)
       utils::URLencode(as.character(v), reserved = TRUE), ""), sep = "=", collapse = "&")), mode = "replace")
   }))
@@ -12108,6 +12134,104 @@ server <- function(input, output, session) {
   # league tabs; prices are DraftKings' lines via ESPN, frozen at each game's start in
   # the lines ledger. Leagues load one per flush, so the cards fill in one by one.
   dash <- reactiveValues(y = FALSE, mlb = FALSE, nfl = FALSE, cfb = FALSE, nhl = FALSE, nba = FALSE)
+  # ---- men's college basketball ----
+  cbb_seen <- reactiveVal(FALSE)
+  observeEvent(input$lg, { if (identical(input$lg, "cbb")) cbb_seen(TRUE) },
+               ignoreInit = FALSE)
+  cbdat <- reactive({
+    req(isTRUE(cbb_seen()))
+    invalidateLater(POLL_MIN * 60 * 1000)
+    warm_own("cbb")
+    withProgress(message = "Loading college basketball data", value = 0.4,
+                 { cbb_sync(); cbb_load() })
+  })
+  cbwk <- reactiveVal(FALSE)
+  observe(dash_guard("college basketball data", {
+    if (isTRUE(cbwk())) return()
+    d <- cbdat(); req(d)
+    td <- today_et()
+    up <- d$sch$ko[d$sch$ko > now_et()]
+    dd <- if (any(d$sch$date == td, na.rm = TRUE)) td
+          else if (length(up)) day_et(min(up))
+          else max(d$sch$date, na.rm = TRUE)
+    if (!is.null(url_state$cbdate)) dd <- url_state$cbdate
+    updateDateInput(session, "cbdate", value = dd)
+    cbwk(TRUE)
+  }))
+  cbboard <- reactive({
+    d <- cbdat(); req(d, input$cbdate)
+    # Only the games this model can speak about. A guarantee game against a side with one
+    # result on record is not a forecast, it is a guess dressed as one, so it is left off
+    # the board rather than shown with a number nobody should act on.
+    g <- d$sch[d$sch$date == as.Date(input$cbdate) &
+               d$sch$home %in% d$ok & d$sch$away %in% d$ok, , drop = FALSE]
+    if (!nrow(g)) return(NULL)
+    now <- now_et()
+    st <- game_settle(CBB_LEDGER, CBB_MODEL,
+                      function(gi, cutoff) cbb_predict(d$sch, gi, cutoff),
+                      g, now)
+    if (is.null(st) || !nrow(st)) return(NULL)
+    done <- g$has_score & !is.na(g$final_at) & g$final_at <= now
+    game_grade_slate(CBB_LEDGER, g, done)
+    all_today <- sum(d$sch$date == as.Date(input$cbdate), na.rm = TRUE)
+    mlog(sprintf(paste0("CBB avail  | %d game(s) on this date, %d of them with both sides ",
+                        "rateable and shown; the projection uses NO availability input -- ",
+                        "ESPN carries no college injuries or pre-game lineups, and what a ",
+                        "missing starter is worth here has not been measured"),
+                 all_today, nrow(g)))
+    list(g = g, st = st, done = done, skipped = all_today - nrow(g),
+         pick = ifelse(st$pred > 0, g$home, g$away),
+         ok = done & ((st$pred > 0) == (g$home_score > g$away_score)))
+  })
+  output$cbrecord <- renderUI({
+    b <- cbboard()
+    if (is.null(b)) return(div(class = "rec", "No college basketball games on this date."))
+    n <- sum(b$done); h <- sum(b$ok, na.rm = TRUE)
+    extra <- if (b$skipped > 0)
+      sprintf(" %d more are against a side with too little on record to rate.", b$skipped) else ""
+    div(class = "rec", paste0(if (n == nrow(b$g) && n > 0)
+      sprintf("Model went %d-%d on %d games.", h, n - h, n)
+      else if (n > 0) sprintf("%d games, %d still to play. %d-%d so far.",
+                              nrow(b$g), nrow(b$g) - n, h, n - h)
+      else sprintf("%d games. %d locked at tip-off, the rest update until theirs.",
+                   nrow(b$g), sum(b$st$locked %in% TRUE)), extra))
+  })
+  output$cbboard_sec <- renderUI({
+    req(cbboard()); tagList(div(class = "sec-hdr", "Game outcomes"), DTOutput("cbboard"))
+  })
+  output$cbboard <- renderDT({
+    b <- cbboard(); req(b); d <- cbdat(); g <- b$g
+    o <- order(-b$st$conf)
+    nmv <- function(id) ifelse(is.na(unname(d$nm[id])), id, unname(d$nm[id]))
+    tbl <- data.frame(
+      Matchup = sprintf('<span class="tm">%s</span><span class="at">@</span><span class="tm">%s</span>',
+                        nmv(g$away), nmv(g$home)),
+      Pick = sprintf('<span class="winner-cell">%s</span>', nmv(b$pick)),
+      `Proj margin` = sprintf('<span class="mg">%.1f</span>', abs(b$st$pred)),
+      Confidence = prob_pill(b$st$conf),
+      Final = ifelse(b$done, paste0(g$away_score, "-", g$home_score), ""),
+      Result = ifelse(!b$done, '<span class="nt">&mdash;</span>',
+               ifelse(b$ok, '<span class="rs ok">Correct</span>',
+                            '<span class="rs no">Wrong</span>')),
+      check.names = FALSE, stringsAsFactors = FALSE)
+    datatable(tbl[o, ], rownames = FALSE, escape = FALSE, selection = "none",
+              options = list(pageLength = 25, dom = "t", ordering = FALSE,
+                             columnDefs = list(list(targets = 2:4, className = "dt-right"))))
+  }, server = FALSE)
+  # Said on the board, not buried in a commit message: the two things a reader of this
+  # table would otherwise have to guess.
+  output$cbnote <- renderUI({
+    req(cbboard())
+    div(class = "hint",
+        paste0("Rated on margin over a two-season window. Across 23,282 past games it ",
+               "called 71% of sides against 64% for always taking the home team, and its ",
+               "stated confidence matches what happened to within a point or two. Two ",
+               "honest limits: a game projected inside three points is close to a coin ",
+               "toss (55%), and nothing here knows who is injured \u2014 college ",
+               "basketball publishes no injury report and ESPN carries no pre-game ",
+               "lineups, so a side missing a starter looks like any other side."))
+  })
+
   DASH_ORDER <- c("y", "mlb", "nfl", "cfb", "nhl", "nba")
   dash_n <- reactiveVal(0L)
   observeEvent(input$dash_refresh, {
