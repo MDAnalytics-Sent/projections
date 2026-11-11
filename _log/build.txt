@@ -1,4 +1,4 @@
-2026-11-10 21:30:21 building the page from /home/runner/work/projections/projections/Projections.R
+2026-11-10 22:00:21 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -12,41 +12,41 @@ NFL qb     | a side without the man who opened its season measured +3.95 points 
 Slate      | 0 games · none graded yet
 Cache      | 599 files (5.9 MB) · 24 served from disk, 1 fetched
 CFB td     | recalibrated on 2852 graded prop(s) settled before this slate: slope 1.36, shift +0.06 -- a raw 25% becomes 19%, a raw 60% becomes 65%
-NHL rating | fitted on 75% shots, 25% goals; shots joined for 8442 of 15914 team-game(s) (53%), the rest fall back to the goal margin
+NHL rating | fitted on 75% shots, 25% goals; shots joined for 8442 of 15916 team-game(s) (53%), the rest fall back to the goal margin
 NHL goalie | 16882 appearance(s), 8442 start(s), 168 goalie(s), 4 season(s) 2023-2026
 NHL goalie | starter edge on 4190 of 14856 game(s) (28%); sd 0.180, range -0.74 to +0.69 goals
-NHL        | 290 final game(s) this season, 290 with box scores, 0 missing
-NHL        | latest final: 2026-11-10 (game 2026020291) | today 2026-11-10 has 7 game(s), 5 final | feed 6 hit / 10 fetched
-NHL goalie | 1160 appearance(s) across 290 game(s); 580 identifiable starter(s), 83 distinct goalie(s)
+NHL        | 291 final game(s) this season, 291 with box scores, 0 missing
+NHL        | latest final: 2026-11-10 (game 2026020291) | today 2026-11-10 has 7 game(s), 6 final | feed 6 hit / 10 fetched
+NHL goalie | 1164 appearance(s) across 291 game(s); 582 identifiable starter(s), 83 distinct goalie(s)
 NHL goalie | fields present -- toi 100%, shots 100%, saves 100%, goals against 100%
-NHL goalie | starters league save pct 0.8927 over 15458 shots
+NHL goalie | starters league save pct 0.8928 over 15523 shots
 NHL goalie | measured +0.35 goals of margin per goal of starter edge (se 0.23) on 7667 prior-season game(s) -- NOT used: needs the right sign and two standard errors
 NHL b2b    | measured -0.25 goals of margin on the second night of a back-to-back (se 0.06) on 7667 prior-season game(s) -- used
-NHL avail  | goalscorer list gated on the injury feed (111 row(s), 65 team(s) keyed); the GAME projection for these 7 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
+NHL avail  | goalscorer list gated on the injury feed (113 row(s), 65 team(s) keyed); the GAME projection for these 7 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NBA star   | leading man identified for 30 team(s) from the last 15 game(s); e.g. Jalen Johnson 33 min, Jabari Smith Jr. 36 min, Andrew Nembhard 33 min
 NBA ingest | 3 of 3 finished game(s) read from the summary feed (30 name(s)); history ends 2026-11-09
 NBA star   | a side missing its leading man measured -3.32 points of margin (se 0.39) on 12000 prior-season game(s) -- used
 NBA roster | 12 of 12 team(s) returned a roster (208 name(s))
 NBA line-up| 5 of 6 game(s) within 8h of tip-off returned a five (50 name(s))
-2026-11-10 21:31:35   today  39.3s
+2026-11-10 22:01:34   today  38.0s
 CFB qb     | passer found for 247 team(s), 19 flagged in all; of the 134 side(s) on THIS board, 133 could be checked and 17 are flagged; injury feed returned 3 row(s) with 1 listed out
-NHL avail  | goalscorer list gated on the injury feed (111 row(s), 65 team(s) keyed); the GAME projection for these 7 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
+NHL avail  | goalscorer list gated on the injury feed (113 row(s), 65 team(s) keyed); the GAME projection for these 7 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NBA roster | 12 of 12 team(s) returned a roster (208 name(s))
 NBA line-up| 5 of 6 game(s) within 8h of tip-off returned a five (50 name(s))
-2026-11-10 21:32:02   nfl    16.1s  3 built, 11 to pick from
-2026-11-10 21:32:34   cfb    21.1s  3 built, 12 to pick from
+2026-11-10 22:02:00   nfl    15.5s  3 built, 11 to pick from
+2026-11-10 22:02:20   cfb    20.0s  3 built, 12 to pick from
 
 ── Slate 2026-11-09 ──
 Slate      | 0 games · none graded yet
-Cache      | 599 files (5.9 MB) · 18 served from disk, 2 fetched
-
-── Slate 2026-11-10 ──
-Slate      | 0 games · none graded yet
-Cache      | 599 files (5.9 MB) · 20 served from disk, 1 fetched
+Cache      | 599 files (5.9 MB) · 20 served from disk, 0 fetched
 
 ── Slate 2026-11-10 ──
 Slate      | 0 games · none graded yet
 Cache      | 599 files (5.9 MB) · 21 served from disk, 0 fetched
+
+── Slate 2026-11-10 ──
+Slate      | 0 games · none graded yet
+Cache      | 599 files (5.9 MB) · 18 served from disk, 3 fetched
 
 ── Slate 2026-11-11 ──
 Slate      | 0 games · none graded yet
@@ -59,17 +59,17 @@ Cache      | 599 files (5.9 MB) · 20 served from disk, 1 fetched
 ── Slate 2026-11-13 ──
 Slate      | 0 games · none graded yet
 Cache      | 599 files (5.9 MB) · 20 served from disk, 1 fetched
-2026-11-10 21:33:01   mlb    26.7s  5 built, 3 to pick from
+2026-11-10 22:02:46   mlb    25.4s  5 built, 3 to pick from
 NHL avail  | goalscorer list gated on the injury feed (NO row(s), no team(s) keyed); the GAME projection for these 3 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NHL avail  | goalscorer list gated on the injury feed (113 row(s), 65 team(s) keyed); the GAME projection for these 7 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NHL avail  | goalscorer list gated on the injury feed (113 row(s), 65 team(s) keyed); the GAME projection for these 6 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NHL avail  | goalscorer list gated on the injury feed (113 row(s), 65 team(s) keyed); the GAME projection for these 11 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NHL avail  | goalscorer list gated on the injury feed (113 row(s), 65 team(s) keyed); the GAME projection for these 2 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
-2026-11-10 21:33:03   nhl     2.6s  5 built, 18 to pick from
+2026-11-10 22:02:49   nhl     2.8s  5 built, 18 to pick from
 NBA roster | 12 of 12 team(s) returned a roster (208 name(s))
 NBA line-up| 5 of 6 game(s) within 8h of tip-off returned a five (50 name(s))
 NBA roster | 20 of 20 team(s) returned a roster (348 name(s))
 NBA roster | 8 of 8 team(s) returned a roster (137 name(s))
 NBA roster | 18 of 18 team(s) returned a roster (312 name(s))
-2026-11-10 21:33:07   nba     3.7s  5 built, 17 to pick from
-2026-11-10 21:33:07 built 16323 KB in 166s
+2026-11-10 22:02:52   nba     3.4s  5 built, 17 to pick from
+2026-11-10 22:02:52 built 16324 KB in 152s
