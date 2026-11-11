@@ -5048,69 +5048,6 @@ load_all <- function() {
   # source that knows about a fresh absence before kick-off.
   qf <- inj_file()
   inj <- if (file.exists(qf)) readRDS(qf) else NULL
-  # ---- TEMPORARY: what availability data exists for men's college basketball ----
-  # Removed once it has answered. I told the owner college basketball would be blind like
-  # college football, on the strength of the CFB probe alone, without testing basketball.
-  # That is the same extrapolation that has been wrong twice this week, so: ask, log what
-  # came back, and build on that. ESPN is firewalled from the sandbox this is written in,
-  # so a live build is the only place the question can be answered.
-  tryCatch({
-    bb <- "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball"
-    get <- function(u, to = 10) {
-      r <- tryCatch(httr::GET(u, httr::timeout(to)), error = function(e) NULL)
-      if (is.null(r) || !identical(httr::status_code(r), 200L)) return(NULL)
-      tryCatch(jsonlite::fromJSON(httr::content(r, "text", encoding = "UTF-8"),
-                                  simplifyVector = FALSE), error = function(e) NULL)
-    }
-    say <- function(...) mlog(paste0("CBB probe  | ", sprintf(...)))
-
-    j <- get(sprintf("%s/injuries", bb))
-    say("league injuries: %s group(s), %d entr(y/ies)",
-        if (is.null(j)) "unreachable" else format(length(j$injuries %||% list())),
-        if (is.null(j)) 0L else sum(vapply(j$injuries %||% list(),
-                                           function(z) length(z$injuries %||% list()), 0L)))
-    for (id in c("158", "2567", "245")) {
-      j <- get(sprintf("%s/teams/%s/injuries", bb, id))
-      say("team %s injuries: %s", id,
-          if (is.null(j)) "unreachable" else sprintf("%d group(s), %d entr(y/ies)",
-            length(j$injuries %||% list()),
-            sum(vapply(j$injuries %||% list(), function(z) length(z$injuries %||% list()), 0L))))
-    }
-    sb <- get(sprintf("%s/scoreboard?dates=%s&limit=400", bb,
-                      format(now_et(), "%Y%m%d")))
-    ev <- sb$events %||% list()
-    say("scoreboard for today: %d event(s)", length(ev))
-    if (length(ev)) {
-      # the first game that has not started -- that is where a pre-game lineup would be
-      pre <- Filter(function(e) !isTRUE(e$status$type$completed) &&
-                      identical(e$status$type$state, "pre"), ev)
-      e <- if (length(pre)) pre[[1]] else ev[[1]]
-      say("inspecting event %s (%s): top-level keys %s", e$id %||% "?",
-          e$status$type$state %||% "?", paste(utils::head(names(e), 12), collapse = ","))
-      s <- get(sprintf("%s/summary?event=%s", bb, e$id))
-      if (is.null(s)) say("summary: unreachable")
-      else {
-        say("summary keys: %s", paste(names(s), collapse = ","))
-        for (k in c("rosters", "boxscore", "probables", "predictor", "injuries", "leaders")) {
-          v <- s[[k]]
-          if (is.null(v)) next
-          say("  summary$%s present: %d element(s)%s", k, length(v),
-              if (k == "rosters" && length(v))
-                sprintf("; first roster keys %s, %d player(s)",
-                        paste(utils::head(names(v[[1]]), 8), collapse = ","),
-                        length(v[[1]]$roster %||% list())) else "")
-          if (k == "rosters" && length(v) && length(v[[1]]$roster %||% list())) {
-            pl <- v[[1]]$roster[[1]]
-            say("  a roster entry's keys: %s", paste(utils::head(names(pl), 12), collapse = ","))
-            say("  does it mark a starter? starter=%s didNotPlay=%s",
-                format(pl$starter %||% NA), format(pl$didNotPlay %||% NA))
-          }
-        }
-      }
-    }
-  }, error = function(e) mlog(sprintf("CBB probe  | failed: %s", conditionMessage(e))))
-  # ---- end temporary probe ----
-
   einj <- tryCatch(nfl_inj(), error = function(e) NULL)
   etk  <- tryCatch(nfl_team_key(), error = function(e) character(0))
   sch <- qb_change_flags(add_kickoff(readRDS(sched_file())), inj, einj, etk)
@@ -8324,6 +8261,177 @@ NBA_ROS_TTL  <- 12 * 60     # a roster changes rarely; a stale one is the whole 
 NBA_INJ_OUT  <- c("out", "injured reserve", "suspension", "suspended",
                   "not with team", "out for season")
 NBA_MODEL    <- sprintf("nba-marg-v%d", NBA_VER)
+
+# =======================================================================================
+# MEN'S COLLEGE BASKETBALL
+#
+# Feasibility measured before any of this was written, on 25,655 completed games across
+# five seasons from the same sportsdataverse releases the other boards use. Walk-forward,
+# refitting weekly, the rating calls 71.1% of sides against 64.4% for "pick the home
+# team", at 9.50 points of mean margin error, and its win probability is honest -- said
+# against happened agrees within one or two points in every decile, Brier skill +18.9%.
+#
+# Two findings shaped the code rather than decorating it:
+#
+#  1. The 356 one-game visitors MUST be excluded. Division II and III sides turn up for a
+#     single guarantee game, and ridge shrinks a team with one result toward the average,
+#     so a team that lost by 40 is modelled as an average opponent -- which mis-predicts
+#     that game AND hands the winner credit for beating an average team by 40. Leaving
+#     them in the fit cost five points of accuracy outright, 66% against 71%.
+#  2. Unplayed games carry a score of 0, not NA. An is.na() check admits 5,479 phantom
+#     0-0 finals for the current season alone. status_type_completed is the only safe
+#     test, and this is the second time this week a feed has lied by being tidy.
+#
+# And what it is worth on the games the owner actually asked about -- the lower tiers:
+# low-major against low-major reads 65.3% against a 58.6% home-only baseline, and on the
+# ones projected inside ten points, 61.5% against 54.5%. It picks the road side in 24% of
+# all games and is right 63.9% of the time. So there is real signal down there, a little
+# weaker than the high majors (69.9%) but the same shape.
+#
+# What is NOT claimed: ranking a slate by projected margin puts 19-point mismatches at
+# the top and reads 91.6% right, which is the college football blowout artefact and tells
+# a reader nothing. Confined to games projected inside ten points, the best three a day
+# hold at 75.3% on a 9.1-point median edge. That is the number worth showing. Games
+# projected inside three points are near coin flips, 55.1% against 50.7%, and the board
+# should not pretend otherwise.
+# WHO IS PLAYING, for this sport. Probed from a live build on 11 November 2026 rather
+# than assumed from the college football result, because the owner pushed back on that
+# extrapolation and was right to.
+#
+# ESPN has nothing. The league-wide injuries endpoint answered 0 groups and 0 entries;
+# so did all three teams asked individually (158, 2567, 245). And a pre-game summary
+# carries no rosters key at all -- its keys are boxscore, odds, pickcenter, predictor,
+# winprobability, standings, lastFiveGames. There is no lineup there to read before tip.
+# The structured pre-game sources that do exist -- sportsdata.io, api-sports, RapidAPI --
+# all want an API key, the same wall CFBD puts up.
+#
+# What IS free, and is better than college football has: the game-rosters release carries
+# starter, did_not_play, active and reason for every player in every game -- 196,876 rows
+# for one season. That names the actual starting five, so "this team is without a man who
+# normally starts" is answerable, one game late, the way the college football flag works.
+# Basketball should carry that better than football did: five starters out of a short
+# rotation, so one absence is a larger share of a team.
+#
+# It is fetched and cached here. Nothing reads it yet, and no projection moves on it,
+# because what a missing starter is worth in this sport has not been measured and this
+# file does not adjust a number on an assumption.
+CBB_VER      <- 1L
+CBB_SEASONS  <- 2024:2027    # ESPN labels a season by the year it ends
+CBB_LAM      <- 2            # ridge penalty; 71.1% at 2, 70.1% at 10, 65.1% at 100
+CBB_HL       <- 400          # days of half-life on the decay
+CBB_WIN_D    <- 730          # days of games in the window, so last season carries November
+CBB_MIN_G    <- 15L          # games before a team is rateable at all
+CBB_MAX_SD   <- 12.09        # residual sd, for turning a margin into a probability
+CBB_CONF_CAP <- 0.97         # no college basketball game is a lock
+CBB_TIGHT    <- 10           # a game projected inside this is "competitive"
+CBB_MODEL    <- sprintf("cbb-ridge-v%d", CBB_VER)
+CBB_LEDGER   <- file.path(LEDGER_DIR, "cbb_predictions.rds")
+CBB_REL_SCH  <- "espn_mens_college_basketball_schedules"
+CBB_REL_ROS  <- "espn_mens_college_basketball_game_rosters"
+
+cbb_dir <- file.path(CACHE_DIR, "cbb")
+dir.create(cbb_dir, showWarnings = FALSE, recursive = TRUE)
+cbb_path <- function(k, y = NULL, ext = "rds")
+  file.path(cbb_dir, if (is.null(y)) sprintf("%s_v%d.%s", k, CBB_VER, ext)
+            else sprintf("%s_v%d_%d.%s", k, CBB_VER, y, ext))
+
+cbb_sync <- function(force = FALSE) {
+  for (y in CBB_SEASONS) {
+    sf <- cbb_path("sched", y)
+    if (force && file.exists(sf)) unlink(sf)
+    sdv_fetch(CBB_REL_SCH, sprintf("mbb_schedule_%d.rds", y), sf)
+    # Rosters only for seasons that can still inform a lineup: the file is ~9MB a season
+    # and nothing reads an old one.
+    if (y >= max(CBB_SEASONS) - 1L) {
+      rf <- cbb_path("ros", y)
+      if (force && file.exists(rf)) unlink(rf)
+      sdv_fetch(CBB_REL_ROS, sprintf("game_rosters_%d.rds", y), rf)
+    }
+  }
+  invisible(TRUE)
+}
+
+# Every game, with the completed ones marked honestly.
+cbb_sched <- function() {
+  out <- lapply(CBB_SEASONS, function(y) {
+    f <- cbb_path("sched", y); if (!file.exists(f)) return(NULL)
+    z <- tryCatch(as.data.frame(readRDS(f)), error = function(e) NULL)
+    if (is.null(z) || !nrow(z)) return(NULL)
+    need <- c("game_id", "date", "home_id", "away_id", "home_score", "away_score",
+              "status_type_completed")
+    if (!all(need %in% names(z))) return(NULL)
+    nm <- function(cc) if (cc %in% names(z)) as.character(z[[cc]]) else rep(NA_character_, nrow(z))
+    data.frame(
+      season = y, game_id = as.character(z$game_id),
+      ko = as.POSIXct(sub("Z$", "", gsub("T", " ", as.character(z$date))), tz = "UTC"),
+      date = as.Date(substr(as.character(z$date), 1, 10)),
+      home = as.character(z$home_id), away = as.character(z$away_id),
+      hname = nm("home_display_name"), aname = nm("away_display_name"),
+      habb = nm("home_abbreviation"), aabb = nm("away_abbreviation"),
+      hconf = nm("home_conference_id"), aconf = nm("away_conference_id"),
+      hs = suppressWarnings(as.numeric(z$home_score)),
+      as_ = suppressWarnings(as.numeric(z$away_score)),
+      neutral = z$neutral_site %in% TRUE,
+      # the only safe test; a score of 0 is what an unplayed game carries
+      has_score = z$status_type_completed %in% TRUE,
+      stringsAsFactors = FALSE)
+  })
+  z <- dplyr::bind_rows(out)
+  if (is.null(z) || !nrow(z)) return(NULL)
+  z$marg <- ifelse(z$has_score, z$hs - z$as_, NA_real_)
+  z[!is.na(z$date), , drop = FALSE]
+}
+
+# Teams with a real schedule. Everyone else is a guarantee-game visitor who cannot be
+# rated from one result and must not be allowed to stand in as an average opponent.
+cbb_rateable <- function(sch) {
+  d <- sch[sch$has_score, , drop = FALSE]
+  if (!nrow(d)) return(character(0))
+  tb <- table(c(d$home, d$away))
+  names(tb)[tb >= CBB_MIN_G]
+}
+
+# Ridge on a difference design over a decayed two-season window, so last season is
+# evidence on one scale rather than a prior bolted onto a differently-centred fit.
+cbb_rate <- function(h, at, lam = CBB_LAM) {
+  if (is.null(h) || !nrow(h)) return(NULL)
+  w <- 2^(-as.numeric(as.Date(at) - h$date) / CBB_HL)
+  tl <- sort(unique(c(h$home, h$away))); ix <- stats::setNames(seq_along(tl), tl)
+  n <- nrow(h); m <- length(tl)
+  if (m < 2L || n < 50L) return(NULL)
+  A <- Matrix::sparseMatrix(
+    i = c(seq_len(n), seq_len(n), seq_len(n)),
+    j = c(ix[h$home], ix[h$away], rep(m + 1L, n)),
+    x = c(rep(1, n), rep(-1, n), ifelse(h$neutral, 0, 1)),
+    dims = c(n, m + 1L))
+  Aw <- A * sqrt(w)
+  b <- tryCatch(as.numeric(Matrix::solve(Matrix::crossprod(Aw) + lam * Matrix::Diagonal(m + 1L),
+                                        Matrix::crossprod(Aw, h$marg * sqrt(w)))),
+                error = function(e) NULL)
+  if (is.null(b) || !all(is.finite(b))) return(NULL)
+  list(r = stats::setNames(b[seq_len(m)], tl), hfa = b[m + 1L], n = n,
+       gp = table(c(h$home, h$away)))
+}
+
+# The projection for one slate, from games played before it.
+cbb_predict <- function(sch, g, at) {
+  ok <- cbb_rateable(sch)
+  h <- sch[sch$has_score & sch$date < as.Date(at) &
+           sch$date >= as.Date(at) - CBB_WIN_D &
+           sch$home %in% ok & sch$away %in% ok, , drop = FALSE]
+  m <- cbb_rate(h, at)
+  if (is.null(m)) return(NULL)
+  have <- g$home %in% names(m$r) & g$away %in% names(m$r)
+  g <- g[have, , drop = FALSE]
+  if (!nrow(g)) return(NULL)
+  pred <- unname(m$r[g$home]) - unname(m$r[g$away]) + ifelse(g$neutral, 0, m$hfa)
+  p <- stats::pnorm(pred / CBB_MAX_SD)
+  p <- pmin(pmax(p, 1 - CBB_CONF_CAP), CBB_CONF_CAP)
+  data.frame(game_id = g$game_id, season = g$season, date = g$date,
+             pred = pred, conf = pmax(p, 1 - p),
+             gp = pmin(as.integer(m$gp[g$home]), as.integer(m$gp[g$away])),
+             stringsAsFactors = FALSE)
+}
 
 nba_dir <- file.path(CACHE_DIR, "nba")
 dir.create(nba_dir, showWarnings = FALSE, recursive = TRUE)
