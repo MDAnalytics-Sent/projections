@@ -455,7 +455,12 @@ window.tdxBind = function(table, tbl, inputId, col, pickId) {
 
 SITE_JS_BODY <- "
 (function() {
-  var known = ['today', 'nfl', 'cfb', 'mlb', 'nhl', 'nba'];
+  // Every league the page can route to. A name missing here is silently sent to 'today',
+  // which is how the NCAAB tab shipped looking broken: the nav item and the pane were
+  // both built, the day pages were on disk, and the click simply was not recognised.
+  // Six separate hardcoded league lists had to learn about the new sport; this is the one
+  // a reader notices.
+  var known = ['today', 'nfl', 'cfb', 'mlb', 'nhl', 'nba', 'cbb'];
   // a day or week's own data: the scorers and matchup panels behind its board
   function applyFrag(body) {
     var s = body && body.querySelector('script.frag-data');

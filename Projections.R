@@ -9728,7 +9728,10 @@ dash_hosted <- function() {
 # (regular season + playoffs). Outside its window a league is skipped entirely, so
 # the page never downloads and fits a sport that is not playing.
 DASH_SEASONS <- list(mlb = c(3, 15, 11, 10), nfl = c(8, 1, 2, 20), cfb = c(8, 15, 1, 25),
-                     nhl = c(9, 20, 6, 30), nba = c(10, 1, 6, 30))
+                     nhl = c(9, 20, 6, 30), nba = c(10, 1, 6, 30),
+                     # November through the first week of April, which covers the
+                     # tournament; outside it the sport is skipped and nothing downloads
+                     cbb = c(11, 1, 4, 8))
 dash_in_season <- function(lg, d = Sys.Date()) {
   w <- DASH_SEASONS[[lg]]; if (is.null(w)) return(TRUE)
   d <- as.Date(d); md <- as.integer(format(d, "%m")) * 100L + as.integer(format(d, "%d"))
@@ -10618,7 +10621,8 @@ server <- function(input, output, session) {
     dt <- function(x) { d <- suppressWarnings(as.Date(x %||% NA_character_)); if (length(d) == 1L && !is.na(d)) d else NULL }
     iv <- function(x) { v <- suppressWarnings(as.integer(x %||% NA_character_)); if (length(v) == 1L && !is.na(v)) v else NULL }
     out <- list()
-    if (!is.null(q$lg) && q$lg %in% c("today", "nfl", "cfb", "mlb", "nhl", "nba")) out$lg <- q$lg
+    if (!is.null(q$lg) && q$lg %in% c("today", "nfl", "cfb", "mlb", "nhl", "nba", "cbb"))
+      out$lg <- q$lg
     out$date_picker <- dt(q$d); out$ndate <- dt(q$nd); out$bdate <- dt(q$bd)
     out$cbdate <- dt(q$cb)
     out$week <- iv(q$wk); out$cweek <- iv(q$cw)
@@ -12264,6 +12268,11 @@ server <- function(input, output, session) {
                "lineups, so a side missing a starter looks like any other side."))
   })
 
+  # No "cbb" here on purpose. The overview's cards are built from the market-lines
+  # ledger by way of LG_NAME and ESPN_LG, and no lines are fetched for college
+  # basketball, so adding it would load a sport to produce no card -- and DASH_ORDER[-1]
+  # is index-coupled to the in-season vector below, so the two must change together.
+  # Giving NCAAB an overview card is its own job: it needs lines first.
   DASH_ORDER <- c("y", "mlb", "nfl", "cfb", "nhl", "nba")
   dash_n <- reactiveVal(0L)
   observeEvent(input$dash_refresh, {
@@ -12760,7 +12769,8 @@ server <- function(input, output, session) {
       if (length(cards)) HTML(sprintf('<div class="sp-grid">%s</div>', paste(cards, collapse = ""))) else
         div(class = "dash-wait", if (length(R$pending)) "Loading today's games\u2026" else "No games today or yesterday."),
       if (length(R$pending) && length(cards)) div(class = "dash-wait", sprintf("Still loading: %s",
-        paste(c(mlb = "MLB", nfl = "NFL", cfb = "NCAAF", nhl = "NHL", nba = "NBA")[R$pending], collapse = ", "))),
+        paste(c(mlb = "MLB", nfl = "NFL", cfb = "NCAAF", nhl = "NHL", nba = "NBA",
+                cbb = "NCAAB")[R$pending], collapse = ", "))),
       if (length(R$errs)) div(class = "err", paste(R$errs, collapse = " \u00b7 ")),
       if (length(cards)) div(class = "dash-cav", HTML(paste0(
         "<b>Value</b> = the model's pick at a price that pays more than its chance is worth: model chance ",
