@@ -1,16 +1,16 @@
-2026-11-12 00:29:41 building the page from /home/runner/work/projections/projections/Projections.R
+2026-11-12 02:14:53 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
 To publish the web page, run:  source("publish_site.R")   (Shiny version: source("deploy_projections.R"))
 
 NFL qb     | 15 side(s) on the 136 game(s) still to play are without the man who opened their season: 5 from the live ESPN feed, 0 from the weekly report, 10 from the named starter
-NFL avail  | live ESPN feed: 800 row(s), 118 listed out, 32 team(s) keyed | weekly report: 42757 row(s)
+NFL avail  | live ESPN feed: 800 row(s), 118 listed out, 32 team(s) keyed | weekly report: 42991 row(s)
 NFL qb     | a side without the man who opened its season measured +3.95 points of margin (se 0.45) on 901 of 2895 prior game(s) -- used
 CFB td     | recalibrated on 2852 graded prop(s) settled before this slate: slope 1.36, shift +0.06 -- a raw 25% becomes 19%, a raw 60% becomes 65%
-NHL rating | fitted on 75% shots, 25% goals; shots joined for 8456 of 15930 team-game(s) (53%), the rest fall back to the goal margin
-NHL goalie | 16910 appearance(s), 8456 start(s), 169 goalie(s), 4 season(s) 2023-2026
-NHL goalie | starter edge on 4197 of 14856 game(s) (28%); sd 0.180, range -0.74 to +0.69 goals
+NHL rating | fitted on 75% shots, 25% goals; shots joined for 8468 of 15930 team-game(s) (53%), the rest fall back to the goal margin
+NHL goalie | 16934 appearance(s), 8468 start(s), 169 goalie(s), 4 season(s) 2023-2026
+NHL goalie | starter edge on 4203 of 14856 game(s) (28%); sd 0.180, range -0.74 to +0.69 goals
 NHL        | 298 final game(s) this season, 298 with box scores, 0 missing
 NHL        | latest final: 2026-11-11 (game 2026020298) | today 2026-11-12 has 11 game(s), 0 final | feed 7 hit / 9 fetched
 NHL goalie | 1192 appearance(s) across 298 game(s); 596 identifiable starter(s), 83 distinct goalie(s)
@@ -23,53 +23,53 @@ NBA star   | leading man identified for 30 team(s) from the last 15 game(s); e.g
 NBA ingest | 11 of 11 finished game(s) read from the summary feed (110 name(s)); history ends 2026-11-10
 NBA star   | a side missing its leading man measured -3.32 points of margin (se 0.39) on 12000 prior-season game(s) -- used
 NBA roster | 8 of 8 team(s) returned a roster (137 name(s))
-2026-11-12 00:30:46   today  31.5s
+2026-11-12 02:16:20   today  53.3s
 CFB qb     | passer found for 247 team(s), 19 flagged in all; of the 134 side(s) on THIS board, 133 could be checked and 17 are flagged; injury feed returned 3 row(s) with 1 listed out
 NHL avail  | goalscorer list gated on the injury feed (113 row(s), 65 team(s) keyed); the GAME projection for these 11 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NBA roster | 8 of 8 team(s) returned a roster (137 name(s))
-2026-11-12 00:31:11   nfl    15.5s  3 built, 11 to pick from
-2026-11-12 00:31:41   cfb    19.2s  3 built, 12 to pick from
+2026-11-12 02:16:46   nfl    15.6s  3 built, 11 to pick from
+2026-11-12 02:17:06   cfb    19.4s  3 built, 12 to pick from
 
 ── Slate 2026-11-12 ──
 Slate      | 0 games · none graded yet
-Cache      | 600 files (5.9 MB) · 24 served from disk, 1 fetched
+Cache      | 601 files (5.9 MB) · 24 served from disk, 1 fetched
 
 ── Slate 2026-11-11 ──
 Slate      | 0 games · none graded yet
-Cache      | 600 files (5.9 MB) · 20 served from disk, 0 fetched
+Cache      | 601 files (5.9 MB) · 20 served from disk, 0 fetched
 
 ── Slate 2026-11-12 ──
 Slate      | 0 games · none graded yet
-Cache      | 600 files (5.9 MB) · 21 served from disk, 0 fetched
+Cache      | 601 files (5.9 MB) · 21 served from disk, 0 fetched
 
 ── Slate 2026-11-13 ──
 Slate      | 0 games · none graded yet
-Cache      | 600 files (5.9 MB) · 20 served from disk, 1 fetched
+Cache      | 601 files (5.9 MB) · 20 served from disk, 1 fetched
 
 ── Slate 2026-11-14 ──
 Slate      | 0 games · none graded yet
-Cache      | 600 files (5.9 MB) · 20 served from disk, 1 fetched
+Cache      | 601 files (5.9 MB) · 20 served from disk, 1 fetched
 
 ── Slate 2026-11-15 ──
 Slate      | 0 games · none graded yet
 Cache      | 601 files (5.9 MB) · 20 served from disk, 1 fetched
-2026-11-12 00:32:06   mlb    19.6s  5 built, 1 to pick from
+2026-11-12 02:17:32   mlb    20.3s  5 built, 1 to pick from
 NHL avail  | goalscorer list gated on the injury feed (NO row(s), no team(s) keyed); the GAME projection for these 6 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NHL avail  | goalscorer list gated on the injury feed (113 row(s), 65 team(s) keyed); the GAME projection for these 11 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NHL avail  | goalscorer list gated on the injury feed (113 row(s), 65 team(s) keyed); the GAME projection for these 2 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NHL avail  | goalscorer list gated on the injury feed (113 row(s), 65 team(s) keyed); the GAME projection for these 14 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NHL avail  | goalscorer list gated on the injury feed (113 row(s), 65 team(s) keyed); the GAME projection for these 5 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
-2026-11-12 00:32:09   nhl     2.6s  5 built, 18 to pick from
+2026-11-12 02:17:34   nhl     2.4s  5 built, 18 to pick from
 NBA roster | 8 of 8 team(s) returned a roster (137 name(s))
 NBA roster | 18 of 18 team(s) returned a roster (313 name(s))
 NBA roster | 10 of 10 team(s) returned a roster (170 name(s))
 NBA roster | 18 of 18 team(s) returned a roster (317 name(s))
-2026-11-12 00:32:13   nba     3.8s  5 built, 17 to pick from
+2026-11-12 02:17:38   nba     3.8s  5 built, 17 to pick from
 CBB avail  | 56 game(s) on this date, 41 of them with both sides rateable and shown; the projection uses NO availability input -- ESPN carries no college injuries or pre-game lineups, and what a missing starter is worth here has not been measured
 CBB avail  | 83 game(s) on this date, 65 of them with both sides rateable and shown; the projection uses NO availability input -- ESPN carries no college injuries or pre-game lineups, and what a missing starter is worth here has not been measured
 CBB avail  | 56 game(s) on this date, 41 of them with both sides rateable and shown; the projection uses NO availability input -- ESPN carries no college injuries or pre-game lineups, and what a missing starter is worth here has not been measured
 CBB avail  | 31 game(s) on this date, 23 of them with both sides rateable and shown; the projection uses NO availability input -- ESPN carries no college injuries or pre-game lineups, and what a missing starter is worth here has not been measured
 CBB avail  | 99 game(s) on this date, 87 of them with both sides rateable and shown; the projection uses NO availability input -- ESPN carries no college injuries or pre-game lineups, and what a missing starter is worth here has not been measured
 CBB avail  | 62 game(s) on this date, 52 of them with both sides rateable and shown; the projection uses NO availability input -- ESPN carries no college injuries or pre-game lineups, and what a missing starter is worth here has not been measured
-2026-11-12 00:32:14   cbb     0.5s  5 built, 15 to pick from
-2026-11-12 00:32:14 built 16690 KB in 154s
+2026-11-12 02:17:40   cbb     0.5s  5 built, 15 to pick from
+2026-11-12 02:17:40 built 16673 KB in 167s
