@@ -795,9 +795,9 @@
 "NHL","401892689","2026-11-11 03:00:00","Nashville @ Los Angeles","Los Angeles","home",0.5516,0.5325,1.8,-0.0072,"DraftKings","2026-11-11 02:51:32","L",-1
 "NBA","401909965","2026-11-11 04:00:00","Oklahoma City Thunder @ Portland Trail Blazers","Oklahoma City Thunder","away",0.5452,0.5337,1.8,-0.0187,"DraftKings","2026-11-11 03:33:07","L",-1
 "NBA","401909966","2026-11-12 00:00:00","Washington Wizards @ Indiana Pacers","Indiana Pacers","home",0.6051,0.5824,1.649,-0.002,"DraftKings","2026-11-11 23:35:38","W",0.649
-"NBA","401909967","2026-11-12 00:00:00","Cleveland Cavaliers @ New York Knicks","New York Knicks","home",0.6156,0.6456,1.488,-0.0842,"DraftKings","2026-11-11 23:35:38",NA,NA
-"NBA","401909968","2026-11-12 00:00:00","Boston Celtics @ Toronto Raptors","Boston Celtics","away",0.5318,0.6444,1.49,-0.2075,"DraftKings","2026-11-11 23:35:38",NA,NA
-"NHL","401892690","2026-11-12 00:00:00","Tampa Bay @ Buffalo","Tampa Bay","away",0.5205,0.5427,1.769,-0.0791,"DraftKings","2026-11-11 23:35:38",NA,NA
+"NBA","401909967","2026-11-12 00:00:00","Cleveland Cavaliers @ New York Knicks","New York Knicks","home",0.6156,0.6456,1.488,-0.0842,"DraftKings","2026-11-11 23:35:38","L",-1
+"NBA","401909968","2026-11-12 00:00:00","Boston Celtics @ Toronto Raptors","Boston Celtics","away",0.5318,0.6444,1.49,-0.2075,"DraftKings","2026-11-11 23:35:38","W",0.49
+"NHL","401892690","2026-11-12 00:00:00","Tampa Bay @ Buffalo","Tampa Bay","away",0.5205,0.5427,1.769,-0.0791,"DraftKings","2026-11-11 23:35:38","W",0.769
 "NCAAF","401866461","2026-11-12 00:30:00","Buffalo @ Ball State","Ball State","home",0.5503,0.4826,1.98,0.0898,"DraftKings","2026-11-12 00:05:14",NA,NA
 "NCAAF","401866462","2026-11-12 00:30:00","Sacramento State @ Central Michigan","Central Michigan","home",0.8502,0.887,1.083,-0.0789,"DraftKings","2026-11-12 00:05:14",NA,NA
 "NCAAF","401866463","2026-11-12 00:30:00","Massachusetts @ Toledo","Toledo","home",0.8103,0.8223,1.167,-0.0546,"DraftKings","2026-11-12 00:05:14",NA,NA
