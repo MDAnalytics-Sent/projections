@@ -810,6 +810,6 @@
 "NHL","401892692","2026-11-12 02:00:00","Philadelphia @ Edmonton","Edmonton","home",0.6107,0.6309,1.521,-0.0713,"DraftKings","2026-11-12 01:32:15","W",0.521
 "NBA","401909974","2026-11-12 02:30:00","Golden State Warriors @ Houston Rockets","Houston Rockets","home",0.6185,0.6851,1.402,-0.1331,"DraftKings","2026-11-12 02:02:19","W",0.402
 "NHL","401892693","2026-11-12 02:30:00","Utah @ Vegas","Vegas","home",0.5328,0.5427,1.769,-0.0574,"DraftKings","2026-11-12 02:02:19","W",0.769
-"NBA","401909975","2026-11-12 03:00:00","Oklahoma City Thunder @ Portland Trail Blazers","Portland Trail Blazers","home",0.5231,0.5714,1.68,-0.121,"DraftKings","2026-11-12 02:32:06",NA,NA
+"NBA","401909975","2026-11-12 03:00:00","Oklahoma City Thunder @ Portland Trail Blazers","Portland Trail Blazers","home",0.5231,0.5714,1.68,-0.121,"DraftKings","2026-11-12 02:32:06","W",0.68
 "NHL","401892695","2026-11-12 03:00:00","Pittsburgh @ San Jose","Pittsburgh","away",0.5075,0.5721,1.676,-0.1497,"DraftKings","2026-11-12 02:32:06",NA,NA
-"NHL","401892694","2026-11-12 03:00:00","Nashville @ Anaheim","Anaheim","home",0.5772,0.5721,1.676,-0.0328,"DraftKings","2026-11-12 02:32:06",NA,NA
+"NHL","401892694","2026-11-12 03:00:00","Nashville @ Anaheim","Anaheim","home",0.5772,0.5721,1.676,-0.0328,"DraftKings","2026-11-12 02:32:06","L",-1
