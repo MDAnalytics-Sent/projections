@@ -12229,12 +12229,17 @@ server <- function(input, output, session) {
     n <- sum(b$done); h <- sum(b$ok, na.rm = TRUE)
     extra <- if (b$skipped > 0)
       sprintf(" %d more are against a side with too little on record to rate.", b$skipped) else ""
+    # One day is not a measurement and the board should not imply otherwise. Over 388
+    # past days with twenty or more games the record ran from 47.6% to 97.4%, with the
+    # middle half between 66% and 77%: a 32-2 night and a 23-18 night are the same coin
+    # landing twice. Saying so here is cheaper than having it mistaken for form.
+    spread <- if (n >= 15) " A single night swings widely \u2014 the long-run rate is 71%." else ""
     div(class = "rec", paste0(if (n == nrow(b$g) && n > 0)
       sprintf("Model went %d-%d on %d games.", h, n - h, n)
       else if (n > 0) sprintf("%d games, %d still to play. %d-%d so far.",
                               nrow(b$g), nrow(b$g) - n, h, n - h)
       else sprintf("%d games. %d locked at tip-off, the rest update until theirs.",
-                   nrow(b$g), sum(b$st$locked %in% TRUE)), extra))
+                   nrow(b$g), sum(b$st$locked %in% TRUE)), extra, spread))
   })
   output$cbboard_sec <- renderUI({
     b <- cbboard(); req(b)
@@ -12253,11 +12258,17 @@ server <- function(input, output, session) {
                                        unname(cbdat()$nm[b$pick[i]])),
                                 abs(b$st$pred[i]), 100 * b$st$conf[i]), collapse = "; ")))
     } else NULL
-    tagList(best, div(class = "sec-hdr", "Game outcomes"), DTOutput("cbboard"))
+    tagList(best, div(class = "sec-hdr", "Game outcomes \u2014 close games first"),
+            DTOutput("cbboard"))
   })
   output$cbboard <- renderDT({
     b <- cbboard(); req(b); d <- cbdat(); g <- b$g
-    o <- order(-b$st$conf)
+    # Competitive games first, each group by confidence. Ranking the whole slate by
+    # confidence put twenty-three-point mismatches on page one and the games worth
+    # reading on page three -- and since the losses concentrate in the close games, the
+    # visible part of the table disagreed with the record above it: 36-12 in the header,
+    # four wrong in sight.
+    o <- order(abs(b$st$pred) > CBB_TIGHT, -b$st$conf)
     nmv <- function(id) ifelse(is.na(unname(d$nm[id])), id, unname(d$nm[id]))
     tbl <- data.frame(
       Matchup = sprintf('<span class="tm">%s</span><span class="at">@</span><span class="tm">%s</span>',
@@ -12270,8 +12281,13 @@ server <- function(input, output, session) {
                ifelse(b$ok, '<span class="rs ok">Correct</span>',
                             '<span class="rs no">Wrong</span>')),
       check.names = FALSE, stringsAsFactors = FALSE)
+    # A PAGER, not dom="t". College basketball plays 42 games on a median night, more
+    # than 25 on 69% of dates and 182 on the busiest, and dom="t" renders one page with
+    # no controls -- so on two nights in three most of the slate was not merely below the
+    # fold, it was unreachable. Every other large board here either pages or sets a page
+    # length above its biggest slate; this one did neither.
     datatable(tbl[o, ], rownames = FALSE, escape = FALSE, selection = "none",
-              options = list(pageLength = 25, dom = "t", ordering = FALSE,
+              options = list(pageLength = 25, dom = "tp", ordering = FALSE,
                              columnDefs = list(list(targets = 2:4, className = "dt-right"))))
   }, server = FALSE)
   # Said on the board, not buried in a commit message: the two things a reader of this
