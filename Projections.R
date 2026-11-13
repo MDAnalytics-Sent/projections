@@ -8345,15 +8345,23 @@ cbb_path <- function(k, y = NULL, ext = "rds")
             else sprintf("%s_v%d_%d.%s", k, CBB_VER, y, ext))
 
 cbb_sync <- function(force = FALSE) {
+  # sdv_fetch NEVER re-downloads a file that already exists -- it returns early on
+  # file.exists alone. Every other sport therefore deletes the live season's copy once it
+  # is older than SDV_REFRESH_MIN, and this one did not: it only deleted on force, which
+  # nothing passes. So the schedule froze at the moment the board was first built. New
+  # games never appeared, results never arrived, status_type_completed never flipped, and
+  # the board sat there showing a snapshot while looking live. That is the whole of why
+  # tonight's games were missing.
+  cur <- max(CBB_SEASONS)
   for (y in CBB_SEASONS) {
     sf <- cbb_path("sched", y)
-    if (force && file.exists(sf)) unlink(sf)
+    if (force || (y >= cur - 1L && age_min(sf) > SDV_REFRESH_MIN)) unlink(sf)
     sdv_fetch(CBB_REL_SCH, sprintf("mbb_schedule_%d.rds", y), sf)
-    # Rosters only for seasons that can still inform a lineup: the file is ~9MB a season
-    # and nothing reads an old one.
-    if (y >= max(CBB_SEASONS) - 1L) {
+    # Rosters only for seasons that can still inform a lineup: ~9MB a season and nothing
+    # reads an old one.
+    if (y >= cur - 1L) {
       rf <- cbb_path("ros", y)
-      if (force && file.exists(rf)) unlink(rf)
+      if (force || age_min(rf) > SDV_REFRESH_MIN) unlink(rf)
       sdv_fetch(CBB_REL_ROS, sprintf("game_rosters_%d.rds", y), rf)
     }
   }
@@ -8373,7 +8381,19 @@ cbb_sched <- function() {
     data.frame(
       season = y, game_id = as.character(z$game_id),
       ko = as.POSIXct(sub("Z$", "", gsub("T", " ", as.character(z$date))), tz = "UTC"),
-      date = as.Date(substr(as.character(z$date), 1, 10)),
+      # The EASTERN date, not the first ten characters of a UTC timestamp. College
+      # basketball is played at night: 3,195 games of 6,000 tip at 7pm Eastern or later,
+      # and every one of them has a UTC date one day ahead. Keying on it put tonight's
+      # games on tomorrow's page -- 23 of the 29 games on 12 November, with the 12
+      # November page instead holding 50 games from the 11th. The other boards all use
+      # day_et for exactly this reason.
+      # day_et alone is NOT enough here, and the test caught it: format() on a POSIXct
+      # renders in the object's OWN tzone, and ko is built in UTC, so day_et handed the
+      # UTC date straight back and nothing moved. The other boards get away with it
+      # because add_kickoff has already converted their kick-off to TZ_ET. The timezone
+      # has to be named explicitly.
+      date = as.Date(format(as.POSIXct(sub("Z$", "", gsub("T", " ", as.character(z$date))),
+                                       tz = "UTC"), tz = TZ_ET)),
       home = as.character(z$home_id), away = as.character(z$away_id),
       hname = nm("home_display_name"), aname = nm("away_display_name"),
       habb = nm("home_abbreviation"), aabb = nm("away_abbreviation"),
