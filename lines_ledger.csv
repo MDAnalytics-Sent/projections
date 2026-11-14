@@ -833,10 +833,10 @@
 "NHL","401892705","2026-11-13 03:00:00","New York @ Los Angeles","Los Angeles","home",0.5544,0.5325,1.8,-0.0021,"DraftKings","2026-11-13 02:57:32","L",-1
 "NBA","401909296","2026-11-14 00:00:00","New York Knicks @ Indiana Pacers","New York Knicks","away",0.6527,0.7324,1.312,-0.144,"DraftKings","2026-11-13 23:55:33","L",-1
 "NBA","401909297","2026-11-14 00:00:00","Milwaukee Bucks @ Orlando Magic","Orlando Magic","home",0.7317,0.7723,1.244,-0.0898,"DraftKings","2026-11-13 23:55:33","W",0.244
-"NCAAF","401858293","2026-11-14 00:00:00","Florida State @ Pittsburgh","Pittsburgh","home",0.6215,0.583,1.645,0.0224,"DraftKings","2026-11-13 23:55:33",NA,NA
-"NBA","401909298","2026-11-14 01:00:00","Cleveland Cavaliers @ Miami Heat","Cleveland Cavaliers","away",0.5084,0.4365,2.2,0.1185,"DraftKings","2026-11-14 00:55:42",NA,NA
-"NBA","401909299","2026-11-14 01:00:00","Atlanta Hawks @ Chicago Bulls","Atlanta Hawks","away",0.7258,0.6912,1.389,0.0081,"DraftKings","2026-11-14 00:55:42",NA,NA
-"NBA","401909300","2026-11-14 01:00:00","Memphis Grizzlies @ New Orleans Pelicans","Memphis Grizzlies","away",0.6377,0.5934,1.617,0.0313,"DraftKings","2026-11-14 00:55:42",NA,NA
+"NCAAF","401858293","2026-11-14 00:00:00","Florida State @ Pittsburgh","Pittsburgh","home",0.6215,0.583,1.645,0.0224,"DraftKings","2026-11-13 23:55:33","L",-1
+"NBA","401909298","2026-11-14 01:00:00","Cleveland Cavaliers @ Miami Heat","Cleveland Cavaliers","away",0.5084,0.4365,2.2,0.1185,"DraftKings","2026-11-14 00:55:42","L",-1
+"NBA","401909299","2026-11-14 01:00:00","Atlanta Hawks @ Chicago Bulls","Atlanta Hawks","away",0.7258,0.6912,1.389,0.0081,"DraftKings","2026-11-14 00:55:42","L",-1
+"NBA","401909300","2026-11-14 01:00:00","Memphis Grizzlies @ New Orleans Pelicans","Memphis Grizzlies","away",0.6377,0.5934,1.617,0.0313,"DraftKings","2026-11-14 00:55:42","W",0.617
 "NBA","401909301","2026-11-14 01:30:00","Utah Jazz @ Houston Rockets","Houston Rockets","home",0.8784,0.8944,1.075,-0.056,"DraftKings","2026-11-14 01:25:25",NA,NA
 "NCAAF","401858526","2026-11-14 02:00:00","Illinois @ UCLA","UCLA","home",0.9019,0.7768,1.235,0.1141,"DraftKings","2026-11-14 01:55:40",NA,NA
 "NHL","401892706","2026-11-14 02:00:00","New York @ Vancouver","New York","away",0.5596,0.6636,1.444,-0.1917,"DraftKings","2026-11-14 01:55:40",NA,NA
