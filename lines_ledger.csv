@@ -1013,9 +1013,9 @@
 "NHL","401892753","2026-11-20 03:00:00","Dallas @ Vegas","Vegas","home",0.5544,0.5325,1.8,-0.0021,"DraftKings","2026-11-20 02:49:50","L",-1
 "NCAAF","401856869","2026-11-20 23:00:00","Iowa State @ UCF","UCF","home",0.5539,0.4783,2,0.1078,"DraftKings","2026-11-20 22:40:56","W",1
 "NBA","401909305","2026-11-21 00:00:00","Charlotte Hornets @ Atlanta Hawks","Atlanta Hawks","home",0.722,0.7061,1.361,-0.0173,"DraftKings","2026-11-20 23:40:47","W",0.361
-"NBA","401909306","2026-11-21 00:30:00","Orlando Magic @ Brooklyn Nets","Orlando Magic","away",0.5745,0.6859,1.402,-0.1948,"DraftKings","2026-11-21 00:10:49",NA,NA
-"NBA","401909307","2026-11-21 00:30:00","Indiana Pacers @ Cleveland Cavaliers","Cleveland Cavaliers","home",0.7144,0.6698,1.435,0.025,"DraftKings","2026-11-21 00:10:49",NA,NA
-"NBA","401909308","2026-11-21 00:30:00","Toronto Raptors @ Detroit Pistons","Detroit Pistons","home",0.6963,0.6969,1.379,-0.0399,"DraftKings","2026-11-21 00:10:49",NA,NA
+"NBA","401909306","2026-11-21 00:30:00","Orlando Magic @ Brooklyn Nets","Orlando Magic","away",0.5745,0.6859,1.402,-0.1948,"DraftKings","2026-11-21 00:10:49","W",0.402
+"NBA","401909307","2026-11-21 00:30:00","Indiana Pacers @ Cleveland Cavaliers","Cleveland Cavaliers","home",0.7144,0.6698,1.435,0.025,"DraftKings","2026-11-21 00:10:49","W",0.435
+"NBA","401909308","2026-11-21 00:30:00","Toronto Raptors @ Detroit Pistons","Detroit Pistons","home",0.6963,0.6969,1.379,-0.0399,"DraftKings","2026-11-21 00:10:49","L",-1
 "NCAAF","401858303","2026-11-21 00:30:00","Clemson @ Duke","Duke","home",0.8341,0.8043,1.192,-0.0056,"DraftKings","2026-11-21 00:10:49",NA,NA
 "NCAAF","401866468","2026-11-21 00:30:00","Bowling Green @ Toledo","Toledo","home",0.9444,0.8579,1.118,0.0555,"DraftKings","2026-11-21 00:10:49",NA,NA
 "NBA","401909309","2026-11-21 01:00:00","Washington Wizards @ Chicago Bulls","Chicago Bulls","home",0.6071,0.5427,1.769,0.0741,"DraftKings","2026-11-21 00:40:56",NA,NA
