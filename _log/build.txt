@@ -1,4 +1,4 @@
-2026-11-21 19:17:47 building the page from /home/runner/work/projections/projections/Projections.R
+2026-11-21 19:47:47 building the page from /home/runner/work/projections/projections/Projections.R
 
 Projections is running.
 Warming the cache in the background.
@@ -8,14 +8,14 @@ NFL qb     | 18 side(s) on the 121 game(s) still to play are without the man who
 NFL avail  | live ESPN feed: 800 row(s), 128 listed out, 32 team(s) keyed | weekly report: 43394 row(s)
 NFL qb     | a side without the man who opened its season measured +3.95 points of margin (se 0.45) on 901 of 2895 prior game(s) -- used
 CFB td     | recalibrated on 2852 graded prop(s) settled before this slate: slope 1.36, shift +0.06 -- a raw 25% becomes 19%, a raw 60% becomes 65%
-NHL rating | fitted on 75% shots, 25% goals; shots joined for 8588 of 16054 team-game(s) (53%), the rest fall back to the goal margin
+NHL rating | fitted on 75% shots, 25% goals; shots joined for 8588 of 16058 team-game(s) (53%), the rest fall back to the goal margin
 NHL goalie | 17174 appearance(s), 8588 start(s), 169 goalie(s), 4 season(s) 2023-2026
 NHL goalie | starter edge on 4263 of 14856 game(s) (29%); sd 0.181, range -0.74 to +0.69 goals
-NHL        | 360 final game(s) this season, 360 with box scores, 0 missing
-NHL        | latest final: 2026-11-21 (game 2026020360) | today 2026-11-21 has 14 game(s), 2 final | feed 8 hit / 9 fetched
-NHL goalie | 1232 appearance(s) across 308 game(s); 616 identifiable starter(s), 85 distinct goalie(s)
+NHL        | 362 final game(s) this season, 362 with box scores, 0 missing
+NHL        | latest final: 2026-11-21 (game 2026020362) | today 2026-11-21 has 14 game(s), 4 final | feed 8 hit / 9 fetched
+NHL goalie | 1240 appearance(s) across 310 game(s); 620 identifiable starter(s), 85 distinct goalie(s)
 NHL goalie | fields present -- toi 100%, shots 100%, saves 100%, goals against 100%
-NHL goalie | starters league save pct 0.8937 over 16458 shots
+NHL goalie | starters league save pct 0.8935 over 16560 shots
 NHL goalie | measured +0.35 goals of margin per goal of starter edge (se 0.23) on 7667 prior-season game(s) -- NOT used: needs the right sign and two standard errors
 NHL b2b    | measured -0.25 goals of margin on the second night of a back-to-back (se 0.06) on 7667 prior-season game(s) -- used
 NHL avail  | goalscorer list gated on the injury feed (113 row(s), 65 team(s) keyed); the GAME projection for these 14 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
@@ -24,13 +24,13 @@ NBA ingest | 2 of 2 finished game(s) read from the summary feed (20 name(s)); hi
 NBA star   | a side missing its leading man measured -3.32 points of margin (se 0.39) on 12000 prior-season game(s) -- used
 NBA roster | 12 of 12 team(s) returned a roster (210 name(s))
 NBA line-up| 5 of 6 game(s) within 8h of tip-off returned a five (50 name(s))
-2026-11-21 19:18:57   today  38.7s
+2026-11-21 19:48:48   today  30.3s
 CFB qb     | passer found for 247 team(s), 20 flagged in all; of the 132 side(s) on THIS board, 131 could be checked and 18 are flagged; injury feed returned 3 row(s) with 1 listed out
 NHL avail  | goalscorer list gated on the injury feed (113 row(s), 65 team(s) keyed); the GAME projection for these 14 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
 NBA roster | 12 of 12 team(s) returned a roster (210 name(s))
 NBA line-up| 5 of 6 game(s) within 8h of tip-off returned a five (50 name(s))
-2026-11-21 19:19:21   nfl    14.3s  3 built, 12 to pick from
-2026-11-21 19:19:51   cfb    19.4s  3 built, 13 to pick from
+2026-11-21 19:49:12   nfl    14.5s  3 built, 12 to pick from
+2026-11-21 19:49:32   cfb    19.1s  3 built, 13 to pick from
 
 ── Slate 2026-11-21 ──
 Slate      | 0 games · none graded yet
@@ -55,23 +55,23 @@ Cache      | 610 files (5.9 MB) · 29 served from disk, 1 fetched
 ── Slate 2026-11-24 ──
 Slate      | 0 games · none graded yet
 Cache      | 610 files (5.9 MB) · 29 served from disk, 1 fetched
-2026-11-21 19:20:14   mlb    17.1s  5 built, 1 to pick from
-NHL avail  | goalscorer list gated on the injury feed (113 row(s), 65 team(s) keyed); the GAME projection for these 14 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
-NHL avail  | goalscorer list gated on the injury feed (113 row(s), 65 team(s) keyed); the GAME projection for these 5 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
-NHL avail  | goalscorer list gated on the injury feed (113 row(s), 65 team(s) keyed); the GAME projection for these 7 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
-NHL avail  | goalscorer list gated on the injury feed (113 row(s), 65 team(s) keyed); the GAME projection for these 1 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
-2026-11-21 19:20:15   nhl     1.7s  4 built, 17 to pick from
+2026-11-21 19:49:53   mlb    16.7s  5 built, 1 to pick from
+NHL avail  | goalscorer list gated on the injury feed (114 row(s), 65 team(s) keyed); the GAME projection for these 14 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
+NHL avail  | goalscorer list gated on the injury feed (114 row(s), 65 team(s) keyed); the GAME projection for these 5 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
+NHL avail  | goalscorer list gated on the injury feed (114 row(s), 65 team(s) keyed); the GAME projection for these 7 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
+NHL avail  | goalscorer list gated on the injury feed (114 row(s), 65 team(s) keyed); the GAME projection for these 1 game(s) uses no availability input at all -- skaters unmeasured, goalie term measured and refused by its guard
+2026-11-21 19:49:55   nhl     1.9s  4 built, 17 to pick from
 NBA roster | 12 of 12 team(s) returned a roster (210 name(s))
 NBA line-up| 5 of 6 game(s) within 8h of tip-off returned a five (50 name(s))
 NBA roster | 14 of 14 team(s) returned a roster (246 name(s))
 NBA roster | 20 of 20 team(s) returned a roster (353 name(s))
 NBA roster | 6 of 6 team(s) returned a roster (105 name(s))
-2026-11-21 19:20:19   nba     3.5s  5 built, 18 to pick from
+2026-11-21 19:49:59   nba     3.6s  5 built, 18 to pick from
 CBB avail  | 57 game(s) on this date, 51 of them with both sides rateable and shown; the projection uses NO availability input -- ESPN carries no college injuries or pre-game lineups, and what a missing starter is worth here has not been measured
 CBB avail  | 59 game(s) on this date, 51 of them with both sides rateable and shown; the projection uses NO availability input -- ESPN carries no college injuries or pre-game lineups, and what a missing starter is worth here has not been measured
 CBB avail  | 57 game(s) on this date, 51 of them with both sides rateable and shown; the projection uses NO availability input -- ESPN carries no college injuries or pre-game lineups, and what a missing starter is worth here has not been measured
 CBB avail  | 42 game(s) on this date, 37 of them with both sides rateable and shown; the projection uses NO availability input -- ESPN carries no college injuries or pre-game lineups, and what a missing starter is worth here has not been measured
 CBB avail  | 46 game(s) on this date, 28 of them with both sides rateable and shown; the projection uses NO availability input -- ESPN carries no college injuries or pre-game lineups, and what a missing starter is worth here has not been measured
 CBB avail  | 86 game(s) on this date, 73 of them with both sides rateable and shown; the projection uses NO availability input -- ESPN carries no college injuries or pre-game lineups, and what a missing starter is worth here has not been measured
-2026-11-21 19:20:23   cbb     0.4s  5 built, 18 to pick from
-2026-11-21 19:20:23 built 17518 KB in 156s
+2026-11-21 19:50:01   cbb     0.6s  5 built, 18 to pick from
+2026-11-21 19:50:01 built 17520 KB in 134s
