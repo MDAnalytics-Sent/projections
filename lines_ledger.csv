@@ -1071,16 +1071,16 @@
 "NCAAF","401858534","2026-11-21 23:15:00","Maryland @ USC","USC","home",0.7766,0.8762,1.095,-0.1494,"DraftKings","2026-11-21 23:10:49","W",0.095
 "NCAAF","401856865","2026-11-22 00:00:00","Arizona @ Kansas State","Arizona","away",0.5803,0.7572,1.267,-0.2649,"DraftKings","2026-11-21 23:50:02",NA,NA
 "NCAAF","401858302","2026-11-22 00:00:00","Virginia Tech @ Miami","Miami","home",0.9339,0.9124,1.056,-0.0143,"DraftKings","2026-11-21 23:50:02",NA,NA
-"NCAAF","401864544","2026-11-22 00:00:00","UNLV @ San José State","UNLV","away",0.7166,0.675,1.42,0.0177,"DraftKings","2026-11-21 23:50:02",NA,NA
-"NCAAF","401869938","2026-11-22 00:00:00","Arkansas State @ Louisiana Tech","Louisiana Tech","home",0.8961,0.8271,1.16,0.0395,"DraftKings","2026-11-21 23:50:02",NA,NA
+"NCAAF","401864544","2026-11-22 00:00:00","UNLV @ San José State","UNLV","away",0.7166,0.675,1.42,0.0177,"DraftKings","2026-11-21 23:50:02","W",0.42
+"NCAAF","401869938","2026-11-22 00:00:00","Arkansas State @ Louisiana Tech","Louisiana Tech","home",0.8961,0.8271,1.16,0.0395,"DraftKings","2026-11-21 23:50:02","W",0.16
 "NHL","401892760","2026-11-22 00:00:00","Philadelphia @ Montréal","Montréal","home",0.5951,0.5934,1.617,-0.0375,"DraftKings","2026-11-21 23:50:02","L",-1
-"NHL","401892764","2026-11-22 00:00:00","Vegas @ Winnipeg","Winnipeg","home",0.5034,0.4365,2.2,0.1074,"DraftKings","2026-11-21 23:50:02",NA,NA
+"NHL","401892764","2026-11-22 00:00:00","Vegas @ Winnipeg","Winnipeg","home",0.5034,0.4365,2.2,0.1074,"DraftKings","2026-11-21 23:50:02","L",-1
 "NHL","401892762","2026-11-22 00:00:00","New York @ Detroit","Detroit","home",0.5522,0.4573,2.1,0.1595,"DraftKings","2026-11-21 23:50:02","L",-1
-"NHL","401892759","2026-11-22 00:00:00","Columbus @ Toronto","Toronto","home",0.5318,0.5174,1.847,-0.0175,"DraftKings","2026-11-21 23:50:02",NA,NA
+"NHL","401892759","2026-11-22 00:00:00","Columbus @ Toronto","Toronto","home",0.5318,0.5174,1.847,-0.0175,"DraftKings","2026-11-21 23:50:02","L",-1
 "NHL","401892763","2026-11-22 00:00:00","New Jersey @ St. Louis","New Jersey","away",0.5463,0.583,1.645,-0.1012,"DraftKings","2026-11-21 23:50:02","L",-1
-"NHL","401892761","2026-11-22 00:00:00","Los Angeles @ Ottawa","Ottawa","home",0.5664,0.6225,1.541,-0.1275,"DraftKings","2026-11-21 23:50:02",NA,NA
-"NHL","401892758","2026-11-22 00:00:00","Washington @ Boston","Boston","home",0.5521,0.5635,1.704,-0.0591,"DraftKings","2026-11-21 23:50:02",NA,NA
-"NBA","401910024","2026-11-22 00:30:00","Portland Trail Blazers @ New York Knicks","New York Knicks","home",0.5554,0.4824,1.99,0.1053,"DraftKings","2026-11-22 00:20:03",NA,NA
+"NHL","401892761","2026-11-22 00:00:00","Los Angeles @ Ottawa","Ottawa","home",0.5664,0.6225,1.541,-0.1275,"DraftKings","2026-11-21 23:50:02","W",0.541
+"NHL","401892758","2026-11-22 00:00:00","Washington @ Boston","Boston","home",0.5521,0.5635,1.704,-0.0591,"DraftKings","2026-11-21 23:50:02","W",0.704
+"NBA","401910024","2026-11-22 00:30:00","Portland Trail Blazers @ New York Knicks","New York Knicks","home",0.5554,0.4824,1.99,0.1053,"DraftKings","2026-11-22 00:20:03","W",0.99
 "NCAAF","401856751","2026-11-22 00:30:00","Kentucky @ Missouri","Missouri","home",0.7171,0.6447,1.488,0.0669,"DraftKings","2026-11-22 00:20:03",NA,NA
 "NCAAF","401856753","2026-11-22 00:30:00","Georgia @ South Carolina","Georgia","away",0.8252,0.8525,1.125,-0.0716,"DraftKings","2026-11-22 00:20:03",NA,NA
 "NCAAF","401858306","2026-11-22 00:30:00","Pittsburgh @ Louisville","Louisville","home",0.8375,0.7867,1.22,0.0216,"DraftKings","2026-11-22 00:20:03",NA,NA
@@ -1096,7 +1096,7 @@
 "NCAAF","401860925","2026-11-22 02:30:00","San Diego State @ Boise State","Boise State","home",0.8984,0.8989,1.069,-0.0396,"DraftKings","2026-11-22 02:20:16",NA,NA
 "NBA","401910028","2026-11-22 03:00:00","Boston Celtics @ Sacramento Kings","Boston Celtics","away",0.8728,0.8316,1.154,0.0071,"DraftKings","2026-11-22 02:50:10",NA,NA
 "NCAAF","401856870","2026-11-22 03:15:00","Oklahoma State @ Arizona State","Oklahoma State","away",0.5338,0.5721,1.676,-0.1055,"DraftKings","2026-11-22 02:50:10",NA,NA
-"NCAAF","401860919","2026-11-22 03:30:00","Utah State @ Oregon State","Oregon State","home",0.7886,0.6908,1.388,0.0943,"DraftKings","2026-11-22 02:50:10",NA,NA
-"NCAAF","401864541","2026-11-22 03:30:00","Hawai'i @ Nevada","Nevada","home",0.6226,0.705,1.36,-0.1535,"DraftKings","2026-11-22 02:50:10",NA,NA
 "NHL","401892767","2026-11-22 03:00:00","Seattle @ San Jose","San Jose","home",0.5296,0.5217,1.833,-0.0291,"DraftKings","2026-11-22 02:50:10",NA,NA
 "NHL","401892766","2026-11-22 03:00:00","Minnesota @ Vancouver","Minnesota","away",0.641,0.7258,1.323,-0.1523,"DraftKings","2026-11-22 02:50:10",NA,NA
+"NCAAF","401860919","2026-11-22 03:30:00","Utah State @ Oregon State","Oregon State","home",0.7886,0.6908,1.388,0.0943,"DraftKings","2026-11-22 03:20:10",NA,NA
+"NCAAF","401864541","2026-11-22 03:30:00","Hawai'i @ Nevada","Nevada","home",0.6226,0.705,1.36,-0.1535,"DraftKings","2026-11-22 03:20:10",NA,NA
