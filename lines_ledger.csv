@@ -1090,13 +1090,13 @@
 "NBA","401910025","2026-11-22 01:00:00","LA Clippers @ Dallas Mavericks","Dallas Mavericks","home",0.6973,0.6305,1.524,0.0624,"DraftKings","2026-11-22 00:50:13",NA,NA
 "NBA","401910026","2026-11-22 01:00:00","Memphis Grizzlies @ Minnesota Timberwolves","Minnesota Timberwolves","home",0.6287,0.6583,1.459,-0.083,"DraftKings","2026-11-22 00:50:13",NA,NA
 "NBA","401910027","2026-11-22 01:00:00","New Orleans Pelicans @ San Antonio Spurs","San Antonio Spurs","home",0.8907,0.9111,1.054,-0.0609,"DraftKings","2026-11-22 00:50:13",NA,NA
-"NBA","401910028","2026-11-22 03:00:00","Boston Celtics @ Sacramento Kings","Boston Celtics","away",0.8728,0.8239,1.167,0.0183,"DraftKings","2026-11-22 00:50:13",NA,NA
 "NCAAF","401862836","2026-11-22 01:00:00","UTSA @ UAB","UTSA","away",0.5304,0.6225,1.541,-0.1828,"DraftKings","2026-11-22 00:50:13",NA,NA
-"NCAAF","401856872","2026-11-22 02:00:00","Utah @ TCU","Utah","away",0.7286,0.7409,1.294,-0.057,"DraftKings","2026-11-22 00:50:13",NA,NA
-"NCAAF","401860925","2026-11-22 02:30:00","San Diego State @ Boise State","Boise State","home",0.8984,0.8989,1.069,-0.0396,"DraftKings","2026-11-22 00:50:13",NA,NA
-"NCAAF","401856870","2026-11-22 03:15:00","Oklahoma State @ Arizona State","Oklahoma State","away",0.5338,0.5514,1.741,-0.0708,"DraftKings","2026-11-22 00:50:13",NA,NA
-"NCAAF","401860919","2026-11-22 03:30:00","Utah State @ Oregon State","Oregon State","home",0.7886,0.6908,1.388,0.0943,"DraftKings","2026-11-22 00:50:13",NA,NA
-"NCAAF","401864541","2026-11-22 03:30:00","Hawai'i @ Nevada","Nevada","home",0.6226,0.6908,1.388,-0.1361,"DraftKings","2026-11-22 00:50:13",NA,NA
-"NHL","401892765","2026-11-22 02:00:00","Anaheim @ Utah","Utah","home",0.6,0.5996,1.602,-0.0385,"DraftKings","2026-11-22 00:50:13",NA,NA
-"NHL","401892767","2026-11-22 03:00:00","Seattle @ San Jose","San Jose","home",0.5296,0.5174,1.847,-0.0217,"DraftKings","2026-11-22 00:50:13",NA,NA
-"NHL","401892766","2026-11-22 03:00:00","Minnesota @ Vancouver","Minnesota","away",0.641,0.7258,1.323,-0.1523,"DraftKings","2026-11-22 00:50:13",NA,NA
+"NBA","401910028","2026-11-22 03:00:00","Boston Celtics @ Sacramento Kings","Boston Celtics","away",0.8728,0.8239,1.167,0.0183,"DraftKings","2026-11-22 01:20:18",NA,NA
+"NCAAF","401856872","2026-11-22 02:00:00","Utah @ TCU","Utah","away",0.7286,0.7335,1.308,-0.0472,"DraftKings","2026-11-22 01:20:18",NA,NA
+"NCAAF","401860925","2026-11-22 02:30:00","San Diego State @ Boise State","Boise State","home",0.8984,0.8989,1.069,-0.0396,"DraftKings","2026-11-22 01:20:18",NA,NA
+"NCAAF","401856870","2026-11-22 03:15:00","Oklahoma State @ Arizona State","Oklahoma State","away",0.5338,0.5514,1.741,-0.0708,"DraftKings","2026-11-22 01:20:18",NA,NA
+"NCAAF","401860919","2026-11-22 03:30:00","Utah State @ Oregon State","Oregon State","home",0.7886,0.6908,1.388,0.0943,"DraftKings","2026-11-22 01:20:18",NA,NA
+"NCAAF","401864541","2026-11-22 03:30:00","Hawai'i @ Nevada","Nevada","home",0.6226,0.705,1.36,-0.1535,"DraftKings","2026-11-22 01:20:18",NA,NA
+"NHL","401892765","2026-11-22 02:00:00","Anaheim @ Utah","Utah","home",0.6,0.5996,1.602,-0.0385,"DraftKings","2026-11-22 01:20:18",NA,NA
+"NHL","401892767","2026-11-22 03:00:00","Seattle @ San Jose","San Jose","home",0.5296,0.5174,1.847,-0.0217,"DraftKings","2026-11-22 01:20:18",NA,NA
+"NHL","401892766","2026-11-22 03:00:00","Minnesota @ Vancouver","Minnesota","away",0.641,0.7258,1.323,-0.1523,"DraftKings","2026-11-22 01:20:18",NA,NA
