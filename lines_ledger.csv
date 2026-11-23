@@ -1112,7 +1112,7 @@
 "NBA","401910035","2026-11-23 01:30:00","Boston Celtics @ Golden State Warriors","Boston Celtics","away",0.5366,0.7445,1.291,-0.3074,"DraftKings","2026-11-22 20:26:14",NA,NA
 "NBA","401910030","2026-11-22 23:00:00","Oklahoma City Thunder @ Miami Heat","Oklahoma City Thunder","away",0.5239,0.3908,2.46,0.2889,"DraftKings","2026-11-22 21:04:17","L",-1
 "NBA","401910031","2026-11-23 00:00:00","Orlando Magic @ Washington Wizards","Orlando Magic","away",0.5516,0.6374,1.508,-0.1685,"DraftKings","2026-11-22 21:04:17","L",-1
-"NBA","401910032","2026-11-23 00:00:00","Denver Nuggets @ Chicago Bulls","Denver Nuggets","away",0.644,0.7817,1.229,-0.2086,"DraftKings","2026-11-22 21:04:17",NA,NA
+"NBA","401910032","2026-11-23 00:00:00","Denver Nuggets @ Chicago Bulls","Denver Nuggets","away",0.644,0.7817,1.229,-0.2086,"DraftKings","2026-11-22 21:04:17","W",0.229
 "NBA","401910033","2026-11-23 00:00:00","Dallas Mavericks @ Utah Jazz","Dallas Mavericks","away",0.5275,0.5514,1.741,-0.0818,"DraftKings","2026-11-22 21:04:17","W",0.741
 "NBA","401910034","2026-11-23 01:00:00","Indiana Pacers @ New York Knicks","New York Knicks","home",0.7523,0.7176,1.338,0.0065,"DraftKings","2026-11-22 21:04:17",NA,NA
 "NFL","401873074","2026-11-22 21:05:00","Jets @ Chargers","Chargers","home",0.576,0.6188,1.552,-0.1058,"DraftKings","2026-11-22 21:04:17","L",-1
@@ -1121,5 +1121,5 @@
 "NFL","401873077","2026-11-23 01:20:00","Vikings @ 49ers","49ers","home",0.7514,0.6292,1.526,0.1469,"DraftKings","2026-11-22 21:04:17",NA,NA
 "NHL","401892769","2026-11-22 22:00:00","Buffalo @ Tampa Bay","Tampa Bay","home",0.667,0.6447,1.488,-0.0076,"DraftKings","2026-11-22 21:04:17","L",-1
 "NHL","401892771","2026-11-23 00:00:00","Pittsburgh @ Dallas","Dallas","home",0.6331,0.669,1.435,-0.0916,"DraftKings","2026-11-22 21:04:17","W",0.435
-"NHL","401892770","2026-11-23 00:00:00","Edmonton @ St. Louis","St. Louis","home",0.5281,0.5325,1.8,-0.0495,"DraftKings","2026-11-22 21:04:17",NA,NA
+"NHL","401892770","2026-11-23 00:00:00","Edmonton @ St. Louis","St. Louis","home",0.5281,0.5325,1.8,-0.0495,"DraftKings","2026-11-22 21:04:17","W",0.8
 "NHL","401892772","2026-11-23 01:00:00","Chicago @ Vancouver","Vancouver","home",0.5344,0.4892,1.952,0.0434,"DraftKings","2026-11-22 21:04:17",NA,NA
