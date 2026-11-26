@@ -6000,13 +6000,54 @@ cfb_qb <- function(upto = NULL) {
   if (!nrow(z)) return(NULL)
   ref <- if (!is.null(upto)) upto else max(z$ko)
   do.call(rbind, lapply(split(seq_len(nrow(z)), z$team), function(i) {
-    w <- z[i, , drop = FALSE]
-    keep <- utils::tail(sort(unique(w$ko)), CFB_QB_N)
-    w <- w[w$ko %in% keep, , drop = FALSE]
-    a <- stats::aggregate(att ~ pid + pname + team, data = w, FUN = sum)
-    a <- a[a$att >= CFB_QB_ATT, , drop = FALSE]
-    if (!nrow(a)) return(NULL)
-    r <- a[which.max(a$att), , drop = FALSE]
+    w0 <- z[i, , drop = FALSE]
+    w0 <- w0[order(w0$ko), , drop = FALSE]
+    # WHO THIS TEAM'S QUARTERBACK IS: the man who opened its season, not whoever has
+    # thrown most lately.
+    #
+    # This used to take the last CFB_QB_N games and call the leading passer in them the
+    # starter, and that rule goes quiet in the middle of a long absence -- exactly the
+    # fault measured and fixed on the NFL board on 9 November, which was never carried
+    # across to this one. Ohio State on 25 November is the proof, and it is the biggest
+    # game of the week. Julian Sayin opened their season and threw weeks 1 to 7; Luke
+    # Fahey has started every game since, four in a row. Over the last five games Fahey
+    # has 149 attempts to Sayin's 29, so the window rule named FAHEY the starter, saw
+    # that Fahey threw last week, and flagged nobody -- with Ohio State favoured by 23.5
+    # at 92% while missing the quarterback their rating was built on.
+    #
+    # It fails the other way too, on the same row. Michigan's Bryce Underwood opened
+    # their season, missed weeks 8 to 10, and is back: he threw all 24 of their attempts
+    # in week 12. But Tommy Carr leads the five-game window, so Carr was named the
+    # starter, Carr did not throw last week, and MICHIGAN was flagged -- marked down for
+    # having its own quarterback back. On the NFL board that case measured -0.78 points,
+    # which is nothing, against -3.68 for a side genuinely without its opener.
+    #
+    # So: the opener is whoever threw most in the team's FIRST game of the season, and
+    # the flag asks whether that man threw in its most recent one. Sayin and Underwood
+    # are both named correctly by that rule.
+    first_ko <- min(w0$ko)
+    fg <- w0[abs(as.numeric(w0$ko) - as.numeric(first_ko)) < 1, , drop = FALSE]
+    r <- NULL
+    if (nrow(fg)) {
+      o <- fg[which.max(fg$att), , drop = FALSE]
+      tot <- sum(w0$att[w0$pid == o$pid[1]])
+      # he still has to have thrown enough across the season to be anyone's starter
+      if (is.finite(tot) && tot >= CFB_QB_ATT)
+        r <- data.frame(pid = o$pid[1], pname = o$pname[1], team = o$team[1],
+                        att = tot, stringsAsFactors = FALSE)
+    }
+    # No usable opener -- the team's first game is missing from the box release, which
+    # happens constantly below FBS. Fall back to the old window rule rather than drop
+    # the team entirely.
+    w <- w0
+    if (is.null(r)) {
+      keep <- utils::tail(sort(unique(w0$ko)), CFB_QB_N)
+      w <- w0[w0$ko %in% keep, , drop = FALSE]
+      a <- stats::aggregate(att ~ pid + pname + team, data = w, FUN = sum)
+      a <- a[a$att >= CFB_QB_ATT, , drop = FALSE]
+      if (!nrow(a)) return(NULL)
+      r <- a[which.max(a$att), , drop = FALSE]
+    }
     # and did he throw in the team's most recent game? This is the signal that actually
     # works. ESPN's college injuries endpoint answers with three rows for the whole
     # sport, so it will never tell anyone a favourite is without its starter. The box
