@@ -6025,6 +6025,15 @@ cfb_qb <- function(upto = NULL) {
     # So: the opener is whoever threw most in the team's FIRST game of the season, and
     # the flag asks whether that man threw in its most recent one. Sayin and Underwood
     # are both named correctly by that rule.
+    # THIS season's first game. cfb_qb loads CFB_SEASONS, which is 2014:2026, so taking
+    # min(ko) over the pooled frame picked the opener of 2014: the first build with this
+    # rule named J.T. Barrett Ohio State's quarterback and Devin Gardner Michigan's, and
+    # flagged 135 of 138 sides because neither has thrown a pass in a decade. The test
+    # missed it because the harness set CFB_SEASONS to 2026 alone -- a fixture describing
+    # a world where the bug cannot happen, which is the second time that exact mistake
+    # has shipped.
+    w0 <- w0[w0$season == max(w0$season), , drop = FALSE]
+    if (!nrow(w0)) return(NULL)
     first_ko <- min(w0$ko)
     fg <- w0[abs(as.numeric(w0$ko) - as.numeric(first_ko)) < 1, , drop = FALSE]
     r <- NULL
