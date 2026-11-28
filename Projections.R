@@ -9500,10 +9500,18 @@ nba_load <- function() {
       # narrow one -- a star out for a game or two, where the ratings have not moved and
       # the markdown should fire. That case the window already catches.
       #
-      # Which means the number below is a question, not a verdict, and the next step is to
-      # measure whether the markdown still earns its sign when the leader is identified
-      # over the season instead of the window. Not to swap the rule because the shape
-      # resembles the quarterback bug.
+      # The measurement settled it, and it settled against the change. Once the diagnostic
+      # stopped measuring the wrong population it reported 3 of 30 sides naming a
+      # different leading man and ONE with an absence the window cannot see. Not 23, not
+      # 19 -- one. And that one is the benign case above: by now the backup is the man
+      # that side plays and the ratings have taken the loss.
+      #
+      # So the rule stands. Reading the leader over the season instead would have swapped
+      # a working identification for one that double-counts an absence on all thirty
+      # sides, to repair one. Worth remembering that the first two readings said 23 and
+      # 19 and both were artifacts of how I was measuring -- a mean over a 5-game sample,
+      # then a mean over eleven seasons. Had the rule been changed off either, the board
+      # would be worse and the commit would have read like a fix.
       # THIS SEASON's minutes, not the file's. nba_minutes spans NBA_SEASONS -- eleven
       # of them -- so win = Inf over the whole file names whoever had the highest mean
       # minutes for the franchise since 2017, which is a traded or retired man. That is
