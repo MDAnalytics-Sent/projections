@@ -9504,7 +9504,14 @@ nba_load <- function() {
       # measure whether the markdown still earns its sign when the leader is identified
       # over the season instead of the window. Not to swap the rule because the shape
       # resembles the quarterback bug.
-      sea <- tryCatch(nba_leaders(mins, win = Inf), error = function(e) NULL)
+      # THIS SEASON's minutes, not the file's. nba_minutes spans NBA_SEASONS -- eleven
+      # of them -- so win = Inf over the whole file names whoever had the highest mean
+      # minutes for the franchise since 2017, which is a traded or retired man. That is
+      # what produced "window Kevin Durant, season Jalen Green" and "window Luka Doncic,
+      # season Anthony Davis": the two sides of a trade, read as an absence. Third
+      # correction to this one diagnostic, each from the number the previous build printed.
+      cm <- mins[mins$season %in% max(mins$season, na.rm = TRUE), , drop = FALSE]
+      sea <- tryCatch(nba_leaders(cm, win = Inf), error = function(e) NULL)
       if (!is.null(sea) && nrow(sea)) {
         j <- match(lead$team, sea$team)
         diff_pid <- !is.na(j) & as.character(sea$pid[j]) != as.character(lead$pid)
@@ -9514,8 +9521,8 @@ nba_load <- function() {
         # headline. The bug needs the season's leader to be unable to win the window at
         # all -- to have played fewer than the floor of recent games, so the window cannot
         # name him however good he is. Then, and only then, is his absence invisible.
-        recent <- utils::tail(sort(unique(mins$date)), NBA_LEAD_N)
-        rec <- mins[mins$date %in% recent & is.finite(mins$min) & mins$min > 0, , drop = FALSE]
+        recent <- utils::tail(sort(unique(cm$date)), NBA_LEAD_N)
+        rec <- cm[cm$date %in% recent & is.finite(cm$min) & cm$min > 0, , drop = FALSE]
         gone <- vapply(seq_along(lead$team), function(i) {
           if (!diff_pid[i]) return(FALSE)
           sum(rec$pid == sea$pid[j[i]] & rec$team == lead$team[i]) < NBA_LEAD_MIN
