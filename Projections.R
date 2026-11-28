@@ -9472,9 +9472,27 @@ nba_load <- function() {
       # which is what the opener rule fixed for quarterbacks.
       #
       # This line says how many teams it is happening to right now. The rule is not
-      # changed on the strength of an argument: a season-to-date leader has the opposite
-      # failure, naming a man who was traded or is out for the year and marking his team
-      # down for ever, so the replacement needs the measurement first.
+      # changed on the strength of an argument, and the argument here is genuinely
+      # two-sided -- which is the part worth writing down, because it is easy to read the
+      # paragraph above and "fix" this into something worse.
+      #
+      # A season-to-date leader has the opposite failure: it names a man who was traded or
+      # is out for the year and marks his team down for ever. And that is not obviously
+      # wrong -- a side without its best player for the season IS worse -- except that the
+      # team ratings are fitted on recent games, which already contain every game played
+      # without him. Mark him missing on top of that and the same absence is counted
+      # twice, once in a rating that has already fallen and once in a -3.32 markdown.
+      #
+      # So the window promoting a backup after a long absence may be the RIGHT answer
+      # rather than the bug it looks like: by then the backup really is the man this side
+      # normally plays, and the ratings have absorbed the loss. The genuine failure is the
+      # narrow one -- a star out for a game or two, where the ratings have not moved and
+      # the markdown should fire. That case the window already catches.
+      #
+      # Which means the number below is a question, not a verdict, and the next step is to
+      # measure whether the markdown still earns its sign when the leader is identified
+      # over the season instead of the window. Not to swap the rule because the shape
+      # resembles the quarterback bug.
       sea <- tryCatch(nba_leaders(mins, win = Inf), error = function(e) NULL)
       if (!is.null(sea) && nrow(sea)) {
         j <- match(lead$team, sea$team)
