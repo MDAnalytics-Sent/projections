@@ -8913,7 +8913,18 @@ nba_leaders <- function(mins, upto = NULL, win = NBA_LEAD_N) {
     a <- stats::aggregate(min ~ pid + pname + team, data = w, FUN = mean)
     n <- stats::aggregate(min ~ pid, data = w, FUN = length); names(n)[2] <- "gp"
     a <- merge(a, n, by = "pid")
-    a <- a[a$gp >= NBA_LEAD_MIN, , drop = FALSE]
+    # Over a 15-game window every regular has played about 15, so ranking on mean minutes
+    # with a floor of 5 is sound. Over a whole season it is not: a man with 5 games at 38
+    # minutes outranks one with 20 at 34, so the leader becomes whoever got hurt early
+    # after heavy minutes. That is not a hypothetical -- the first run of the diagnostic
+    # below reported 19 of 30 teams with a season leader who "cannot win the window", and
+    # the names were Murray, Haliburton, Lillard, Herro: precisely the injured stars the
+    # statistic selects for. The instrument had found its own bias. So when reading over
+    # the season the floor scales with how many games the side has played; mean minutes
+    # stays the measure of how big a man's role is, which is the right question.
+    floor_g <- if (is.finite(win)) NBA_LEAD_MIN
+               else max(NBA_LEAD_MIN, ceiling(length(keep) / 2))
+    a <- a[a$gp >= floor_g, , drop = FALSE]
     if (!nrow(a)) return(NULL)
     a[which.max(a$min), c("team", "pid", "pname", "min", "gp"), drop = FALSE]
   }))
