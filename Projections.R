@@ -8880,7 +8880,10 @@ nba_minutes <- function(sch) {
 # that is loses about six points of margin whatever the name.
 NBA_LEAD_N   <- 15L   # games of recent form the leader is read from
 NBA_LEAD_MIN <- 5L    # games he must have played before he counts as established
-nba_leaders <- function(mins, upto = NULL) {
+# win = Inf reads the leader from the whole season to date instead of a trailing window.
+# Nothing calls it that way to decide anything yet -- it is there so the build can measure
+# how often the window and the season disagree, which is the blind spot described below.
+nba_leaders <- function(mins, upto = NULL, win = NBA_LEAD_N) {
   if (is.null(mins) || !nrow(mins)) return(NULL)
   z <- if (is.null(upto)) mins else mins[mins$date < upto, , drop = FALSE]
   if (!nrow(z)) return(NULL)
@@ -8888,7 +8891,7 @@ nba_leaders <- function(mins, upto = NULL) {
   sp <- split(seq_len(nrow(z)), z$team)
   do.call(rbind, lapply(sp, function(i) {
     w <- z[i, , drop = FALSE]
-    keep <- utils::tail(sort(unique(w$date)), NBA_LEAD_N)
+    keep <- if (is.finite(win)) utils::tail(sort(unique(w$date)), win) else unique(w$date)
     w <- w[w$date %in% keep & is.finite(w$min) & w$min > 0, , drop = FALSE]
     if (!nrow(w)) return(NULL)
     a <- stats::aggregate(min ~ pid + pname + team, data = w, FUN = mean)
@@ -9440,10 +9443,36 @@ nba_load <- function() {
     .nba_star$led <- TRUE
     if (is.null(lead) || !nrow(lead))
       mlog("NBA star   | no minutes on file, so no leading man is identified and the model is unchanged")
-    else
+    else {
       mlog(sprintf("NBA star   | leading man identified for %d team(s) from the last %d game(s); e.g. %s",
                    nrow(lead), NBA_LEAD_N,
                    paste(utils::head(sprintf("%s %.0f min", lead$pname, lead$min), 3), collapse = ", ")))
+      # The same shape of bug that hid a missing quarterback for NFL and college, now
+      # measured here rather than waited for. The leading man is read from the last 15
+      # dates and must have played 5 of them, so a star who misses 11 straight drops
+      # under the floor and his BACKUP becomes "the leading man" -- after which the
+      # question "is this side's best player out?" is asked about someone who is playing,
+      # and the absence stops being marked. The window goes quiet exactly when it matters,
+      # which is what the opener rule fixed for quarterbacks.
+      #
+      # This line says how many teams it is happening to right now. The rule is not
+      # changed on the strength of an argument: a season-to-date leader has the opposite
+      # failure, naming a man who was traded or is out for the year and marking his team
+      # down for ever, so the replacement needs the measurement first.
+      sea <- tryCatch(nba_leaders(mins, win = Inf), error = function(e) NULL)
+      if (!is.null(sea) && nrow(sea)) {
+        j <- match(lead$team, sea$team)
+        dis <- which(!is.na(j) & as.character(sea$pid[j]) != as.character(lead$pid))
+        mlog(sprintf(paste0("NBA star   | window vs season: %d of %d team(s) have a different ",
+                            "leading man over the last %d game(s) than over the season -- ",
+                            "for those teams a long absence by the season's best player is ",
+                            "INVISIBLE to the availability check%s"),
+                     length(dis), nrow(lead), NBA_LEAD_N,
+                     if (length(dis)) sprintf(": %s", paste(utils::head(sprintf(
+                       "%s (window %s, season %s)", lead$team[dis], lead$pname[dis],
+                       sea$pname[j[dis]]), 4), collapse = "; ")) else ""))
+      }
+    }
   }
   list(sch = sch, pan = pan, endr = endr, ents = ents, mins = mins, lead = lead,
        # the season files first, then this season's finished games from ESPN, which the
