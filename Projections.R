@@ -7541,6 +7541,28 @@ nhl_fit <- function(R, season_) {
   # said once per run, not once per day page
   if (!isTRUE(.nhl_gk$said)) {
     .nhl_gk$said <- TRUE
+    # Does this model beat "always pick the home team"? Nothing asked that before, and
+    # nothing logged it, so the answer went unexamined for the whole life of the board.
+    # It matters because the home-ice intercept is applied to EVERY game while the team
+    # ratings only shift it a little: if the intercept is large next to the spread of
+    # rd * beta, the model cannot express a team difference and collapses onto home ice.
+    # Live over 103 graded games it picked the home side 84.2% of the time and finished
+    # 45.6%, against 42.7% for picking home blind -- which is no edge at all. These two
+    # lines are the instrument that should have said so on day one.
+    ic <- unname(stats::coef(m1)["(Intercept)"])
+    sp <- stats::sd(h$pred - ic)
+    mlog(sprintf(paste0("NHL shape  | home ice is worth %+.3f goals and is added to every game; ",
+                        "everything the ratings and rest contribute has sd %.3f, so the ",
+                        "constant is %.2fx the whole spread of team quality -- the model ",
+                        "picks the home side in %.1f%% of these %d game(s)"),
+                 ic, sp, if (sp > 1e-9) ic / sp else NA_real_,
+                 100 * mean(h$pred > 0), nrow(h)))
+    acc  <- mean((h$pred > 0) == (h$marg > 0))
+    base <- mean(h$marg > 0)
+    mlog(sprintf(paste0("NHL skill  | on %d prior-season game(s) the model picked the winner ",
+                        "%.1f%% of the time; picking the home side blind would have gone ",
+                        "%.1f%% -- the model is %+.1f point(s) of edge over home ice alone"),
+                 nrow(h), 100 * acc, 100 * base, 100 * (acc - base)))
     if (is.finite(gd_b)) {
       mlog(sprintf("NHL goalie | measured %+.2f goals of margin per goal of starter edge (se %.2f) on %d prior-season game(s) -- %s",
                    gd_b, gd_se, nrow(h),
@@ -8379,12 +8401,89 @@ CBB_MODEL    <- sprintf("cbb-ridge-v%d", CBB_VER)
 CBB_LEDGER   <- file.path(LEDGER_DIR, "cbb_predictions.rds")
 CBB_REL_SCH  <- "espn_mens_college_basketball_schedules"
 CBB_REL_ROS  <- "espn_mens_college_basketball_game_rosters"
+CBB_SCORE_DAYS <- 3L         # days back the live scoreboard is asked who won
+
+# Last night's results, from the scoreboard instead of the season file.
+#
+# This board had every score it ever showed from one source: the sportsdataverse release.
+# That release ingests on its own schedule, and the schedule it ingests on is slower than
+# a night of basketball. Downloaded fresh at 00:44 on 28 November, it carried 85 of 85
+# games on the 24th, 69 of 69 on the 25th, 23 of 23 on the 26th -- and 0 of 55 on the
+# 27th. So the board sat all day on the 28th with 49 locked picks and no results, and the
+# record could not move until the release caught up. That is the whole of the two-day lag:
+# not our refresh, not our date keying, the upstream file.
+#
+# The schedule's game_id IS the ESPN event id -- the release is named
+# espn_mens_college_basketball_schedules and the ids are ESPN's nine-digit event ids --
+# so the overlay joins on it directly with no name matching. Only the score is taken; the
+# pick is never touched. This is the same repair NBA already had and this sport did not.
+cbb_overlay_scores <- function(s, days = CBB_SCORE_DAYS, now = now_et()) {
+  if (is.null(s) || !nrow(s)) return(s)
+  today <- as.Date(format(now, "%Y-%m-%d"))
+  got <- 0L; bad <- 0L
+  for (i in 0:days) {
+    ev <- tryCatch(espn_scoreboard("cbb", today - i), error = function(e) NULL)
+    if (is.null(ev) || !nrow(ev) ||
+        !all(c("eid", "h_score", "a_score", "done") %in% names(ev))) next
+    ev <- ev[ev$done %in% TRUE & is.finite(ev$h_score) & is.finite(ev$a_score), , drop = FALSE]
+    if (!nrow(ev)) next
+    j <- match(as.character(ev$eid), as.character(s$game_id))
+    k <- which(!is.na(j))
+    if (!length(k)) next
+    # Which side is home? Both sides of this join are ESPN's own data for the same event
+    # id, so the designations agree -- but a silent disagreement would swap every score
+    # and invert the grade, which is the single worst thing this overlay could do. So it
+    # is checked rather than assumed, and a row that disagrees is skipped and counted.
+    if ("h_id" %in% names(ev)) {
+      agree <- is.na(ev$h_id[k]) | is.na(s$home[j[k]]) |
+               as.character(ev$h_id[k]) == as.character(s$home[j[k]])
+      bad <- bad + sum(!agree)
+      k <- k[agree]
+      if (!length(k)) next
+    }
+    # a game the season file already calls complete is left exactly as it is
+    new <- k[!(s$has_score[j[k]] %in% TRUE)]
+    s$home_score[j[k]] <- ev$h_score[k]
+    s$away_score[j[k]] <- ev$a_score[k]
+    s$has_score[j[k]]  <- TRUE
+    got <- got + length(new)
+  }
+  attr(s, "overlaid") <- got
+  attr(s, "flipped") <- bad
+  s
+}
+
+.cbb_gk <- new.env(parent = emptyenv())
 
 cbb_load <- function() {
   sch <- cbb_sched()
   if (is.null(sch) || !nrow(sch)) return(NULL)
   nm <- stats::setNames(c(sch$hname, sch$aname), c(sch$home, sch$away))
   nm <- nm[!is.na(names(nm)) & !duplicated(names(nm))]
+  # How fresh are the scores? NHL logs this and the lag was caught in one line; this
+  # sport did not, so a board two days behind looked exactly like a board up to date.
+  # Said once per run, not once per day page.
+  if (!isTRUE(.cbb_gk$said)) {
+    .cbb_gk$said <- TRUE
+    cur <- sch[sch$season == max(CBB_SEASONS), , drop = FALSE]
+    fin <- cur[cur$has_score %in% TRUE, , drop = FALSE]
+    td  <- as.Date(format(now_et(), "%Y-%m-%d"))
+    tdy <- sum(cur$date == td, na.rm = TRUE)
+    ov  <- attr(sch, "overlaid") %||% 0L
+    fl  <- attr(sch, "flipped") %||% 0L
+    if (nrow(fin)) {
+      lt <- max(fin$date, na.rm = TRUE)
+      mlog(sprintf(paste0("CBB scores | latest final: %s (%d day(s) behind today) | %d final ",
+                          "game(s) this season | today %s has %d game(s), %d final | %d ",
+                          "score(s) came from the live scoreboard, not the season file%s"),
+                   format(lt), as.integer(td - lt), nrow(fin), format(td), tdy,
+                   sum(cur$date == td & cur$has_score %in% TRUE, na.rm = TRUE), ov,
+                   if (fl > 0L) sprintf(" | %d SKIPPED: the feed and the season file disagree on which side is home", fl) else ""))
+    } else {
+      mlog(sprintf("CBB scores | NO final game(s) on file this season at all; today %s has %d game(s)",
+                   format(td), tdy))
+    }
+  }
   list(sch = sch, nm = nm)
 }
 
@@ -8459,6 +8558,9 @@ cbb_sched <- function() {
   })
   z <- dplyr::bind_rows(out)
   if (is.null(z) || !nrow(z)) return(NULL)
+  # the overlay goes in BEFORE marg, so the margin is computed once from whichever
+  # source actually has the score
+  z <- cbb_overlay_scores(z)
   z$marg <- ifelse(z$has_score, z$home_score - z$away_score, NA_real_)
   z$final_at <- z$ko + CBB_GAME_MIN * 60
   z[!is.na(z$date), , drop = FALSE]
@@ -10117,7 +10219,12 @@ dash_edge_record <- function(L, min_n = 20L) {
 # ends, so the price a pick was shown at is saved in the bets ledger before first pitch.
 ESPN_DIR   <- file.path("proj_cache", "espn")
 ESPN_SPORT <- c(nfl = "football/nfl", cfb = "football/college-football", mlb = "baseball/mlb",
-                nhl = "hockey/nhl", nba = "basketball/nba")
+                nhl = "hockey/nhl", nba = "basketball/nba",
+                cbb = "basketball/mens-college-basketball")
+# Both college feeds return only a featured handful without a division filter: 80 is
+# football's FBS, 50 is basketball's Division I. Asking for the wrong one, or for none,
+# is how a 55-game night comes back as six ranked teams.
+ESPN_GROUP <- c(cfb = "&groups=80", cbb = "&groups=50")
 ESPN_LG    <- c(NFL = "nfl", NCAAF = "cfb", MLB = "mlb", NHL = "nhl", NBA = "nba")
 .espn_mem  <- new.env(parent = emptyenv())
 
@@ -10235,7 +10342,8 @@ espn_scoreboard <- function(lg, date) {
   if (is.na(date) || !lg %in% names(ESPN_SPORT)) return(NULL)
   ds <- format(date, "%Y%m%d")
   url <- sprintf("https://site.api.espn.com/apis/site/v2/sports/%s/scoreboard?dates=%s&limit=300%s",
-                 ESPN_SPORT[[lg]], ds, if (lg == "cfb") "&groups=80" else "")
+                 ESPN_SPORT[[lg]], ds,
+                 if (lg %in% names(ESPN_GROUP)) ESPN_GROUP[[lg]] else "")
   past <- date < as.Date(format(Sys.time(), "%Y-%m-%d", tz = TZ_ET))
   espn_cached(paste0("sb_", lg, "_", ds), ttl = if (past) 20 else 8, function() {
     j <- espn_get(url)
