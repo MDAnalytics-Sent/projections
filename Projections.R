@@ -7591,8 +7591,13 @@ nhl_fit <- function(R, season_) {
     # Does this model beat "always pick the home team"? Nothing asked that before and
     # nothing logged it, so the answer went unexamined for the whole life of the board.
     # It matters because the home-ice intercept is added to EVERY game while the team
-    # ratings only shift it a little, so the model picks the home side about 80% of the
-    # time and its raw record swings with how often home sides happen to be winning.
+    # ratings only shift it, so the model leans home and its raw record swings with how
+    # often home sides happen to be winning. Measured over the 7,667 prior-season games:
+    # home ice +0.224 goals against a rating-and-rest spread of sd 0.453, a ratio of
+    # 0.49, and the home side taken in 72.4% of games for 57.7% against 54.6% home-blind.
+    # Note those are MILDER than the same quantities read off this season's board pages
+    # (0.29, 0.379, 0.76x, 84%) -- the pages were the road-heavy fortnight again, which is
+    # the third time that window has flattered a wrong conclusion in one night.
     #
     # Read the ledger before concluding anything from a day page. The day pages age out
     # after two weeks, and measuring the fortnight to 28 November gave 45.6% against
@@ -8473,7 +8478,7 @@ CBB_SCORE_DAYS <- 3L         # days back the live scoreboard is asked who won
 cbb_overlay_scores <- function(s, days = CBB_SCORE_DAYS, now = now_et()) {
   if (is.null(s) || !nrow(s)) return(s)
   today <- as.Date(format(now, "%Y-%m-%d"))
-  got <- 0L; bad <- 0L
+  got <- 0L; bad <- 0L; swp <- 0L
   for (i in 0:days) {
     ev <- tryCatch(espn_scoreboard("cbb", today - i), error = function(e) NULL)
     if (is.null(ev) || !nrow(ev) ||
@@ -8483,26 +8488,35 @@ cbb_overlay_scores <- function(s, days = CBB_SCORE_DAYS, now = now_et()) {
     j <- match(as.character(ev$eid), as.character(s$game_id))
     k <- which(!is.na(j))
     if (!length(k)) next
-    # Which side is home? Both sides of this join are ESPN's own data for the same event
-    # id, so the designations agree -- but a silent disagreement would swap every score
-    # and invert the grade, which is the single worst thing this overlay could do. So it
-    # is checked rather than assumed, and a row that disagrees is skipped and counted.
-    if ("h_id" %in% names(ev)) {
-      agree <- is.na(ev$h_id[k]) | is.na(s$home[j[k]]) |
-               as.character(ev$h_id[k]) == as.character(s$home[j[k]])
-      bad <- bad + sum(!agree)
-      k <- k[agree]
-      if (!length(k)) next
-    }
+    # Which side is home? Getting this wrong swaps every score and inverts every grade,
+    # so it is checked rather than assumed. The first build with the check live found 8
+    # games on one night where the scoreboard and the season file disagree -- neutral-site
+    # tournament games, where the two sources pick opposite nominal hosts. Those are not
+    # bad data, they are the same game listed the other way round, so the score is taken
+    # and swapped to match our own idea of home, exactly as espn_find already does with
+    # its flip. A row that matches NEITHER way round is the one to refuse.
+    hid <- if ("h_id" %in% names(ev)) as.character(ev$h_id[k]) else rep(NA_character_, length(k))
+    aid <- if ("a_id" %in% names(ev)) as.character(ev$a_id[k]) else rep(NA_character_, length(k))
+    ours_h <- as.character(s$home[j[k]]); ours_a <- as.character(s$away[j[k]])
+    unknown <- is.na(hid) | is.na(aid) | is.na(ours_h) | is.na(ours_a)
+    same <- unknown | (hid == ours_h)
+    flip <- !unknown & !same & hid == ours_a & aid == ours_h
+    keep <- same | flip
+    bad  <- bad + sum(!keep)
+    k <- k[keep]; flip <- flip[keep]
+    if (!length(k)) next
     # a game the season file already calls complete is left exactly as it is
     new <- k[!(s$has_score[j[k]] %in% TRUE)]
-    s$home_score[j[k]] <- ev$h_score[k]
-    s$away_score[j[k]] <- ev$a_score[k]
+    hs <- ifelse(flip, ev$a_score[k], ev$h_score[k])
+    as_ <- ifelse(flip, ev$h_score[k], ev$a_score[k])
+    s$home_score[j[k]] <- hs
+    s$away_score[j[k]] <- as_
     s$has_score[j[k]]  <- TRUE
-    got <- got + length(new)
+    got <- got + length(new); swp <- swp + sum(flip)
   }
   attr(s, "overlaid") <- got
-  attr(s, "flipped") <- bad
+  attr(s, "refused") <- bad
+  attr(s, "swapped") <- swp
   s
 }
 
@@ -8523,15 +8537,17 @@ cbb_load <- function() {
     td  <- as.Date(format(now_et(), "%Y-%m-%d"))
     tdy <- sum(cur$date == td, na.rm = TRUE)
     ov  <- attr(sch, "overlaid") %||% 0L
-    fl  <- attr(sch, "flipped") %||% 0L
+    rf  <- attr(sch, "refused") %||% 0L
+    sw  <- attr(sch, "swapped") %||% 0L
     if (nrow(fin)) {
       lt <- max(fin$date, na.rm = TRUE)
       mlog(sprintf(paste0("CBB scores | latest final: %s (%d day(s) behind today) | %d final ",
                           "game(s) this season | today %s has %d game(s), %d final | %d ",
-                          "score(s) came from the live scoreboard, not the season file%s"),
+                          "score(s) came from the live scoreboard, not the season file%s%s"),
                    format(lt), as.integer(td - lt), nrow(fin), format(td), tdy,
                    sum(cur$date == td & cur$has_score %in% TRUE, na.rm = TRUE), ov,
-                   if (fl > 0L) sprintf(" | %d SKIPPED: the feed and the season file disagree on which side is home", fl) else ""))
+                   if (sw > 0L) sprintf(" | %d listed the other way round (neutral site) and were swapped to match", sw) else "",
+                   if (rf > 0L) sprintf(" | %d REFUSED: the feed names two sides this game does not have", rf) else ""))
     } else {
       mlog(sprintf("CBB scores | NO final game(s) on file this season at all; today %s has %d game(s)",
                    format(td), tdy))
@@ -9462,15 +9478,29 @@ nba_load <- function() {
       sea <- tryCatch(nba_leaders(mins, win = Inf), error = function(e) NULL)
       if (!is.null(sea) && nrow(sea)) {
         j <- match(lead$team, sea$team)
-        dis <- which(!is.na(j) & as.character(sea$pid[j]) != as.character(lead$pid))
-        mlog(sprintf(paste0("NBA star   | window vs season: %d of %d team(s) have a different ",
-                            "leading man over the last %d game(s) than over the season -- ",
-                            "for those teams a long absence by the season's best player is ",
-                            "INVISIBLE to the availability check%s"),
-                     length(dis), nrow(lead), NBA_LEAD_N,
-                     if (length(dis)) sprintf(": %s", paste(utils::head(sprintf(
-                       "%s (window %s, season %s)", lead$team[dis], lead$pname[dis],
-                       sea$pname[j[dis]]), 4), collapse = "; ")) else ""))
+        diff_pid <- !is.na(j) & as.character(sea$pid[j]) != as.character(lead$pid)
+        # A different name is NOT yet the bug. Two men within a minute of each other swap
+        # places between the season and the last fifteen games for no interesting reason,
+        # and the first run of this counted 23 of 30 teams that way, which is noise with a
+        # headline. The bug needs the season's leader to be unable to win the window at
+        # all -- to have played fewer than the floor of recent games, so the window cannot
+        # name him however good he is. Then, and only then, is his absence invisible.
+        recent <- utils::tail(sort(unique(mins$date)), NBA_LEAD_N)
+        rec <- mins[mins$date %in% recent & is.finite(mins$min) & mins$min > 0, , drop = FALSE]
+        gone <- vapply(seq_along(lead$team), function(i) {
+          if (!diff_pid[i]) return(FALSE)
+          sum(rec$pid == sea$pid[j[i]] & rec$team == lead$team[i]) < NBA_LEAD_MIN
+        }, logical(1))
+        g <- which(gone)
+        mlog(sprintf(paste0("NBA star   | window vs season: %d of %d team(s) name a different ",
+                            "leading man, and for %d of those the season's best player has ",
+                            "played under %d of the last %d game(s) -- so the window CANNOT ",
+                            "name him and his absence is invisible to the availability ",
+                            "check (see the markdown measured below)%s"),
+                     sum(diff_pid), nrow(lead), length(g), NBA_LEAD_MIN, NBA_LEAD_N,
+                     if (length(g)) sprintf(": %s", paste(utils::head(sprintf(
+                       "%s (window %s, season %s)", lead$team[g], lead$pname[g],
+                       sea$pname[j[g]]), 5), collapse = "; ")) else ""))
       }
     }
   }
