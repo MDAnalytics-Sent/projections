@@ -4237,6 +4237,36 @@ game_read_ledger <- function(path) {
   L
 }
 
+# What a board has actually done, on the picks it locked at the start of each game.
+#
+# A day page shows one night, and the day pages age out after two weeks, so the only
+# record a reader could ever see was a fortnight long. That is not enough to tell a bad
+# night from a bad model, and the difference is the whole question. Measuring the
+# fortnight to 28 November put NHL at 45.6% against 42.7% for picking the home side
+# blind, which reads as a model with no edge; the ledger over the same season says
+# 229-185 = 55.3% against 51.7%, because home sides won 55.0% of the first 309 games and
+# 41.9% of the last 105. Same model, same picks, opposite conclusion -- and the reader
+# was only ever shown the window that misleads.
+#
+# Everything here comes off the locked pick: conf is what was claimed BEFORE the game,
+# and no row is ever rewritten, so this cannot flatter itself after the fact.
+game_ledger_record <- function(path, since = NULL) {
+  L <- game_read_ledger(path)
+  if (!nrow(L) || !all(c("pred", "conf", "home_score", "away_score") %in% names(L)))
+    return(NULL)
+  k <- !is.na(L$pred) & !is.na(L$home_score) & !is.na(L$away_score) &
+       L$home_score != L$away_score
+  if (!is.null(since) && "kickoff" %in% names(L))
+    k <- k & !is.na(L$kickoff) & as.Date(L$kickoff) >= as.Date(since)
+  L <- L[k, , drop = FALSE]
+  if (!nrow(L)) return(NULL)
+  hw <- L$home_score > L$away_score
+  ok <- (L$pred > 0) == hw
+  list(n = nrow(L), w = sum(ok), l = sum(!ok), acc = mean(ok),
+       claimed = if (all(is.finite(L$conf))) mean(L$conf) else NA_real_,
+       home_base = mean(hw), home_pick = mean(L$pred > 0))
+}
+
 # Append-only. A pick already on the ledger is never rewritten, by anything.
 game_append_ledger <- function(path, new) {
   L <- game_read_ledger(path)
@@ -7541,14 +7571,20 @@ nhl_fit <- function(R, season_) {
   # said once per run, not once per day page
   if (!isTRUE(.nhl_gk$said)) {
     .nhl_gk$said <- TRUE
-    # Does this model beat "always pick the home team"? Nothing asked that before, and
+    # Does this model beat "always pick the home team"? Nothing asked that before and
     # nothing logged it, so the answer went unexamined for the whole life of the board.
-    # It matters because the home-ice intercept is applied to EVERY game while the team
-    # ratings only shift it a little: if the intercept is large next to the spread of
-    # rd * beta, the model cannot express a team difference and collapses onto home ice.
-    # Live over 103 graded games it picked the home side 84.2% of the time and finished
-    # 45.6%, against 42.7% for picking home blind -- which is no edge at all. These two
-    # lines are the instrument that should have said so on day one.
+    # It matters because the home-ice intercept is added to EVERY game while the team
+    # ratings only shift it a little, so the model picks the home side about 80% of the
+    # time and its raw record swings with how often home sides happen to be winning.
+    #
+    # Read the ledger before concluding anything from a day page. The day pages age out
+    # after two weeks, and measuring the fortnight to 28 November gave 45.6% against
+    # 42.7% for picking home blind -- which reads as a model with no edge. The ledger,
+    # which keeps every locked pick, says 229-185 = 55.3% over 414 games against a
+    # claimed 56.4%. The fortnight was simply road-heavy: home won 55.0% of the first
+    # 309 games and 41.9% of the last 105, and the model went 58.6% then 45.7%. Its edge
+    # over picking home blind was +3.6, +3.6 and +3.8 points in those three windows --
+    # the one quantity that holds still. These lines report that shape every build.
     ic <- unname(stats::coef(m1)["(Intercept)"])
     sp <- stats::sd(h$pred - ic)
     mlog(sprintf(paste0("NHL shape  | home ice is worth %+.3f goals and is added to every game; ",
@@ -11976,11 +12012,26 @@ server <- function(input, output, session) {
       else sprintf("%d games. %d locked at puck drop, the rest update until theirs.",
                    nrow(b$g), sum(b$st$locked %in% TRUE))
     }
-    div(class = "rec", msg,
-        if (length(d$dropped))
-          span(style = "color:#fcd34d", sprintf(
-            "  Seasons %s dropped: the public feed has one identical score for every game.",
-            paste(d$dropped, collapse = ", "))))
+    # The season, under the night. Without this the only record on the page was a single
+    # slate, and a 3-12 night looks identical whether the model is broken or merely
+    # having the worst night in two hundred.
+    rc <- tryCatch(game_ledger_record(NHL_LEDGER), error = function(e) NULL)
+    tagList(
+      div(class = "rec", msg,
+          if (length(d$dropped))
+            span(style = "color:#fcd34d", sprintf(
+              "  Seasons %s dropped: the public feed has one identical score for every game.",
+              paste(d$dropped, collapse = ", ")))),
+      if (!is.null(rc) && rc$n >= 50L)
+        div(class = "hint", sprintf(
+          paste0("On record this season, locked at puck drop: %d-%d (%.1f%%)%s. Taking the ",
+                 "home side in every game would have gone %.1f%%, and this model takes it ",
+                 "in %.0f%% of them. Hockey lives nearer the coin toss than any other board ",
+                 "here, so one night swings hard — judge it on this line, not on tonight."),
+          rc$w, rc$l, 100 * rc$acc,
+          if (is.finite(rc$claimed)) sprintf(", against the %.1f%% it claimed beforehand", 100 * rc$claimed) else "",
+          100 * rc$home_base, 100 * rc$home_pick))
+    )
   })
   output$nboard_sec <- renderUI({
     req(nboard())
