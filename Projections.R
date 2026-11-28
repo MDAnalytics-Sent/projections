@@ -4267,6 +4267,23 @@ game_ledger_record <- function(path, since = NULL) {
        home_base = mean(hw), home_pick = mean(L$pred > 0))
 }
 
+# The season line that goes under every board's nightly record. One sentence, written
+# once, because five copies of it would drift apart by the third edit.
+LEDGER_NOTE_MIN <- 50L
+ledger_note <- function(path, lock, tail = "") {
+  rc <- tryCatch(game_ledger_record(path), error = function(e) NULL)
+  if (is.null(rc) || rc$n < LEDGER_NOTE_MIN) return(NULL)
+  div(class = "hint", sprintf(
+    paste0("On record this season, locked at %s: %d-%d (%.1f%%)%s. Taking the home side ",
+           "in every game would have gone %.1f%%, and this model takes it in %.0f%% of ",
+           "them.%s"),
+    lock, rc$w, rc$l, 100 * rc$acc,
+    if (is.finite(rc$claimed)) sprintf(", against the %.1f%% it claimed beforehand",
+                                       100 * rc$claimed) else "",
+    100 * rc$home_base, 100 * rc$home_pick,
+    if (nzchar(tail)) paste0(" ", tail) else ""))
+}
+
 # Append-only. A pick already on the ledger is never rewritten, by anything.
 game_append_ledger <- function(path, new) {
   L <- game_read_ledger(path)
@@ -11002,11 +11019,14 @@ server <- function(input, output, session) {
     vn  <- sum(b$done & !b$tie & !is.na(vg))
     vok <- sum(b$done & !b$tie & !is.na(vg) &
                  ((vg > 0) == (b$g$home_score > b$g$away_score)))
-    div(class = "rec",
-      sprintf("Model went %d-%d (%.0f%%) on %d decided games.",
-              ok, n - ok, 100 * ok / max(n, 1), n),
-      if (vn > 0) sprintf("  Vegas favourites went %d-%d (%.0f%%).",
-                          vok, vn - vok, 100 * vok / vn) else "")
+    tagList(
+      div(class = "rec",
+        sprintf("Model went %d-%d (%.0f%%) on %d decided games.",
+                ok, n - ok, 100 * ok / max(n, 1), n),
+        if (vn > 0) sprintf("  Vegas favourites went %d-%d (%.0f%%).",
+                            vok, vn - vok, 100 * vok / vn) else ""),
+      ledger_note(LEDGER_FILE, "kickoff")
+    )
   })
 
   output$board <- renderDT({
@@ -11476,10 +11496,13 @@ server <- function(input, output, session) {
     else
       sprintf("%d FBS matchups. %d locked at kickoff, the rest update until theirs.",
               tot, lock)
-    div(class = "rec", txt,
-        if (!isTRUE(d$talent))
-          span(style = "color:#a8620a",
-               "  Recruiting is off: install.packages(\"nanoparquet\") to switch it on."))
+    tagList(
+      div(class = "rec", txt,
+          if (!isTRUE(d$talent))
+            span(style = "color:#a8620a",
+                 "  Recruiting is off: install.packages(\"nanoparquet\") to switch it on.")),
+      ledger_note(CFB_LEDGER, "kickoff")
+    )
   })
 
   output$cboard <- renderDT({
@@ -12015,22 +12038,15 @@ server <- function(input, output, session) {
     # The season, under the night. Without this the only record on the page was a single
     # slate, and a 3-12 night looks identical whether the model is broken or merely
     # having the worst night in two hundred.
-    rc <- tryCatch(game_ledger_record(NHL_LEDGER), error = function(e) NULL)
     tagList(
       div(class = "rec", msg,
           if (length(d$dropped))
             span(style = "color:#fcd34d", sprintf(
               "  Seasons %s dropped: the public feed has one identical score for every game.",
               paste(d$dropped, collapse = ", ")))),
-      if (!is.null(rc) && rc$n >= 50L)
-        div(class = "hint", sprintf(
-          paste0("On record this season, locked at puck drop: %d-%d (%.1f%%)%s. Taking the ",
-                 "home side in every game would have gone %.1f%%, and this model takes it ",
-                 "in %.0f%% of them. Hockey lives nearer the coin toss than any other board ",
-                 "here, so one night swings hard — judge it on this line, not on tonight."),
-          rc$w, rc$l, 100 * rc$acc,
-          if (is.finite(rc$claimed)) sprintf(", against the %.1f%% it claimed beforehand", 100 * rc$claimed) else "",
-          100 * rc$home_base, 100 * rc$home_pick))
+      ledger_note(NHL_LEDGER, "puck drop",
+                  paste0("Hockey lives nearer the coin toss than any other board here, so ",
+                         "one night swings hard — judge it on this line, not on tonight."))
     )
   })
   output$nboard_sec <- renderUI({
@@ -12231,12 +12247,15 @@ server <- function(input, output, session) {
     b <- bboard()
     if (is.null(b)) return(div(class = "rec", "No NBA games on this date."))
     n <- sum(b$done); h <- sum(b$ok, na.rm = TRUE)
-    div(class = "rec", if (n == nrow(b$g) && n > 0)
-      sprintf("Model went %d-%d on %d games.", h, n - h, n)
-      else if (n > 0) sprintf("%d games, %d still to play. %d-%d so far.",
-                              nrow(b$g), nrow(b$g) - n, h, n - h)
-      else sprintf("%d games. %d locked at tip-off, the rest update until theirs.",
-                   nrow(b$g), sum(b$st$locked %in% TRUE)))
+    tagList(
+      div(class = "rec", if (n == nrow(b$g) && n > 0)
+        sprintf("Model went %d-%d on %d games.", h, n - h, n)
+        else if (n > 0) sprintf("%d games, %d still to play. %d-%d so far.",
+                                nrow(b$g), nrow(b$g) - n, h, n - h)
+        else sprintf("%d games. %d locked at tip-off, the rest update until theirs.",
+                     nrow(b$g), sum(b$st$locked %in% TRUE))),
+      ledger_note(NBA_LEDGER, "tip-off")
+    )
   })
   output$bboard_sec <- renderUI({
     req(bboard()); tagList(div(class = "sec-hdr", "Game outcomes"), DTOutput("bboard"))
@@ -12443,12 +12462,15 @@ server <- function(input, output, session) {
     # middle half between 66% and 77%: a 32-2 night and a 23-18 night are the same coin
     # landing twice. Saying so here is cheaper than having it mistaken for form.
     spread <- if (n >= 15) " A single night swings widely \u2014 the long-run rate is 71%." else ""
-    div(class = "rec", paste0(if (n == nrow(b$g) && n > 0)
-      sprintf("Model went %d-%d on %d games.", h, n - h, n)
-      else if (n > 0) sprintf("%d games, %d still to play. %d-%d so far.",
-                              nrow(b$g), nrow(b$g) - n, h, n - h)
-      else sprintf("%d games. %d locked at tip-off, the rest update until theirs.",
-                   nrow(b$g), sum(b$st$locked %in% TRUE)), extra, spread))
+    tagList(
+      div(class = "rec", paste0(if (n == nrow(b$g) && n > 0)
+        sprintf("Model went %d-%d on %d games.", h, n - h, n)
+        else if (n > 0) sprintf("%d games, %d still to play. %d-%d so far.",
+                                nrow(b$g), nrow(b$g) - n, h, n - h)
+        else sprintf("%d games. %d locked at tip-off, the rest update until theirs.",
+                     nrow(b$g), sum(b$st$locked %in% TRUE)), extra, spread)),
+      ledger_note(CBB_LEDGER, "tip-off")
+    )
   })
   output$cbboard_sec <- renderUI({
     b <- cbboard(); req(b)
